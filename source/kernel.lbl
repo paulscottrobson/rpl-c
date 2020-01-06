@@ -1,0 +1,12 @@
+tos		= $6
+IP		= 3
+FlatBuild	= $1000
+temp3		= $c
+temp2		= $a
+temp1		= $8
+CrashDump	= $103e
+Next		= $0
+BootCode	= $1034
+InitialiseCoreCode= $100d
+Literal2Byte	= $101e
+FreeMemory	= $3000

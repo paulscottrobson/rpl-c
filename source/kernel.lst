@@ -1,0 +1,77 @@
+
+; 64tass Turbo Assembler Macro V1.54.1900 listing file
+; 64tass -q -c -o kernel.prg -L kernel.lst -l kernel.lbl kernel.asm
+; Mon Jan 06 15:54:27 2020
+
+;Offset	;Hex		;Monitor	;Source
+
+;******  Processing input file: kernel.asm
+
+=$1000					FlatBuild = $1000 							; code starts here.
+=$3000					FreeMemory = $3000 							; compiled code etc/ here
+
+;******  Processing file: data.asm
+
+.0000					Next:
+>0000							.fill 	6
+=3					IP = Next+3 								; the IP which points to the current instruction
+.0006					tos:
+>0006							.word 	?
+.0008					temp1:
+>0008							.word 	?
+.000a					temp2:
+>000a							.word 	?
+.000c					temp3:
+>000c							.word 	?
+
+;******  Return to file: kernel.asm
+
+.1000	a2 ff		ldx #$ff			ldx 		#$FF 					; reset the stack
+.1002	9a		txs				txs
+.1003	a2 34		ldx #$34			ldx			#BootCode & $FF 		; boot address
+.1005	a0 10		ldy #$10			ldy 		#BootCode >>8
+.1007	20 0d 10	jsr $100d			jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
+.100a	4c 00 00	jmp $0000			jmp 		Next
+
+;******  Processing file: core.asm
+
+.100d					InitialiseCoreCode:
+.100d	a9 e8		lda #$e8			lda 	#$E8 					; Copy INX INX 			4 cycles when run
+.100f	85 00		sta $00				sta 	Next
+.1011	85 01		sta $01				sta 	Next+1
+.1013	a9 7c		lda #$7c			lda 	#$7C 					; Copy JMP ($aaaa,x) 	6 cycles when run
+.1015	85 02		sta $02				sta 	Next+2
+.1017	86 03		stx $03				stx 	Next+3 					; set the indirect address (IP)
+.1019	84 04		sty $04				sty 	Next+4
+.101b	a2 fe		ldx #$fe			ldx 	#-2 					; set up to run from provided word.
+.101d	60		rts				rts
+.101e					Literal2Byte:
+.101e	a5 06		lda $06				lda 	TOS
+.1020	48		pha				pha
+.1021	a5 07		lda $07				lda 	TOS+1
+.1023	48		pha				pha
+.1024	e8		inx				inx  							; point X to the word
+.1025	e8		inx				inx
+.1026	8a		txa				txa 							; copy into Y
+.1027	a8		tay				tay
+.1028	b1 03		lda ($03),y			lda 	(IP),y 					; read it. the LSB
+.102a	85 06		sta $06				sta 	TOS
+.102c	c8		iny				iny 							; read and push the MSB
+.102d	b1 03		lda ($03),y			lda 	(IP),y
+.102f	85 07		sta $07				sta 	TOS+1
+.1031	4c 00 00	jmp $0000			jmp 	Next
+
+;******  Return to file: kernel.asm
+
+.1034					BootCode:
+>1034	1e 10						.word 		Literal2Byte
+>1036	cd ab						.word 		$ABCD
+>1038	1e 10						.word 		Literal2Byte
+>103a	ef cd						.word 		$CDEF
+>103c	3e 10						.word 		CrashDump
+.103e					CrashDump:
+.103e	ba		tsx				tsx
+.103f	86 08		stx $08				stx 		temp1
+.1041	4c ff ff	jmp $ffff			jmp 		$FFFF
+
+;******  End of listing
