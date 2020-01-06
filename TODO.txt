@@ -1,0 +1,14 @@
+TODO:
+	Write the basic executor
+	Write some basic words - constants, basic stack operations - and check them
+	Write $$literal $$define $$string $$nextline.
+	Write $$@ and $$^ and $$call skeletons
+	Write code to scan and generate dictionaries.
+	Write code to analyse that code and batten on to the executable a runtime program.
+	Implement new/clear stuff for that program.
+	Check code runs.
+	Implement variables
+	Implement calls
+	Add export as you go
+	When the core is written, write the importers and scanners.
+	
