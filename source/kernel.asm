@@ -29,10 +29,12 @@ FreeMemory = $3000 							; compiled code etc/ here
 		.include 	"words/arithmetic/divide.src"
 		.include 	"words/arithmetic/multiply.src"
 		.include 	"words/arithmetic/unary.src"
+		.include 	"words/system/callhandler.src"
 		.include 	"words/system/debug.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/number.src"
 		.include 	"words/system/skipper.src"
+		.include 	"words/system/varhandlers.src"
 		.include 	"words/data/literals.src"
 		.include 	"words/data/stack.src"
 		.include 	"words/data/memory.src"
@@ -46,8 +48,8 @@ BootCode:
 		.word 		Literal2Byte
 		.word 		$ABCD
 
-		.word 		SkipComment
-		.text 		4,"ABC"
+		.word 		LiteralString
+		.text 		4,"AB",0
 
 		.word 		Literal2Byte
 		.word 		$3345

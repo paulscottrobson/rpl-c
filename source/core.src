@@ -46,3 +46,31 @@ Literal2Byte:	;; $$literal noexec
 		lda 	(IP),y
 		sta 	TOS+1
 		jmp 	Next
+
+; *****************************************************************************
+;
+;				Word that loads a string address onto the stack
+;
+; *****************************************************************************
+
+LiteralString: ;; $string noexec
+		.byte $FF
+		pushTOS 						; save old TOS
+		inx
+		inx 							; skip over current word
+		txa 							; add to IP + 1 to give string address
+		tay 							; put in Y
+		sec 							; make that TOS
+		adc 	IP
+		sta 	TOS
+		lda 	IP+1
+		adc 	#0
+		sta 	TOS+1
+		;
+		txa 							; add data length to X
+		clc
+		adc 	(IP),y
+		tax
+		jmp 	Next+2 					; jump without pre-increment
+
+

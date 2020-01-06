@@ -55,4 +55,4 @@ class DictionaryFull(Dictionary):
 if __name__ == "__main__":
 	d = DictionaryFull()
 	for k in d.getKeys():
-		print("{0:14} {1:14} = ${2:04x}".format(k,d.get(k)["handler"]+":",d.get(k)["address"]))
+		print("{0:16} {1:16} = ${2:04x}".format(k,d.get(k)["handler"]+":",d.get(k)["address"]))

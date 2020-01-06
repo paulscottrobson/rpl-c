@@ -1,14 +1,17 @@
 TODO:
-	Write $$String
-	Write $$@ and $$^ and $$call skeletons
-	Write code to analyse that code and batten on to the executable a runtime program.
+	Do we need importers or are they all special cases. Some are immediate (bit 7)
+		NO: Because they've been identified uniquely to get that far, so they'll be immediate.
+			Replace Encode address with immediate flag.
+			
+	Write code to create rpl-c binary code, batten on to the executable a runtime program.
 	Implement new/clr stuff for that program.
 	Check code runs.
+	Implement calls/return code
 	Implement variables
-	Implement calls
 	Add export as you go
 	When the core is written, write the importers and scanners.
 	
+Missing vocabulary:	
 ; << <= <> >= >> alloc assert clr vlist
 else end endif for if index list load new 
 next old repeat rnd run save sgn stop until	

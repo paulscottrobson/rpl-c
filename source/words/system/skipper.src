@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-NextLine:
+NextLine: 	;; $$nextline
 		clc 								; add (IP) to IP
 		lda 	IP
 		adc 	(IP)
@@ -36,7 +36,7 @@ _NLGoEnd:
 ;
 ; *****************************************************************************
 
-SkipComment: 	;; $$comment noexec
+SkipComment: 	;; $$comment noexec 
 		inx									; (IP),X points to the length.
 		inx 
 		txa
@@ -54,4 +54,3 @@ SkipComment: 	;; $$comment noexec
 
 DefineError:	;; $$define noexec
 		rerror "DEFINITION?"
-
