@@ -1,0 +1,92 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		number.src
+;		Purpose :	Convert the word at [TOS]+1 to a number
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;	  Convert word at [TOS] to a number in temp3. CS if okay, CC if bad.
+;
+; *****************************************************************************
+
+dbltemp3 .macro	
+		asl 	temp3
+		rol 	temp3+1
+		.endm
+
+ConvertToInteger:	
+		stz 	temp3 						; reset value
+		stz 	temp3+1	
+		stz 	temp1 						; temp1 = 0 (decimal) 255 (hex)
+		ldy 	#0 							; look at first character
+		lda 	(TOS),y 	
+		cmp		#'$'						; if $ then skip it and set hex flag
+		bne 	_CTILoop
+		dec 	temp1
+		iny
+		;
+_CTILoop: 									; multiply temp1 by 10 or 16
+		lda 	(TOS),y 					; next digit
+		;
+		and 	#$7F 						; drop end of word flag
+		sec
+		sbc 	#'0' 						; put in range '0'+
+		bcc 	_CTIFail 					; out of range.
+		cmp 	#10 						; in 0-9 ?
+		bcc 	_CTILegal
+		cmp 	#'A'-'0'					; between 9 and A ?
+		bcc 	_CTIFail
+		sec
+		sbc 	#7 							; hex adjust
+		cmp 	#16 						; out of range ?
+		bcs 	_CTIFail		
+_CTILegal:
+		sta 	temp1+1 					; save digit value.
+		dbltemp3 							; x 2
+		lda 	temp3 						; copy x2 into temp2
+		sta 	temp2
+		lda 	temp3+1
+		sta 	temp2+1
+		dbltemp3 							; x 4
+		dbltemp3 							; x 8
+		bit 	temp1 						; hexadecimal
+		bpl 	_CTIDecimal
+		dbltemp3 							; x 16
+		bra 	_CTIAddLoop
+_CTIDecimal:
+		clc 								; x 8 + x 2 = x 10
+		lda 	temp3		
+		adc 	temp2
+		sta 	temp3
+		lda 	temp3+1
+		adc 	temp2+1
+		sta 	temp3+1
+		lda 	temp1+1 					; check digit 0-9
+		cmp 	#10
+		bcs 	_CTIFail
+		;
+_CTIAddLoop:								; add digit value.
+		clc
+		lda 	temp3
+		adc 	temp1+1
+		sta 	temp3
+		bcc 	_CTINoCarry
+		inc 	temp3+1
+_CTINoCarry:
+		lda 	(TOS),y 					; was this the last character
+		iny
+		asl 	a
+		bcc 	_CTILoop 					; no, go back.
+_CTIOkay:
+		sec
+		rts
+
+_CTIFail:									; fail.
+		clc
+		rts

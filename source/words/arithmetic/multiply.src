@@ -1,0 +1,42 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		multiply.src
+;		Purpose :	16x16 Multiply
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+Multiply16x16:	;; 	*
+		stx 	temp1
+		tsx
+		lda 	Stack2Low,x 				; 2nd value on stack to temp1
+		sta 	temp2
+		lda		Stack2High,x
+		sta 	temp2+1
+		stz 	Stack2Low,x 				; zero 2nd value on stack
+		stz 	Stack2High,x
+_MultLoop:	
+		lsr 	temp2+1 					; ror temp2 into C
+		ror 	temp2
+		bcc 	_MultNoAdd
+		;
+		clc 								; add 1st to 2nd
+		lda 	TOS		
+		adc 	Stack2Low,x
+		sta 	Stack2Low,x
+		lda 	TOS+1
+		adc 	Stack2High,x
+		sta 	Stack2High,x
+_MultNoAdd:
+		asl 	TOS 						; shift 1st left
+		rol 	TOS+1
+		lda 	temp2	 					; until zero	
+		ora 	temp2+1
+		bne 	_MultLoop
+		;
+		ldx 	temp1 						; restore X load result
+		popTOS
+		jmp 	Next

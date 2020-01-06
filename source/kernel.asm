@@ -2,7 +2,7 @@
 ; *****************************************************************************
 ;
 ;		Name :		kernel.asm
-;		Purpose :	Flat6502 Kernel.
+;		Purpose :	RPL-C Kernel.
 ;		Author :	Paul Robson (paul@robsons.org.uk)
 ;		Date : 		6th January 2020
 ;
@@ -23,18 +23,35 @@ FreeMemory = $3000 							; compiled code etc/ here
 		jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
 		jmp 		Next
 
-		.include 	"core.asm"				; Next/Exit/Enter/Gen Literals
-
-		
+		.include 	"core.src"			
+		.include 	"words/arithmetic/binary.src"
+		.include 	"words/arithmetic/compare.src"
+		.include 	"words/arithmetic/divide.src"
+		.include 	"words/arithmetic/multiply.src"
+		.include 	"words/arithmetic/unary.src"
+		.include 	"words/system/debug.src"
+		.include 	"words/system/miscellany.src"
+		.include 	"words/system/number.src"
+		.include 	"words/data/literals.src"
+		.include 	"words/data/stack.src"
+		.include 	"words/data/memory.src"
+Dictionary:
+		.include 	"generated/dictionary.inc"
+				
 BootCode:
 		.word 		Literal2Byte
 		.word 		$ABCD
+
+		.word 		Literal2Byte
+		.word 		$3345
+		.word 		Literal2Byte
+		.word 		$2234
+		.word 		Literal2Byte
+		.word 		$1123
+
+		.word 		Rot
+
 		.word 		Literal2Byte
 		.word 		$CDEF
-		.word 		CrashDump
+		.word 		ExitDump
 
-CrashDump:
-		tsx 
-		stx 		temp1
-		jmp 		$FFFF		
-			

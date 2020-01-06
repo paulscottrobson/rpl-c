@@ -1,0 +1,174 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		unary.src
+;		Purpose :	Unary functions
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;							Incrementers
+;
+; *****************************************************************************
+
+Unary1Plus:		;; 1+
+		inc 	TOS
+		bne 	_U1PSkip
+		inc 	TOS+1
+_U1PSkip:
+		jmp 	Next
+
+Unary2Plus:		;; 2+
+		clc
+		lda 	TOS
+		adc 	#2
+		sta 	TOS
+		bcc 	_U1PSkip
+		inc 	TOS+1
+_U1PSkip:
+		jmp 	Next
+
+; *****************************************************************************
+;
+;								Decrementers
+;
+; *****************************************************************************
+
+Unary1Minus:	;; 1-
+		lda 	TOS
+		bne 	_U1MSkip
+		dec 	TOS+1
+_U1MSkip:
+		dec 	TOS
+		jmp 	Next
+
+Unary2Minus:	;; 2-
+		sec
+		lda 	TOS
+		sbc 	#2
+		sta 	TOS
+		bcs 	_U1PSkip
+		dec 	TOS+1
+_U1PSkip:
+		jmp 	Next
+
+; *****************************************************************************
+;
+;								Absolute Value
+;
+; *****************************************************************************
+
+Absolute: ;; abs
+		lda 	TOS+1
+		bmi 	Negate
+		jmp 	Next
+
+; *****************************************************************************
+;
+;								Negate TOS
+;
+; *****************************************************************************
+
+Negate: 	;; negate
+		sec
+		lda 	#0
+		sbc 	TOS
+		sta 	TOS
+		lda 	#0
+		sbc 	TOS+1
+		sta 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;								One's complement TOS
+;
+; *****************************************************************************
+
+OneComplement: 	;; not
+		lda 	TOS
+		eor 	#$FF
+		sta 	TOS
+		lda 	TOS+1
+		eor 	#$FF
+		sta 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;								 Zero Checks
+;
+; *****************************************************************************
+
+CheckMinus:	;; 0<
+		lda 	TOS+1
+		bmi 	UnaryTrue
+UnaryFalse:
+		stz 	TOS
+		stz 	TOS+1
+		jmp 	Next
+UnaryTrue:
+		lda 	#1
+		sta 	TOS
+		stz 	TOS+1
+		jmp 	Next
+
+CheckZero: 	;; 0=
+		lda 	TOS
+		ora 	TOS+1
+		bne 	UnaryFalse
+		bra 	UnaryTrue
+		
+; *****************************************************************************
+;
+;									Byte swap
+;
+; *****************************************************************************
+
+ByteSwap:	;; bswap
+		lda 	TOS
+		ldy 	TOS+1
+		sta 	TOS+1
+		sty 	TOS
+		jmp 	Next
+
+; *****************************************************************************
+;
+;									Scalars
+;	
+; *****************************************************************************
+
+Times2:	;; 2*
+		asl 	TOS
+		rol 	TOS+1
+		jmp 	Next
+
+Times4:	;; 4*
+		asl 	TOS
+		rol 	TOS+1
+		asl 	TOS
+		rol 	TOS+1
+		jmp 	Next
+
+Times16: ;; 16*
+		asl 	TOS
+		rol 	TOS+1
+		asl 	TOS
+		rol 	TOS+1
+		asl 	TOS
+		rol 	TOS+1
+		asl 	TOS
+		rol 	TOS+1
+		jmp 	Next
+
+Divide2:	;; 2/
+		lda 	TOS+1
+		asl 	a
+		ror 	TOS+1
+		ror 	TOS
+		jmp 	Next
+

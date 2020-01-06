@@ -30,7 +30,7 @@ print(sp)
 tosAddr = labels["tos"]
 stack = [ mem[tosAddr]+mem[tosAddr+1]*256 ]
 for i in range(sp,253,2):
-	stack.append(mem[0x102+sp]+mem[0x101+sp]*256)
+	stack.append(mem[0x102+i]+mem[0x101+i]*256)
 
 fmt = ["${0:04x}".format(c) for c in stack]
 print("Hex: >>{0}".format(" ".join(["{0:7}".format(s) for s in fmt])))

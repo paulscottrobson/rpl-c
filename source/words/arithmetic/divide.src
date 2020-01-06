@@ -1,0 +1,129 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		divide.src
+;		Purpose :	16x16 Divide
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+Divide16x16: 	;; /
+		stx 	temp2
+		tsx
+		jsr 	IntegerDivide
+		popTOS
+		ldx 	temp2
+		jmp 	Next
+
+Modulus16x16:	;; mod
+		stx 	temp2
+		tsx
+		jsr 	IntegerDivide
+		ldx 	temp2
+		pla
+		pla
+		lda 	temp1
+		sta 	TOS
+		lda 	temp1+1
+		sta 	TOS+1
+		jmp 	Next
+
+;
+;		Divide tos by tos2. Quotient in tos2, remainder in temp1
+;
+IntegerDivide:
+		lda 	TOS 				; check for division by zero.
+		ora 	TOS+1
+		bne 	_BFDOkay
+		rerror	"DIVISION BY ZERO"
+		;
+		;		Reset the interim values
+		;
+_BFDOkay:
+		stz 	temp1 						; Q/Dividend/Left in +0
+		stz 	temp1+1 					; M/Divisor/Right in +2
+		stz 	SignCount 					; Count of signs.
+		;
+		;		Remove and count signs from the integers.
+		;
+		jsr 	CheckIntegerNegate 			; negate 2nd (and bump sign count)
+		jsr 	CheckTOSNegate 				; negate TOS (and bump sign count)
+
+		phy 								; Y is the counter
+		;
+		;		Main division loop
+		;
+		ldy 	#16 						; 16 iterations of the loop.
+_BFDLoop:
+		asl 	Stack2Low,x 				; shift AQ left.
+		rol 	Stack2High,x
+		rol 	temp1
+		rol 	temp1+1
+		;
+		sec
+		lda 	temp1+0 					; Calculate A-M on stack.
+		sbc 	TOS
+		pha
+		lda 	temp1+1
+		sbc 	TOS+1
+		bcc 	_BFDNoAdd
+		;
+		sta 	temp1+1
+		pla
+		sta 	temp1+0
+		;
+		lda 	Stack2Low,x 				; set Q bit 1.
+		ora 	#1
+		sta 	Stack2Low,x
+		bra 	_BFDNext
+_BFDNoAdd:
+		pla 								; Throw away the intermediate calculations
+_BFDNext:									; do 32 times.
+		dey
+		bne 	_BFDLoop
+		ply 								; restore Y
+		;
+		lsr 	SignCount 					; if sign count odd,
+		bcc 	_BFDUnsigned 				; then the result is signed
+		jsr		IntegerNegateAlways 		; negate the result
+_BFDUnsigned:		
+		rts
+
+; *******************************************************************************************
+;
+;				Check / Negate integer 2nd on stack, counting negations
+;
+; *******************************************************************************************
+
+CheckIntegerNegate:
+		lda 	Stack2High,x 				; is it -ve = MSB set ?
+		bmi 	IntegerNegateAlways 		; if so negate it
+		rts
+IntegerNegateAlways:
+		inc 	SignCount 					; bump the count of signs
+		sec 								; negate
+		lda 	#0
+		sbc 	Stack2Low,x
+		sta 	Stack2Low,x
+		lda 	#0
+		sbc 	Stack2High,x
+		sta 	Stack2High,x
+		rts
+
+CheckTOSNegate:
+		lda 	TOS+1
+		bpl		CTNNoChange
+		inc 	SignCount
+TOSNegateAlways:
+		sec		
+		lda 	#0
+		sbc 	TOS
+		sta 	TOS
+		lda 	#0
+		sbc 	TOS+1
+		sta 	TOS+1
+CTNNoChange:		
+		rts
+

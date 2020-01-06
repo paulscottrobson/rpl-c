@@ -1,0 +1,119 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		compare.src
+;		Purpose :	Comparison tests
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;								Equality Check
+;
+; *****************************************************************************
+
+CheckEqual:		;; =
+		stx 	temp1
+		tsx
+		lda 	TOS
+		eor 	Stack2Low,x
+		bne	 	CompareFalse
+		lda 	TOS+1
+		eor 	Stack2High,x
+		bne 	CompareFalse
+;
+;		Routines that restore X and return true (1) or false (0)
+;
+CompareTrue:
+		ldx 	temp1
+		pla
+		pla
+		lda 	#1
+		sta 	TOS
+		stz 	TOS+1
+		jmp 	Next
+		;
+CompareFalse:				
+		ldx 	temp1
+		pla
+		pla
+		stz 	TOS
+		stz 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;							 Comparison Check
+;
+; *****************************************************************************
+
+CheckLess: 		;; <
+		clc
+		stx 	temp1
+		tsx
+		lda 	TOS
+		sbc 	Stack2Low,x
+		lda 	TOS+1
+		sbc 	Stack2High,x
+		bvc 	_CLNoFlip
+		eor 	#$80
+_CLNoFlip:
+		asl 	a
+		bcs 	CompareFalse
+		bra 	CompareTrue
+
+CheckGreater: 	;; >
+		clc
+		stx 	temp1
+		tsx
+		lda 	Stack2Low,x
+		sbc 	TOS
+		lda 	Stack2High,x
+		sbc 	TOS+1
+		bvc 	_CGNoFlip
+		eor 	#$80
+_CGNoFlip:
+		asl 	a
+		bcs 	CompareFalse
+		bra 	CompareTrue
+
+; *****************************************************************************
+;
+;								Minimum/Maximum
+;
+; *****************************************************************************
+
+Minimum:	;; min
+		lda 	#0
+		bra 	MinMaxCode
+Maximum:	;; max
+		lda 	#$80
+MinMaxCode:
+		sta 	temp1+1
+		stx 	temp1
+		tsx
+		sec		
+		lda 	TOS
+		sbc 	Stack2Low,x
+		lda 	TOS+1
+		sbc 	Stack2High,x
+		bvc 	_MMNoFlip
+		eor 	#$80
+_MMNoFlip:
+		eor 	temp1+1
+		bmi 	_MMNoCopy
+		;
+		lda 	Stack2Low,x
+		sta 	TOS
+		lda 	Stack2High,x
+		sta 	TOS+1
+		;
+_MMNoCopy:
+		ldx 	temp1
+		pla
+		pla
+		jmp 	Next
+
