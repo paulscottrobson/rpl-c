@@ -1,0 +1,57 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		skipper.src
+;		Purpose :	$$comment $$define $$nextline
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;			Advance to next line. (IP) must point to the current line
+;
+; *****************************************************************************
+
+NextLine:
+		clc 								; add (IP) to IP
+		lda 	IP
+		adc 	(IP)
+		sta 	IP
+		bcc 	_NLNoCarry
+		inc 	IP+1
+_NLNoCarry:
+		lda 	(IP)						; is there any following program ?
+		beq 	_NLGoEnd
+		ldx 	#3 							; start 3 in
+		jmp 	Next+2 						; avoid the first two INXs
+_NLGoEnd:
+		rerror 	"GOTOEND:TODO"
+
+; *****************************************************************************
+;
+;							Skip a comment
+;
+; *****************************************************************************
+
+SkipComment: 	;; $$comment noexec
+		inx									; (IP),X points to the length.
+		inx 
+		txa
+		tay 								; put into Y
+		clc
+		adc 	(IP),y 						; add the length to X
+		tax 								; put back in X
+		jmp 	Next+2 						; continue skipping the pre-increment.
+
+; *****************************************************************************
+;
+;			If you run into a definition it generates an error.
+;
+; *****************************************************************************
+
+DefineError:	;; $$define noexec
+		rerror "DEFINITION?"
+

@@ -1,14 +1,17 @@
 TODO:
-	Write $$define $$string $$nextline.
+	Write $$String
 	Write $$@ and $$^ and $$call skeletons
 	Write code to analyse that code and batten on to the executable a runtime program.
-	Implement new/clear stuff for that program.
+	Implement new/clr stuff for that program.
 	Check code runs.
 	Implement variables
 	Implement calls
 	Add export as you go
 	When the core is written, write the importers and scanners.
 	
-; << <= <> >= >> alloc assert clr 
+; << <= <> >= >> alloc assert clr vlist
 else end endif for if index list load new 
 next old repeat rnd run save sgn stop until	
+
+Fixes:
+	On NextLine if (IP) = 0 then goto end. There is no nextline.

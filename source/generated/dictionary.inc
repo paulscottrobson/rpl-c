@@ -5,488 +5,502 @@
 	.byte	$a1
 _end1:
 
-; *** $$literal ***
+; *** $$comment ***
 	.byte	_end2-*
+	.byte	$40
+	.word	SkipComment
+	.byte	$24,$24,$43,$4f,$4d,$4d,$45,$4e,$d4
+_end2:
+
+; *** $$define ***
+	.byte	_end3-*
+	.byte	$40
+	.word	DefineError
+	.byte	$24,$24,$44,$45,$46,$49,$4e,$c5
+_end3:
+
+; *** $$literal ***
+	.byte	_end4-*
 	.byte	$40
 	.word	Literal2Byte
 	.byte	$24,$24,$4c,$49,$54,$45,$52,$41,$cc
-_end2:
+_end4:
 
 ; *** * ***
-	.byte	_end3-*
+	.byte	_end5-*
 	.byte	$00
 	.word	Multiply16x16
 	.byte	$aa
-_end3:
+_end5:
 
 ; *** + ***
-	.byte	_end4-*
+	.byte	_end6-*
 	.byte	$00
 	.word	Add
 	.byte	$ab
-_end4:
+_end6:
 
 ; *** +! ***
-	.byte	_end5-*
+	.byte	_end7-*
 	.byte	$00
 	.word	WordAdd
 	.byte	$2b,$a1
-_end5:
+_end7:
 
 ; *** - ***
-	.byte	_end6-*
+	.byte	_end8-*
 	.byte	$00
 	.word	Subtract
 	.byte	$ad
-_end6:
+_end8:
 
 ; *** -1 ***
-	.byte	_end7-*
+	.byte	_end9-*
 	.byte	$00
 	.word	ConstantMinus1
 	.byte	$2d,$b1
-_end7:
+_end9:
 
 ; *** / ***
-	.byte	_end8-*
+	.byte	_end10-*
 	.byte	$00
 	.word	Divide16x16
 	.byte	$af
-_end8:
+_end10:
 
 ; *** 0 ***
-	.byte	_end9-*
+	.byte	_end11-*
 	.byte	$00
 	.word	Constant0
 	.byte	$b0
-_end9:
+_end11:
 
 ; *** 0< ***
-	.byte	_end10-*
+	.byte	_end12-*
 	.byte	$00
 	.word	CheckMinus
 	.byte	$30,$bc
-_end10:
+_end12:
 
 ; *** 0= ***
-	.byte	_end11-*
+	.byte	_end13-*
 	.byte	$00
 	.word	CheckZero
 	.byte	$30,$bd
-_end11:
+_end13:
 
 ; *** 1 ***
-	.byte	_end12-*
+	.byte	_end14-*
 	.byte	$00
 	.word	C1
 	.byte	$b1
-_end12:
+_end14:
 
 ; *** 1+ ***
-	.byte	_end13-*
+	.byte	_end15-*
 	.byte	$00
 	.word	Unary1Plus
 	.byte	$31,$ab
-_end13:
+_end15:
 
 ; *** 1- ***
-	.byte	_end14-*
+	.byte	_end16-*
 	.byte	$00
 	.word	Unary1Minus
 	.byte	$31,$ad
-_end14:
+_end16:
 
 ; *** 10 ***
-	.byte	_end15-*
+	.byte	_end17-*
 	.byte	$00
 	.word	C10
 	.byte	$31,$b0
-_end15:
+_end17:
 
 ; *** 100 ***
-	.byte	_end16-*
+	.byte	_end18-*
 	.byte	$00
 	.word	C100
 	.byte	$31,$30,$b0
-_end16:
+_end18:
 
 ; *** 1024 ***
-	.byte	_end17-*
+	.byte	_end19-*
 	.byte	$00
 	.word	C1024
 	.byte	$31,$30,$32,$b4
-_end17:
+_end19:
 
 ; *** 127 ***
-	.byte	_end18-*
+	.byte	_end20-*
 	.byte	$00
 	.word	C127
 	.byte	$31,$32,$b7
-_end18:
+_end20:
 
 ; *** 128 ***
-	.byte	_end19-*
+	.byte	_end21-*
 	.byte	$00
 	.word	C128
 	.byte	$31,$32,$b8
-_end19:
+_end21:
 
 ; *** 15 ***
-	.byte	_end20-*
+	.byte	_end22-*
 	.byte	$00
 	.word	C15
 	.byte	$31,$b5
-_end20:
+_end22:
 
 ; *** 16 ***
-	.byte	_end21-*
+	.byte	_end23-*
 	.byte	$00
 	.word	C16
 	.byte	$31,$b6
-_end21:
+_end23:
 
 ; *** 16* ***
-	.byte	_end22-*
+	.byte	_end24-*
 	.byte	$00
 	.word	Times16
 	.byte	$31,$36,$aa
-_end22:
+_end24:
 
 ; *** 2 ***
-	.byte	_end23-*
+	.byte	_end25-*
 	.byte	$00
 	.word	C2
 	.byte	$b2
-_end23:
+_end25:
 
 ; *** 2* ***
-	.byte	_end24-*
+	.byte	_end26-*
 	.byte	$00
 	.word	Times2
 	.byte	$32,$aa
-_end24:
+_end26:
 
 ; *** 2+ ***
-	.byte	_end25-*
+	.byte	_end27-*
 	.byte	$00
 	.word	Unary2Plus
 	.byte	$32,$ab
-_end25:
+_end27:
 
 ; *** 2- ***
-	.byte	_end26-*
+	.byte	_end28-*
 	.byte	$00
 	.word	Unary2Minus
 	.byte	$32,$ad
-_end26:
+_end28:
 
 ; *** 2/ ***
-	.byte	_end27-*
+	.byte	_end29-*
 	.byte	$00
 	.word	Divide2
 	.byte	$32,$af
-_end27:
+_end29:
 
 ; *** 24 ***
-	.byte	_end28-*
+	.byte	_end30-*
 	.byte	$00
 	.word	C24
 	.byte	$32,$b4
-_end28:
+_end30:
 
 ; *** 255 ***
-	.byte	_end29-*
+	.byte	_end31-*
 	.byte	$00
 	.word	C255
 	.byte	$32,$35,$b5
-_end29:
+_end31:
 
 ; *** 256 ***
-	.byte	_end30-*
+	.byte	_end32-*
 	.byte	$00
 	.word	C256
 	.byte	$32,$35,$b6
-_end30:
+_end32:
 
 ; *** 3 ***
-	.byte	_end31-*
+	.byte	_end33-*
 	.byte	$00
 	.word	C3
 	.byte	$b3
-_end31:
+_end33:
 
 ; *** 32 ***
-	.byte	_end32-*
+	.byte	_end34-*
 	.byte	$00
 	.word	C32
 	.byte	$33,$b2
-_end32:
+_end34:
 
 ; *** 32767 ***
-	.byte	_end33-*
+	.byte	_end35-*
 	.byte	$00
 	.word	C32767
 	.byte	$33,$32,$37,$36,$b7
-_end33:
+_end35:
 
 ; *** 32768 ***
-	.byte	_end34-*
+	.byte	_end36-*
 	.byte	$00
 	.word	C32768
 	.byte	$33,$32,$37,$36,$b8
-_end34:
+_end36:
 
 ; *** 4 ***
-	.byte	_end35-*
+	.byte	_end37-*
 	.byte	$00
 	.word	C4
 	.byte	$b4
-_end35:
+_end37:
 
 ; *** 4* ***
-	.byte	_end36-*
+	.byte	_end38-*
 	.byte	$00
 	.word	Times4
 	.byte	$34,$aa
-_end36:
+_end38:
 
 ; *** 40 ***
-	.byte	_end37-*
+	.byte	_end39-*
 	.byte	$00
 	.word	C50
 	.byte	$34,$b0
-_end37:
+_end39:
 
 ; *** 4096 ***
-	.byte	_end38-*
+	.byte	_end40-*
 	.byte	$00
 	.word	C4096
 	.byte	$34,$30,$39,$b6
-_end38:
+_end40:
 
 ; *** 48 ***
-	.byte	_end39-*
+	.byte	_end41-*
 	.byte	$00
 	.word	C48
 	.byte	$34,$b8
-_end39:
+_end41:
 
 ; *** 5 ***
-	.byte	_end40-*
+	.byte	_end42-*
 	.byte	$00
 	.word	C5
 	.byte	$b5
-_end40:
+_end42:
 
 ; *** 512 ***
-	.byte	_end41-*
+	.byte	_end43-*
 	.byte	$00
 	.word	C512
 	.byte	$35,$31,$b2
-_end41:
+_end43:
 
 ; *** 63 ***
-	.byte	_end42-*
+	.byte	_end44-*
 	.byte	$00
 	.word	C63
 	.byte	$36,$b3
-_end42:
+_end44:
 
 ; *** 64 ***
-	.byte	_end43-*
+	.byte	_end45-*
 	.byte	$00
 	.word	C64
 	.byte	$36,$b4
-_end43:
+_end45:
 
 ; *** 8 ***
-	.byte	_end44-*
+	.byte	_end46-*
 	.byte	$00
 	.word	C8
 	.byte	$b8
-_end44:
+_end46:
 
 ; *** < ***
-	.byte	_end45-*
+	.byte	_end47-*
 	.byte	$00
 	.word	CheckLess
 	.byte	$bc
-_end45:
+_end47:
 
 ; *** = ***
-	.byte	_end46-*
+	.byte	_end48-*
 	.byte	$00
 	.word	CheckEqual
 	.byte	$bd
-_end46:
+_end48:
 
 ; *** > ***
-	.byte	_end47-*
+	.byte	_end49-*
 	.byte	$00
 	.word	CheckGreater
 	.byte	$be
-_end47:
+_end49:
 
 ; *** ?dup ***
-	.byte	_end48-*
+	.byte	_end50-*
 	.byte	$00
 	.word	TestDup
 	.byte	$3f,$44,$55,$d0
-_end48:
+_end50:
 
 ; *** @ ***
-	.byte	_end49-*
+	.byte	_end51-*
 	.byte	$00
 	.word	WordRead
 	.byte	$c0
-_end49:
+_end51:
 
 ; *** abs ***
-	.byte	_end50-*
+	.byte	_end52-*
 	.byte	$00
 	.word	Absolute
 	.byte	$41,$42,$d3
-_end50:
+_end52:
 
 ; *** and ***
-	.byte	_end51-*
+	.byte	_end53-*
 	.byte	$00
 	.word	And
 	.byte	$41,$4e,$c4
-_end51:
+_end53:
 
 ; *** bswap ***
-	.byte	_end52-*
+	.byte	_end54-*
 	.byte	$00
 	.word	ByteSwap
 	.byte	$42,$53,$57,$41,$d0
-_end52:
+_end54:
 
 ; *** c! ***
-	.byte	_end53-*
+	.byte	_end55-*
 	.byte	$00
 	.word	ByteWrite
 	.byte	$43,$a1
-_end53:
+_end55:
 
 ; *** c@ ***
-	.byte	_end54-*
+	.byte	_end56-*
 	.byte	$00
 	.word	ByteRead
 	.byte	$43,$c0
-_end54:
+_end56:
 
 ; *** drop ***
-	.byte	_end55-*
+	.byte	_end57-*
 	.byte	$00
 	.word	Drop
 	.byte	$44,$52,$4f,$d0
-_end55:
+_end57:
 
 ; *** dup ***
-	.byte	_end56-*
+	.byte	_end58-*
 	.byte	$00
 	.word	Dup
 	.byte	$44,$55,$d0
-_end56:
+_end58:
 
 ; *** max ***
-	.byte	_end57-*
+	.byte	_end59-*
 	.byte	$00
 	.word	Maximum
 	.byte	$4d,$41,$d8
-_end57:
+_end59:
 
 ; *** min ***
-	.byte	_end58-*
+	.byte	_end60-*
 	.byte	$00
 	.word	Minimum
 	.byte	$4d,$49,$ce
-_end58:
+_end60:
 
 ; *** mod ***
-	.byte	_end59-*
+	.byte	_end61-*
 	.byte	$00
 	.word	Modulus16x16
 	.byte	$4d,$4f,$c4
-_end59:
+_end61:
 
 ; *** negate ***
-	.byte	_end60-*
+	.byte	_end62-*
 	.byte	$00
 	.word	Negate
 	.byte	$4e,$45,$47,$41,$54,$c5
-_end60:
+_end62:
 
 ; *** nip ***
-	.byte	_end61-*
+	.byte	_end63-*
 	.byte	$00
 	.word	Nip
 	.byte	$4e,$49,$d0
-_end61:
+_end63:
 
 ; *** not ***
-	.byte	_end62-*
+	.byte	_end64-*
 	.byte	$00
 	.word	OneComplement
 	.byte	$4e,$4f,$d4
-_end62:
+_end64:
 
 ; *** or ***
-	.byte	_end63-*
+	.byte	_end65-*
 	.byte	$00
 	.word	LogOr
 	.byte	$4f,$d2
-_end63:
+_end65:
 
 ; *** over ***
-	.byte	_end64-*
+	.byte	_end66-*
 	.byte	$00
 	.word	Over
 	.byte	$4f,$56,$45,$d2
-_end64:
+_end66:
 
 ; *** rot ***
-	.byte	_end65-*
+	.byte	_end67-*
 	.byte	$00
 	.word	Rot
 	.byte	$52,$4f,$d4
-_end65:
+_end67:
 
 ; *** swap ***
-	.byte	_end66-*
+	.byte	_end68-*
 	.byte	$00
 	.word	Swap
 	.byte	$53,$57,$41,$d0
-_end66:
+_end68:
 
 ; *** sys ***
-	.byte	_end67-*
+	.byte	_end69-*
 	.byte	$00
 	.word	Call6502
 	.byte	$53,$59,$d3
-_end67:
+_end69:
 
 ; *** xbreak ***
-	.byte	_end68-*
+	.byte	_end70-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end68:
+_end70:
 
 ; *** xdump ***
-	.byte	_end69-*
+	.byte	_end71-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end69:
+_end71:
 
 ; *** xor ***
-	.byte	_end70-*
+	.byte	_end72-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end70:
+_end72:
 
 	.byte	0
 

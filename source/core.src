@@ -24,8 +24,8 @@ InitialiseCoreCode:
 		sta 	Next+2 
 		stx 	Next+3 					; set the indirect address (IP)
 		sty 	Next+4
-		ldx 	#-2 					; set up to run from provided word.
-		rts
+		ldx 	#1 						; set up to run from provided word.
+		rts								; (2 INX skip offset and line#)
 
 ; *****************************************************************************
 ;

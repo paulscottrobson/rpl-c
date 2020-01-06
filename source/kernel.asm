@@ -32,15 +32,22 @@ FreeMemory = $3000 							; compiled code etc/ here
 		.include 	"words/system/debug.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/number.src"
+		.include 	"words/system/skipper.src"
 		.include 	"words/data/literals.src"
 		.include 	"words/data/stack.src"
 		.include 	"words/data/memory.src"
+
 Dictionary:
 		.include 	"generated/dictionary.inc"
 				
 BootCode:
+		.byte 		Line20-BootCode
+		.word 		10
 		.word 		Literal2Byte
 		.word 		$ABCD
+
+		.word 		SkipComment
+		.text 		4,"ABC"
 
 		.word 		Literal2Byte
 		.word 		$3345
@@ -48,10 +55,15 @@ BootCode:
 		.word 		$2234
 		.word 		Literal2Byte
 		.word 		$1123
+		.word 		NextLine
 
+Line20:	.byte 		EndOfProgram-Line20
+		.word 		20
 		.word 		Rot
-
 		.word 		Literal2Byte
 		.word 		$CDEF
 		.word 		ExitDump
+		.word 		NextLine
+EndOfProgram:
+		.byte 		0
 
