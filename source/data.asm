@@ -22,8 +22,9 @@ Next: 										; NEXT code (INX INX JSR ($xxxx,X) goes here)
 
 IP = Next+3 								; the IP which points to the current instruction
 
-tos:
+tos:										; top of stack register
 		.word 	?
+
 temp1:										; general usage zero page
 		.word 	?	
 temp2:	
@@ -33,6 +34,9 @@ temp3:
 temp4:
 		.word 	?
 		
+freeMemory:									; start of free memory
+		.word 	?
+
 ; *****************************************************************************
 ;
 ;							Other memory allocation
@@ -42,10 +46,14 @@ temp4:
 SignCount:		
 		.byte 	?
 
-stack2Low = $102
-stack2High = $101
+stack2Low = $102							; access other stack members following tsx
+stack2High = $101							; (which requires saving X, not on the stack !)
 stack3Low = $104
 stack3High = $103
+
+azVariables = $600 							; 26 x 2 variables occupying 52 bytes.
+hashTableSize = 16 							; hash tables for variables.
+hashTables = $640 							; hash tables start here.
 
 ; *****************************************************************************
 ;

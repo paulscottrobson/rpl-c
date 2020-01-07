@@ -93,6 +93,9 @@ class LineConverter(object):
 	#
 	def convertElement(self,e):
 		#
+		#		Firstly, the two elements which are not word orientated - these are
+		#		' <comment to end of line and "string to next quote"
+		#
 		if e.startswith("'"):												# ' <comment>
 			self.appendWord("$$comment")									# comment handler
 			e = e[1:].strip()
@@ -109,6 +112,10 @@ class LineConverter(object):
 			self.code += [ord(c) for c in m.group(1)]						# add string
 			self.code.append(0)												# make ASCIIZ
 			return m.group(2)
+		#
+		#		Word orientated. Split the word off and analyse it. First is it in the
+		#		dictionary. Second is it a call of a definition. Third is it a constant (dec/hex)
+		#		Fourth, is it a colon definition, Fifth, is it variable access.
 		#
 		p = (e+" ").find(" ")												# split off a word
 		word = e[:p]
@@ -148,8 +155,8 @@ class LineConverter(object):
 			name = word[:-1]+"  "											# pad name out.
 			nameEnc = self.getCh(name[0])+self.getCh(name[1])*32+self.getCh(name[2])*32*40
 			self.appendWord("$$@handler" if word.endswith("@") else "$$!handler")
-			self.code.append(nameEnc & 0xFF)
 			self.code.append(nameEnc >> 8)
+			self.code.append(nameEnc & 0xFF)
 			return nextCode
 		#
 		raise ConversionException("Can't process "+word)

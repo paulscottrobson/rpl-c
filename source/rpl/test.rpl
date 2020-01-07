@@ -1,4 +1,4 @@
 ' comment
 $ABCD
-42 1+ dup 1+ swap "hi!"
+42 1+ dup 1+ swap "hi!" xbreak
 $CDEF xdump
