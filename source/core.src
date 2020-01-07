@@ -53,8 +53,7 @@ Literal2Byte:	;; $$literal noexec
 ;
 ; *****************************************************************************
 
-LiteralString: ;; $string noexec
-		.byte $FF
+LiteralString: ;; $$string noexec
 		pushTOS 						; save old TOS
 		inx
 		inx 							; skip over current word

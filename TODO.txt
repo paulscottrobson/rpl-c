@@ -1,5 +1,5 @@
 TODO:
-	Write code to create rpl-c binary code, batten on to the executable a runtime program.
+	Batten on to the executable a runtime program.
 	Implement new/clr stuff for that program.
 	Check code runs.
 	Implement calls/return code

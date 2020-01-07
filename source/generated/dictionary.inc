@@ -54,11 +54,11 @@ _end7:
 	.byte	$24,$24,$4e,$45,$58,$54,$4c,$49,$4e,$c5
 _end8:
 
-; *** $string ***
+; *** $$string ***
 	.byte	_end9-*
 	.byte	$40
 	.word	LiteralString
-	.byte	$24,$53,$54,$52,$49,$4e,$c7
+	.byte	$24,$24,$53,$54,$52,$49,$4e,$c7
 _end9:
 
 ; *** * ***

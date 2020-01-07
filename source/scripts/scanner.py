@@ -58,6 +58,12 @@ class Dictionary(object):
 		keys.sort()
 		return keys
 	#
+	#		Does a word exist
+	#
+	def isWord(self,key):
+		key = key.strip().lower()
+		return key in self.dictionary
+	#
 	#		Get a specific record.
 	#
 	def get(self,key):

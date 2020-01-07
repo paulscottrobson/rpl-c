@@ -12,6 +12,7 @@
 
 import os,sys,re
 from scanner import *
+from dictaddr import *
 
 # *****************************************************************************
 #
