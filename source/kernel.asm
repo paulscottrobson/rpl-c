@@ -9,12 +9,11 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
-FlatBuild = $1000 							; code starts here.
-FreeMemory = $3000 							; compiled code etc/ here
+RplBuild = $1000 							; code starts here.
 
 		.include 	"data.asm"
 
-		* = FlatBuild
+		* = RplBuild
 
 		ldx 		#$FF 					; reset the stack
 		txs
@@ -42,30 +41,6 @@ FreeMemory = $3000 							; compiled code etc/ here
 Dictionary:
 		.include 	"generated/dictionary.inc"
 				
+		* = $3FFF
+		.byte 	$FF
 BootCode:
-		.byte 		Line20-BootCode
-		.word 		10
-		.word 		Literal2Byte
-		.word 		$ABCD
-
-		.word 		LiteralString
-		.text 		4,"AB",0
-
-		.word 		Literal2Byte
-		.word 		$3345
-		.word 		Literal2Byte
-		.word 		$2234
-		.word 		Literal2Byte
-		.word 		$1123
-		.word 		NextLine
-
-Line20:	.byte 		EndOfProgram-Line20
-		.word 		20
-		.word 		Rot
-		.word 		Literal2Byte
-		.word 		$CDEF
-		.word 		ExitDump
-		.word 		NextLine
-EndOfProgram:
-		.byte 		0
-

@@ -1,12 +1,4 @@
-'	test line
- "hello world" 
- 0 dup drop swap
- 42 $1A7 
- test
- :test  dup 42
- abc@ 
- abc!
- a@
- z@
- z99@
- zzz@
+' comment
+$ABCD
+42 1+ dup 1+ swap "hi!"
+$CDEF xdump

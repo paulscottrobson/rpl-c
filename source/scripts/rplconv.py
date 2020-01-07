@@ -36,11 +36,11 @@ class RPLProgram(object):
 		self.analyseDefinitions()
 		self.code = []
 		for i in range(0,len(self.lines)):
-			print(">>> {0:5} {1}".format(self.getLineNumber(i),self.lines[i]))
+			#print(">>> {0:5} {1}".format(self.getLineNumber(i),self.lines[i]))
 			lineCode = convertObject.convertLine(self.lines[i],self)
 			lineNumber = self.getLineNumber(i)
 			lineCode = [ 3+len(lineCode), lineNumber & 0xFF,lineNumber >> 8] + lineCode
-			print(" ".join(["{0:02x}".format(c) for c in lineCode]))
+			#print(" ".join(["{0:02x}".format(c) for c in lineCode]))
 			self.code += lineCode
 		self.code.append(0)
 	#
@@ -176,5 +176,4 @@ if __name__ == "__main__":
 	prg = RPLProgram()
 	prg.addFile("rpl/test.rpl")
 	prg.convert(LineConverter())
-	print(prg.lines)
-	print(prg.definitions)
+	open("generated"+os.sep+"rplcode.bin","wb").write(bytes(prg.code))

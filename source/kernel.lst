@@ -1,14 +1,13 @@
 
 ; 64tass Turbo Assembler Macro V1.54.1900 listing file
-; 64tass -q -c -o kernel.prg -L kernel.lst -l kernel.lbl kernel.asm
-; Tue Jan 07 17:06:28 2020
+; 64tass -q -c -o kernel_nocode.prg -L kernel.lst -l kernel.lbl kernel.asm
+; Tue Jan 07 18:09:36 2020
 
 ;Offset	;Hex		;Monitor	;Source
 
 ;******  Processing input file: kernel.asm
 
-=$1000					FlatBuild = $1000 							; code starts here.
-=$3000					FreeMemory = $3000 							; compiled code etc/ here
+=$1000					RplBuild = $1000 							; code starts here.
 
 ;******  Processing file: data.asm
 
@@ -36,8 +35,8 @@
 
 .1000	a2 ff		ldx #$ff			ldx 		#$FF 					; reset the stack
 .1002	9a		txs				txs
-.1003	a2 39		ldx #$39			ldx			#BootCode & $FF 		; boot address
-.1005	a0 17		ldy #$17			ldy 		#BootCode >>8
+.1003	a2 00		ldx #$00			ldx			#BootCode & $FF 		; boot address
+.1005	a0 40		ldy #$40			ldy 		#BootCode >>8
 .1007	20 0d 10	jsr $100d			jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
 .100a	4c 00 00	jmp $0000			jmp 		Next
 
@@ -1302,28 +1301,7 @@
 
 ;******  Return to file: kernel.asm
 
-.1739					BootCode:
->1739	1b						.byte 		Line20-BootCode
->173a	0a 00						.word 		10
->173c	1e 10						.word 		Literal2Byte
->173e	cd ab						.word 		$ABCD
->1740	34 10						.word 		LiteralString
->1742	04 41 42 00					.text 		4,"AB",0
->1746	1e 10						.word 		Literal2Byte
->1748	45 33						.word 		$3345
->174a	1e 10						.word 		Literal2Byte
->174c	34 22						.word 		$2234
->174e	1e 10						.word 		Literal2Byte
->1750	23 11						.word 		$1123
->1752	4d 13						.word 		NextLine
->1754	0d				Line20:	.byte 		EndOfProgram-Line20
->1755	14 00						.word 		20
->1757	9c 14						.word 		Rot
->1759	1e 10						.word 		Literal2Byte
->175b	ef cd						.word 		$CDEF
->175d	bb 12						.word 		ExitDump
->175f	4d 13						.word 		NextLine
-.1761					EndOfProgram:
->1761	00						.byte 		0
+>3fff	ff						.byte 	$FF
+.4000					BootCode:
 
 ;******  End of listing

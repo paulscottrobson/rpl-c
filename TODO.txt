@@ -1,7 +1,5 @@
 TODO:
-	Batten on to the executable a runtime program.
 	Implement new/clr stuff for that program.
-	Check code runs.
 	Implement calls/return code
 	Implement variables
 	Add export as you go

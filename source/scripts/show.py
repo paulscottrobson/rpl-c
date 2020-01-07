@@ -25,7 +25,6 @@ for s in src:
 #
 mem = [x for x in open("dump.bin","rb").read(-1)]
 sp = mem[labels["temp1"]]
-print(sp)
 #
 tosAddr = labels["tos"]
 stack = [ mem[tosAddr]+mem[tosAddr+1]*256 ]
