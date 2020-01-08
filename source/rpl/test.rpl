@@ -1,8 +1,8 @@
 ' comment
 $ABCD
-test5
+0 test6
 $CDEF xdump
-:test ;
+:test 1+ ;
 ' 8 calls
 :test2 test test test test test test test test ;
 ' 64 calls

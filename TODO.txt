@@ -19,3 +19,5 @@ Decoders:
 	$$call 	$$comment $$string $$@handler $$!handler
 
 Fixes:
+	Optimise the call lookup.
+	

@@ -156,12 +156,12 @@ class LineConverter(object):
 			self.code += wByte
 			return nextCode
 		#		
-		if re.match("^[A-Z][A-Z0-9]*[\\@\\!]$",word) is not None:			# is it var@ var!
+		if re.match("^[A-Z][A-Z0-9]*[\\@\\!\\&]$",word) is not None:			# is it var@ var!
 			if len(word) > 4:
 				raise ConversionException("Variable too long "+word)
 			name = word[:-1]+"  "											# pad name out.
 			nameEnc = self.getCh(name[0])+self.getCh(name[1])*32+self.getCh(name[2])*32*40
-			self.appendWord("$$@handler" if word.endswith("@") else "$$!handler")
+			self.appendWord("$$"+word[-1]+"handler")
 			self.code.append(nameEnc >> 8)
 			self.code.append(nameEnc & 0xFF)
 			return nextCode

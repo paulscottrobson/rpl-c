@@ -9,10 +9,68 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
+; *****************************************************************************
+;
+;					Push the variable address on the stack
+;
+; *****************************************************************************
+
+VarAddressHandler:	;; 	$$&handler noexec <2>
+		clc 								; find variable, error if it doesn't exist.
+		jsr 	VariableFind 				
+		pushTOS 							; push stack top on the stack.
+
+		lda 	temp1 						; the address is the new value
+		sta 	TOS
+		lda		temp1+1
+		sta 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;					Push the variable value on the stack
+;
+; *****************************************************************************
+
 VarReadHandler:		;; 	$$@handler 	noexec <2>
-		.byte 	$FF
+		clc 								; find variable, error if it doesn't exist.
+		jsr 	VariableFind 				
+		;
+		pushTOS 							; push stack top on the stack.
+
+		lda 	(temp1)						; read variable address to TOS
+		sta 	TOS
+		ldy 	#1
+		lda 	(temp1),y
+		sta 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;						Store the TOS at the variable
+;
+; *****************************************************************************
 
 VarWriteHandler:	;; 	$$!handler 	noexec <2>
-		.byte 	$FF
+		sec 								; find variable, create it if it doesn't exist.
+		jsr 	VariableFind 							
 
-		
+		lda 	TOS 						; write TOS to that address.
+		sta 	(temp1)
+		lda 	TOS+1
+		ldy 	#1
+		sta 	(temp1),y
+
+		popTOS 								; get the next value off the stack and loop
+		jmp 	Next
+
+; *****************************************************************************
+;
+;		Extract the variable name, find where it is and place address of 
+;		data in temp1. If CS on entry, create it if it doesn't exist, else
+;		report an error.
+;
+; *****************************************************************************
+
+VariableFind:
+		.byte 	$FF		
