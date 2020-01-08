@@ -1,15 +1,24 @@
 TODO:
-	Implement begin/end
 	Implement calls/return code
 	Implement variables
 	Implement other structures.
-	Add export as you go
+	Implement other words
+	Write "List" code (keep a skipper for OLD)
 	When the core is written, write the importers and scanners.
 	
 Missing vocabulary:	
-	; << <= <> >= >> alloc assert vlist
+	$$call ; 
+	$$@handler $$!handler
+	<< <= <> >= >> alloc vlist
 	else endif for if index list load 
-	next old repeat rnd run save sgn until	
+	next old rnd run save sgn	
 	(old will have to use the listing code to advance the pointer)	
+
+Encoders/Immediate:
+	repeat	until
+
+Decoders:
+	$$call 	$$comment $$string $$@handler $$!handler
+
 
 Fixes:

@@ -1,4 +1,4 @@
 ' comment
 $ABCD
-42 1+ dup 1+ swap "hi!"
+10000 repeat 1- dup 0= until
 $CDEF xdump

@@ -76,17 +76,20 @@ class ConversionException(Exception):
 
 class LineConverter(object):
 	def __init__(self):
-		self.rplDictionary = DictionaryFull()
+		self.rplDictionary = DictionaryFull()		
 	#
 	#		Convert a line
 	#
 	def convertLine(self,line,parent):
 		self.code = []														# result here
+		self.rStack = [ 0 ]													# Structure stack.
 		self.parent = parent												# who to ask about defines
 		line = line.upper().strip()											# preprocess
 		while line != "":													# keep doing till all gone
 			line = self.convertElement(line).strip()
 		self.appendWord("$$nextline")										# end of line marker
+		if len(self.rStack) != 1:											# unclosed structure ?
+			raise ConversionException("Structure open")
 		return self.code 
 	#
 	#		Convert a single element
@@ -120,6 +123,10 @@ class LineConverter(object):
 		p = (e+" ").find(" ")												# split off a word
 		word = e[:p]
 		nextCode = e[p:].strip()
+		#
+		if word == "REPEAT" or word == "UNTIL":								# repeat/until 
+			self.repeatUntil(word)
+			return nextCode
 		#
 		if self.rplDictionary.isWord(word):									# is it a known word
 			self.appendWord(word) 											# (e.g. a dictionary word)
@@ -178,6 +185,32 @@ class LineConverter(object):
 		addr = self.rplDictionary.getAddress(name)
 		self.code.append(addr & 0xFF)
 		self.code.append(addr >> 8)
+	#
+	#		Current code position in line
+	#
+	def currentPos(self):
+		return len(self.code)
+	#
+	#		Check pop stack for structure mixing
+	#
+	def checkPop(self,required):
+		if self.rStack.pop() != required:
+			raise ConversionException("Structures mixed")
+	#
+	#		Handle repeat/until
+	#
+	def repeatUntil(self,word):
+		if word == "REPEAT":												# REPEAT
+			self.appendWord("REPEAT")										# Compile dummy repeat
+			self.rStack.append(self.currentPos())							# Save loop address
+			self.rStack.append(LineConverter.REPEAT)						# Save repeat marker
+		if word == "UNTIL":
+			self.checkPop(LineConverter.REPEAT)								# convertor ?
+			self.appendWord("UNTIL")										# Repeat action
+			back = self.currentPos() - self.rStack.pop() + 1 				# work out offset.
+			self.code.append(back)											# +1 because applied after offset
+
+LineConverter.REPEAT = 'R'
 
 if __name__ == "__main__":
 	prg = RPLProgram()

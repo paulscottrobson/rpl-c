@@ -112,9 +112,9 @@ UnaryFalse:
 		stz 	TOS+1
 		jmp 	Next
 UnaryTrue:
-		lda 	#1
+		lda 	#$FF
 		sta 	TOS
-		stz 	TOS+1
+		sta 	TOS+1
 		jmp 	Next
 
 CheckZero: 	;; 0=

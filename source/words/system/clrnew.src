@@ -58,7 +58,6 @@ _CVSFindEnd:
 		lda 	#8 							; this puts a gap in, more for clarity than anything.
 		ldy 	#0 
 		jsr 	AdvanceFreeMem				; we need +1 because the previous code leaves the
-		.byte 	$FF
 		rts 								; free mem pointer pointing to the last zero offset
 
 ; *****************************************************************************
@@ -75,4 +74,3 @@ AdvanceFreeMem:
 		adc 	nextFreeMem+1
 		sta 	nextFreeMem+1
 		rts		
-		

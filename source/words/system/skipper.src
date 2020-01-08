@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-NextLine: 	;; $$nextline
+NextLine: 	;; $$nextline hide
 		advance IP							; push IP to next line.
 		lda 	(IP)						; is there any following program ?
 		beq 	_NLGoEnd

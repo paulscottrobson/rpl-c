@@ -29,6 +29,14 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/arithmetic/divide.src"
 		.include 	"words/arithmetic/multiply.src"
 		.include 	"words/arithmetic/unary.src"
+
+		.include 	"words/data/literals.src"
+		.include 	"words/data/stack.src"
+		.include 	"words/data/memory.src"
+
+		.include 	"words/structures/repeatuntil.src"
+
+		.include 	"words/system/branch.src"
 		.include 	"words/system/callhandler.src"
 		.include 	"words/system/clrnew.src"
 		.include 	"words/system/debug.src"
@@ -36,9 +44,6 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/system/number.src"
 		.include 	"words/system/skipper.src"
 		.include 	"words/system/varhandlers.src"
-		.include 	"words/data/literals.src"
-		.include 	"words/data/stack.src"
-		.include 	"words/data/memory.src"
 
 WarmStart:	
 		.byte 	$FF
@@ -46,7 +51,7 @@ WarmStart:
 ErrorHandler:
 		.byte 	$FF
 		ldx 	#$5E
-			
+
 Dictionary:
 		.include 	"generated/dictionary.inc"
 				

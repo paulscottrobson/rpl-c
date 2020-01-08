@@ -31,9 +31,9 @@ CompareTrue:
 		ldx 	temp1
 		pla
 		pla
-		lda 	#1
+		lda 	#$FF
 		sta 	TOS
-		stz 	TOS+1
+		sta 	TOS+1
 		jmp 	Next
 		;
 CompareFalse:				

@@ -1,0 +1,49 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		branch.src
+;		Purpose :	Branch routines.
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		8th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;						Branch if TOS = 0, removes TOS
+;
+; *****************************************************************************
+
+BranchBackwardsIfZero:
+		lda 	TOS 						; check TOS = 0
+		ora 	TOS+1
+		beq 	BranchBackwardsTestSucceeds
+		;
+		;		Come here if branch test fails.
+		;
+BranchTestFails:		
+		popTOS 								; drop
+		inx 								; skip over the relative branch.
+		jmp 	Next
+
+; *****************************************************************************
+;
+;				 Unconditional Branch Backwards with Drop
+;
+; *****************************************************************************
+
+BranchBackwardsTestSucceeds:
+		popTOS 								; throw away the test value
+		inx 								; advance by one, to skip the offset
+
+		txa 								; A = Y = position
+		tay 				
+		iny 								; (IP),Y now points to the back branch.
+		;
+		sec
+		sbc 	(IP),y 						; adjust the position backwards
+		tax 								; position back in this line.
+		jmp 	Next 						; and continue
+
+		
