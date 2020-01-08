@@ -7,9 +7,9 @@ TODO:
 	
 Missing vocabulary:	
 	$$@handler $$!handler
-	<< <= <> >= >> alloc vlist
+	alloc vlist
 	else endif for if index list load 
-	next old rnd run save sgn	
+	next old run save	
 	(old will have to use the listing code to advance the pointer)	
 
 Encoders/Immediate:

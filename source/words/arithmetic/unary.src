@@ -122,7 +122,23 @@ CheckZero: 	;; 0= <0>
 		ora 	TOS+1
 		bne 	UnaryFalse
 		bra 	UnaryTrue
+
+; *****************************************************************************
+;
+;									Sign of TOS
+;
+; *****************************************************************************
 		
+SignTOS: ;; sgn <0>
+		lda 	TOS+1
+		bmi		UnaryTrue
+		ora 	TOS
+		beq 	UnaryFalse
+		lda 	#1
+		sta 	TOS
+		stz		TOS+1
+		jmp 	Next
+
 ; *****************************************************************************
 ;
 ;									Byte swap
@@ -145,6 +161,7 @@ ByteSwap:	;; bswap <0>
 Times16: ;; 16* <0>
 		asl 	TOS
 		rol 	TOS+1
+Times8:	;; 8* <0>
 		asl 	TOS
 		rol 	TOS+1
 Times4:	;; 4* <0>
@@ -155,10 +172,58 @@ Times2:	;; 2* <0>
 		rol 	TOS+1
 		jmp 	Next
 
+Divide16:	;; 16/ <0>
+		lsr 	TOS+1
+		ror 	TOS
+Divide8:	;; 8/ <0>
+		lsr 	TOS+1
+		ror 	TOS
+Divide4:	;; 4/ <0>
+		lsr 	TOS+1
+		ror 	TOS
 Divide2:	;; 2/ <0>
-		lda 	TOS+1
-		asl 	a
-		ror 	TOS+1
+		lsr 	TOS+1
 		ror 	TOS
 		jmp 	Next
 
+Times256:	;; 256* <0>
+		lda 	TOS
+		sta 	TOS+1
+		stz 	TOS
+		jmp 	Next
+
+Divide256:	;; 256/ <0>
+		lda 	TOS+1
+		sta 	TOS
+		stz 	TOS+1
+		jmp 	Next
+
+; *****************************************************************************
+;
+;							Random Number Generator
+;
+; *****************************************************************************
+
+RandomNumber: 	;; rnd <0>
+		pushTOS
+		lda 	randomSeed
+		ora 	randomSeed+1
+		bne 	_RH_NoInit
+		lda 	#$7C
+		sta 	randomSeed
+		lda 	#$A1
+		sta 	randomSeed+1
+_RH_NoInit:
+		lda 	randomSeed
+        lsr		a
+        rol 	randomSeed+1  
+        bcc 	_RH_NoEor
+        eor 	#$B4 
+_RH_NoEor: 
+        sta 	randomSeed
+        eor 	randomSeed+1  
+        ;
+        sta 	TOS+1
+        lda 	randomSeed
+        sta 	TOS
+		jmp 	Next
