@@ -6,10 +6,12 @@ TODO:
 	
 Missing vocabulary:	
 	else endif if
-
+	list
 	vlist load save old run
+
 Encoders/Immediate:
-	repeat	until
+	repeat	until 
+	for 	next
 
 Decoders:
 	$$call 	$$comment $$string $$@handler $$!handler
