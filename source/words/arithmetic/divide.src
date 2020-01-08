@@ -9,7 +9,7 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
-Divide16x16: 	;; /
+Divide16x16: 	;; / <0>
 		stx 	temp2
 		tsx
 		jsr 	IntegerDivide
@@ -17,7 +17,7 @@ Divide16x16: 	;; /
 		ldx 	temp2
 		jmp 	Next
 
-Modulus16x16:	;; mod
+Modulus16x16:	;; mod <0>
 		stx 	temp2
 		tsx
 		jsr 	IntegerDivide

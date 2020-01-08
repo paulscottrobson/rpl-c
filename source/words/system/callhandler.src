@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-CallHandler: 	;; 	$$call noexec
+CallHandler: 	;; 	$$call noexec <2>
 		inx									; bump X to the call address.
 		inx 
 		inc 	rsp 						; bump the RSP (first time to zero)
@@ -89,7 +89,7 @@ _CHFoundLSB:
 ;
 ; *****************************************************************************
 		
-ReturnHandler:	;;	; noexec		
+ReturnHandler:	;;	; noexec <0>		
 		ldy 	rsp 						; get rsp
 		bmi 	_RHUnderflow 				; if -ve underflowed
 		dec 	rsp 						; decrement rsp

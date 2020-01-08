@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-NewHandler:		;; 	new
+NewHandler:		;; 	new <0>
 		stz 	ProgramMemory 				; Make the first offset zero.
 		jsr 	ClearVariableSpace 			; clear variables, reset pointers
 		jmp 	Next
@@ -26,7 +26,7 @@ NewHandler:		;; 	new
 ;
 ; *****************************************************************************
 
-ClrHandler:		;; 	clr
+ClrHandler:		;; 	clr <0>
 		jsr 	ClearVariableSpace 			; clear variables, reset pointers
 		jmp 	Next
 		

@@ -33,7 +33,7 @@ InitialiseCoreCode:
 ;
 ; *****************************************************************************
 
-Literal2Byte:	;; $$literal noexec
+Literal2Byte:	;; $$literal noexec <2>
 		pushTOS							; push the old TOS on the stack
 		inx  							; point X to the word 
 		inx 
@@ -53,7 +53,7 @@ Literal2Byte:	;; $$literal noexec
 ;
 ; *****************************************************************************
 
-LiteralString: ;; $$string noexec
+LiteralString: ;; $$string noexec <n>
 		pushTOS 						; save old TOS
 		inx
 		inx 							; skip over current word
@@ -71,5 +71,3 @@ LiteralString: ;; $$string noexec
 		adc 	(IP),y
 		tax
 		jmp 	Next+2 					; jump without pre-increment
-
-

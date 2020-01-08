@@ -15,13 +15,13 @@
 ;
 ; *****************************************************************************
 
-Constant0:		;; 	0
+Constant0:		;; 	0 <0>
 		pushTOS
 		stz 	TOS
 		stz 	TOS+1
 		jmp 	Next
 
-ConstantMinus1:	;; 	-1
+ConstantMinus1:	;; 	-1 <0>
 		pushTOS
 		lda 	#$FF
 		sta 	TOS
@@ -39,17 +39,17 @@ const1 	.macro
 		bra 	Const1Byte
 		.endm
 
-C1:		const1 1 							;; 1
-C2:		const1 2 							;; 2
-C3:		const1 3 							;; 3
-C4:		const1 4 							;; 4
-C5:		const1 5 							;; 5
-C8:		const1 8 							;; 8
+C1:		const1 1 							;; 1 <0>
+C2:		const1 2 							;; 2 <0>
+C3:		const1 3 							;; 3 <0>
+C4:		const1 4 							;; 4 <0>
+C5:		const1 5 							;; 5 <0>
+C8:		const1 8 							;; 8 <0>
 
-C10: 	const1 10 							;; 10
-C15: 	const1 15 							;; 15
-C16: 	const1 16 							;; 16
-C24: 	const1 24 							;; 24
+C10: 	const1 10 							;; 10 <0>
+C15: 	const1 15 							;; 15 <0>
+C16: 	const1 16 							;; 16 <0>
+C24: 	const1 24 							;; 24 <0>
 
 Const1Byte:
 		pushTOS
@@ -57,16 +57,14 @@ Const1Byte:
 		stz 	TOS+1
 		jmp 	Next		
 
-C32: 	const1 32 							;; 32
-C48: 	const1 48 							;; 48
-C50: 	const1 50 							;; 40
-C63: 	const1 63 							;; 63
-C64: 	const1 64 							;; 64
+C32: 	const1 32 							;; 32 <0>
+C63: 	const1 63 							;; 63 <0>
+C64: 	const1 64 							;; 64 <0>
 
-C100:	const1 100 							;; 100
-C127:	const1 127 							;; 127
-C128:	const1 128 							;; 128
-C255:	const1 255 							;; 255
+C100:	const1 100 							;; 100 <0>
+C127:	const1 127 							;; 127 <0>
+C128:	const1 128 							;; 128 <0>
+C255:	const1 255 							;; 255 <0>
 
 ; *****************************************************************************
 ;
@@ -86,10 +84,10 @@ Const2Byte:
 		sty 	TOS+1
 		jmp 	Next
 
-C256: 	const2 	256 						;; 256
-C512: 	const2 	512 						;; 512
-C1024: 	const2 	1024 						;; 1024
-C4096:	const2 	4096						;; 4096
-C32767:	const2 	32767						;; 32767
-C32768:	const2 	32768 						;; 32768
+C256: 	const2 	256 						;; 256 <0>
+C512: 	const2 	512 						;; 512 <0>
+C1024: 	const2 	1024 						;; 1024 <0>
+C4096:	const2 	4096						;; 4096 <0>
+C32767:	const2 	32767						;; 32767 <0>
+C32768:	const2 	32768 						;; 32768 <0>
 

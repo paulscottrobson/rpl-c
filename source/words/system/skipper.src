@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-NextLine: 	;; $$nextline hide
+NextLine: 	;; $$nextline hide <0>
 		advance IP							; push IP to next line.
 		lda 	(IP)						; is there any following program ?
 		beq 	_NLGoEnd
@@ -30,7 +30,7 @@ _NLGoEnd:
 ;
 ; *****************************************************************************
 
-SkipComment: 	;; $$comment noexec 
+SkipComment: 	;; $$comment noexec <n> 
 		inx									; (IP),X points to the length.
 		inx 
 		txa
@@ -46,5 +46,5 @@ SkipComment: 	;; $$comment noexec
 ;
 ; *****************************************************************************
 
-DefineCode:	;; $$define noexec
+DefineCode:	;; $$define noexec <n>
 		rerror "DEFINITION?"

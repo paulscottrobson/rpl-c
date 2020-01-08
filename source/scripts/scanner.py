@@ -35,7 +35,7 @@ class Dictionary(object):
 	def append(self,elements,label):					
 		nElements = len(elements)
 		if elements[0] not in self.dictionary:								# create record
-			self.dictionary[elements[0]] = { "word":elements[0],"handler":"","encode":"",
+			self.dictionary[elements[0]] = { "word":elements[0],"handler":"","encode":"","params":"",
 					 						 "decode":"", "hide":"","noexec":"" }
 		entry = self.dictionary[elements[0]]								# add label if required
 		if entry["handler"] == "":
@@ -48,6 +48,8 @@ class Dictionary(object):
 			elif e == "noexec" or e == "hide":								# handle switches
 				assert entry[e] == "",elements[0]+"."+e+" set twice"
 				entry[e] = "Y"
+			elif e.startswith("<") and e.endswith(">") and "012n".find(e[1]) >= 0:
+				entry["params"] = e[1]
 			else:															# unknown
 				assert False,"Bad element "+e
 	#
@@ -82,11 +84,12 @@ if __name__ == "__main__":
 		h.write("; *** {0} ***\n".format(k.lower()))
 		h.write("\t.byte\t_end{0}-*\n".format(count))
 		#
-		ctrlByte = 0
+		ctrlByte ="012n".find(e["params"])
+		assert ctrlByte >= 0,"Not defined params "+k
 		ctrlByte += (0x80 if e["hide"] == "Y" else 0x00)
 		ctrlByte += (0x40 if e["noexec"] == "Y" else 0x00)
-		ctrlByte += (0x02 if e["encode"] != "" else 0x00)
-		ctrlByte += (0x01 if e["decode"] != "" else 0x00)
+		ctrlByte += (0x20 if e["encode"] != "" else 0x00)
+		ctrlByte += (0x10 if e["decode"] != "" else 0x00)
 		h.write("\t.byte\t${0:02x}\n".format(ctrlByte))
 		#
 		h.write("\t.word\t{0}\n".format(e["handler"]))

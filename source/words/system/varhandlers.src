@@ -9,10 +9,10 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
-VarReadHandler:		;; 	$$@handler 	noexec
+VarReadHandler:		;; 	$$@handler 	noexec <2>
 		.byte 	$FF
 
-VarWriteHandler:	;; 	$$!handler 	noexec
+VarWriteHandler:	;; 	$$!handler 	noexec <2>
 		.byte 	$FF
 
 		

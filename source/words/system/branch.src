@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-BranchBackwardsIfZero:
+BranchBackwardsIfZero: 
 		lda 	TOS 						; check TOS = 0
 		ora 	TOS+1
 		beq 	BranchBackwardsTestSucceeds

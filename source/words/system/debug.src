@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-ExitDump: ;; xdump
+ExitDump: ;; xdump <0>
 		tsx 								; save Data Stack in temp1
 		stx 	temp1
 		jmp 	$FFFF 						; makes the X16-Emulator dump-exit.
@@ -26,6 +26,6 @@ ExitDump: ;; xdump
 ;
 ; *****************************************************************************
 
-BreakCmd:	;; xbreak noexec
+BreakCmd:	;; xbreak noexec <0>
 		.byte 	$FF
 		jmp 	Next

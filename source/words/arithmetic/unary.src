@@ -15,14 +15,14 @@
 ;
 ; *****************************************************************************
 
-Unary1Plus:		;; 1+
+Unary1Plus:		;; 1+ <0>
 		inc 	TOS
 		bne 	_U1PSkip
 		inc 	TOS+1
 _U1PSkip:
 		jmp 	Next
 
-Unary2Plus:		;; 2+
+Unary2Plus:		;; 2+ <0>
 		clc
 		lda 	TOS
 		adc 	#2
@@ -38,7 +38,7 @@ _U1PSkip:
 ;
 ; *****************************************************************************
 
-Unary1Minus:	;; 1-
+Unary1Minus:	;; 1- <0>
 		lda 	TOS
 		bne 	_U1MSkip
 		dec 	TOS+1
@@ -46,7 +46,7 @@ _U1MSkip:
 		dec 	TOS
 		jmp 	Next
 
-Unary2Minus:	;; 2-
+Unary2Minus:	;; 2- <0>
 		sec
 		lda 	TOS
 		sbc 	#2
@@ -62,7 +62,7 @@ _U1PSkip:
 ;
 ; *****************************************************************************
 
-Absolute: ;; abs
+Absolute: ;; abs <0>
 		lda 	TOS+1
 		bmi 	Negate
 		jmp 	Next
@@ -73,7 +73,7 @@ Absolute: ;; abs
 ;
 ; *****************************************************************************
 
-Negate: 	;; negate
+Negate: 	;; negate <0>
 		sec
 		lda 	#0
 		sbc 	TOS
@@ -89,7 +89,7 @@ Negate: 	;; negate
 ;
 ; *****************************************************************************
 
-OneComplement: 	;; not
+OneComplement: 	;; not <0>
 		lda 	TOS
 		eor 	#$FF
 		sta 	TOS
@@ -104,7 +104,7 @@ OneComplement: 	;; not
 ;
 ; *****************************************************************************
 
-CheckMinus:	;; 0<
+CheckMinus:	;; 0< <0>
 		lda 	TOS+1
 		bmi 	UnaryTrue
 UnaryFalse:
@@ -117,7 +117,7 @@ UnaryTrue:
 		sta 	TOS+1
 		jmp 	Next
 
-CheckZero: 	;; 0=
+CheckZero: 	;; 0= <0>
 		lda 	TOS
 		ora 	TOS+1
 		bne 	UnaryFalse
@@ -129,7 +129,7 @@ CheckZero: 	;; 0=
 ;
 ; *****************************************************************************
 
-ByteSwap:	;; bswap
+ByteSwap:	;; bswap <0>
 		lda 	TOS
 		ldy 	TOS+1
 		sta 	TOS+1
@@ -142,30 +142,20 @@ ByteSwap:	;; bswap
 ;	
 ; *****************************************************************************
 
-Times2:	;; 2*
+Times16: ;; 16* <0>
+		asl 	TOS
+		rol 	TOS+1
+		asl 	TOS
+		rol 	TOS+1
+Times4:	;; 4* <0>
+		asl 	TOS
+		rol 	TOS+1
+Times2:	;; 2* <0>
 		asl 	TOS
 		rol 	TOS+1
 		jmp 	Next
 
-Times4:	;; 4*
-		asl 	TOS
-		rol 	TOS+1
-		asl 	TOS
-		rol 	TOS+1
-		jmp 	Next
-
-Times16: ;; 16*
-		asl 	TOS
-		rol 	TOS+1
-		asl 	TOS
-		rol 	TOS+1
-		asl 	TOS
-		rol 	TOS+1
-		asl 	TOS
-		rol 	TOS+1
-		jmp 	Next
-
-Divide2:	;; 2/
+Divide2:	;; 2/ <0>
 		lda 	TOS+1
 		asl 	a
 		ror 	TOS+1

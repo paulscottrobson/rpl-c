@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-CheckEqual:		;; =
+CheckEqual:		;; = <0>
 		stx 	temp1
 		tsx
 		lda 	TOS
@@ -50,7 +50,7 @@ CompareFalse:
 ;
 ; *****************************************************************************
 
-CheckLess: 		;; <
+CheckLess: 		;; < <0>
 		clc
 		stx 	temp1
 		tsx
@@ -65,7 +65,7 @@ _CLNoFlip:
 		bcs 	CompareFalse
 		bra 	CompareTrue
 
-CheckGreater: 	;; >
+CheckGreater: 	;; > <0>
 		clc
 		stx 	temp1
 		tsx
@@ -86,10 +86,10 @@ _CGNoFlip:
 ;
 ; *****************************************************************************
 
-Minimum:	;; min
+Minimum:	;; min <0>
 		lda 	#0
 		bra 	MinMaxCode
-Maximum:	;; max
+Maximum:	;; max <0>
 		lda 	#$80
 MinMaxCode:
 		sta 	temp1+1
