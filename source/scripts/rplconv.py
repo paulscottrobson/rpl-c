@@ -127,6 +127,9 @@ class LineConverter(object):
 		if word == "REPEAT" or word == "UNTIL":								# repeat/until 
 			self.repeatUntil(word)
 			return nextCode
+		if word == "FOR" or word == "NEXT":									# for/next
+			self.forNext(word)
+			return nextCode
 		#
 		if self.rplDictionary.isWord(word):									# is it a known word
 			self.appendWord(word) 											# (e.g. a dictionary word)
@@ -206,11 +209,23 @@ class LineConverter(object):
 			self.rStack.append(LineConverter.REPEAT)						# Save repeat marker
 		if word == "UNTIL":
 			self.checkPop(LineConverter.REPEAT)								# convertor ?
-			self.appendWord("UNTIL")										# Repeat action
-			back = self.currentPos() - self.rStack.pop() + 1 				# work out offset.
-			self.code.append(back)											# +1 because applied after offset
+			self.appendWord("UNTIL")										# Loop action
+			self.code.append(self.rStack.pop()+3)							# branch back X value
+	#
+	#		Handle for/next
+	#
+	def forNext(self,word):
+		if word == "FOR":													# For
+			self.appendWord("FOR")											# Compile for (n->r)
+			self.rStack.append(self.currentPos())							# Save loop address
+			self.rStack.append(LineConverter.FOR)							# Save for marker
+		if word == "NEXT":
+			self.checkPop(LineConverter.FOR)								# convertor ?
+			self.appendWord("NEXT")											# Loop action
+			self.code.append(self.rStack.pop()+3)							# branch back X value
 
 LineConverter.REPEAT = 'R'
+LineConverter.FOR = 'F'
 
 if __name__ == "__main__":
 	prg = RPLProgram()

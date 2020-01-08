@@ -16,7 +16,20 @@
 ; *****************************************************************************
 
 ForHandler:	;; for <0> 
+		inc 	rsp 						; bump the RSP
+		ldy 	rsp 						; get return stack and push TOS/$FF on it.
+		cpy 	#$40 						; overflow
+		beq 	_FHOverflow
+		lda 	TOS+1
+		sta 	returnStackHigh,y
+		lda 	TOS
+		sta 	returnStackLow,y
+		lda 	#$FF
+		sta 	returnStackX,y
+		popTOS 								; update TOS, losing loop variable
 		jmp 	Next 						
+_FHOverflow:
+		rerror	"FOR STACK?"
 
 ; *****************************************************************************
 ;
@@ -24,7 +37,56 @@ ForHandler:	;; for <0>
 ;
 ; *****************************************************************************
 
-NextHandler:	;; next <1>
-		jmp 	BranchBackwardsIfZero
+NextHandler:	;; next <1> 
+		phx
+		ldx 	rsp 						; get current stack ptr
+		lda 	returnStackX,x 				; check it's a FOR Loop
+		cmp 	#$FF
+		bne 	NHNoFor
+		;
+		lda 	returnStackLow,x 			; decrement the count
+		bne 	_NHNoBorrow
+		dec 	returnStackHigh,x
+_NHNoBorrow:
+		dec 	returnStackLow,x
+		;
+		lda 	returnStackLow,x 			; have we reached the end ?
+		ora 	returnStackHigh,x
+		plx 								; restore X and re-test
+		ora 	#0
+		beq 	_NHComplete 				; if so then complete, else loop.
+		inx 								; advance to branch
+		inx 
+		jmp 	BranchBackwardsAlways
+		;
+_NHComplete:
+		inx 								; skip over the branch quantity
+		dec 	rsp 						; drop the indx
+		jmp 	Next
 
+NHNoFor:
+		rerror 	"NO FOR?"
 		
+; *****************************************************************************
+;
+;								Access current index
+;
+; *****************************************************************************
+
+GetIndex: 	;; index <0>
+		ldy 	rsp 						; get current stack ptr
+		lda 	returnStackX,y 				; check it's a FOR Loop
+		cmp 	#$FF
+		bne 	NHNoFor
+		;
+		pushTOS
+		;
+		lda 	returnStackLow,y 			; put counter-1 out
+		sec
+		sbc 	#1
+		sta 	TOS
+		lda 	returnStackHigh,y
+		sbc 	#0
+		sta 	TOS+1
+		;
+		jmp 	Next

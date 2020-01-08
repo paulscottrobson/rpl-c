@@ -35,15 +35,15 @@ BranchTestFails:
 
 BranchBackwardsTestSucceeds:
 		popTOS 								; throw away the test value
-		inx 								; advance by one, to skip the offset
+		inx 								; advance by two, to the offset
+		inx
 
+BranchBackwardsAlways:
 		txa 								; A = Y = position
-		tay 				
-		iny 								; (IP),Y now points to the back branch.
+		tay 								; (IP),Y now points to the back branch.
 		;
-		sec
-		sbc 	(IP),y 						; adjust the position backwards
+		lda 	(IP),y 						; adjust the position backwards
 		tax 								; position back in this line.
-		jmp 	Next 						; and continue
+		jmp 	Next+2 						; and continue
 
 		

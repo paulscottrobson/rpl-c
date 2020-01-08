@@ -1,18 +1,6 @@
 ' comment
 $ABCD
-45 z!	$1234 a! 
-$1357 he8!
-513 x1!
-514 y2!
-515 z3!
-516 a4!
-517 c5!
-518 e6!
-519 h7!
-520 i8!
-521 k9!
-
-x1@ y2@ z3@ a4@ c5@ e6@ h7@ i8@ k9@
-
-a@ z@ he8@
+tri42
 $CDEF xdump
+
+:tri42 3 for 5 for index next next ;
