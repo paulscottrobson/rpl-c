@@ -2,11 +2,8 @@
 
 0 $9f20 ! 16 $9f22 c!
 
-128 60 * for index 63 and 32 + draw next
+128 60 * for 42 $9f23 c! index 15 and $9f23 c! next
 
 repeat 0 until	
 
 
-:draw  dup $9f23 c! $9f23 c! ;
-
-xbreak
