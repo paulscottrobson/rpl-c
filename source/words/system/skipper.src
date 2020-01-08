@@ -46,5 +46,5 @@ SkipComment: 	;; $$comment noexec
 ;
 ; *****************************************************************************
 
-DefineError:	;; $$define noexec
+DefineCode:	;; $$define noexec
 		rerror "DEFINITION?"

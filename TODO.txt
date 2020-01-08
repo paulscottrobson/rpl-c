@@ -1,5 +1,4 @@
 TODO:
-	Implement calls/return code
 	Implement variables
 	Implement other structures.
 	Implement other words
@@ -7,7 +6,6 @@ TODO:
 	When the core is written, write the importers and scanners.
 	
 Missing vocabulary:	
-	$$call ; 
 	$$@handler $$!handler
 	<< <= <> >= >> alloc vlist
 	else endif for if index list load 
@@ -19,6 +17,5 @@ Encoders/Immediate:
 
 Decoders:
 	$$call 	$$comment $$string $$@handler $$!handler
-
 
 Fixes:

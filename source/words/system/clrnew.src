@@ -33,11 +33,14 @@ ClrHandler:		;; 	clr
 ; *****************************************************************************
 ;
 ;		Clear : Erases all memory and allocation, clear out hash tables
-;							  (does not erase A-Z)
+;				reset the return stack (does not erase A-Z)
 ;
 ; *****************************************************************************
 
 ClearVariableSpace:
+		lda 	#$FF 						; empty return stack
+		sta 	rsp
+
 		set16	nextFreeMem,ProgramMemory	; reset allocated memory pointer.
 		;
 		;		TODO:If using a cache for line lookup, initialise it here.

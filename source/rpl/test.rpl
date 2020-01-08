@@ -1,4 +1,6 @@
 ' comment
 $ABCD
-10000 repeat 1- dup 0= until
+42 test2
 $CDEF xdump
+:test dup 2 * ;
+:test2 test test test test ;

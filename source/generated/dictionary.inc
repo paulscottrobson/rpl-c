@@ -36,7 +36,7 @@ _end5:
 ; *** $$define ***
 	.byte	_end6-*
 	.byte	$40
-	.word	DefineError
+	.word	DefineCode
 	.byte	$24,$24,$44,$45,$46,$49,$4e,$c5
 _end6:
 
@@ -355,236 +355,243 @@ _end50:
 	.byte	$b8
 _end51:
 
-; *** < ***
+; *** ; ***
 	.byte	_end52-*
+	.byte	$40
+	.word	ReturnHandler
+	.byte	$bb
+_end52:
+
+; *** < ***
+	.byte	_end53-*
 	.byte	$00
 	.word	CheckLess
 	.byte	$bc
-_end52:
+_end53:
 
 ; *** = ***
-	.byte	_end53-*
+	.byte	_end54-*
 	.byte	$00
 	.word	CheckEqual
 	.byte	$bd
-_end53:
+_end54:
 
 ; *** > ***
-	.byte	_end54-*
+	.byte	_end55-*
 	.byte	$00
 	.word	CheckGreater
 	.byte	$be
-_end54:
+_end55:
 
 ; *** ?dup ***
-	.byte	_end55-*
+	.byte	_end56-*
 	.byte	$00
 	.word	TestDup
 	.byte	$3f,$44,$55,$d0
-_end55:
+_end56:
 
 ; *** @ ***
-	.byte	_end56-*
+	.byte	_end57-*
 	.byte	$00
 	.word	WordRead
 	.byte	$c0
-_end56:
+_end57:
 
 ; *** abs ***
-	.byte	_end57-*
+	.byte	_end58-*
 	.byte	$00
 	.word	Absolute
 	.byte	$41,$42,$d3
-_end57:
+_end58:
 
 ; *** and ***
-	.byte	_end58-*
+	.byte	_end59-*
 	.byte	$00
 	.word	And
 	.byte	$41,$4e,$c4
-_end58:
+_end59:
 
 ; *** assert ***
-	.byte	_end59-*
+	.byte	_end60-*
 	.byte	$00
 	.word	AssertCode
 	.byte	$41,$53,$53,$45,$52,$d4
-_end59:
+_end60:
 
 ; *** bswap ***
-	.byte	_end60-*
+	.byte	_end61-*
 	.byte	$00
 	.word	ByteSwap
 	.byte	$42,$53,$57,$41,$d0
-_end60:
+_end61:
 
 ; *** c! ***
-	.byte	_end61-*
+	.byte	_end62-*
 	.byte	$00
 	.word	ByteWrite
 	.byte	$43,$a1
-_end61:
+_end62:
 
 ; *** c@ ***
-	.byte	_end62-*
+	.byte	_end63-*
 	.byte	$00
 	.word	ByteRead
 	.byte	$43,$c0
-_end62:
+_end63:
 
 ; *** clr ***
-	.byte	_end63-*
+	.byte	_end64-*
 	.byte	$00
 	.word	ClrHandler
 	.byte	$43,$4c,$d2
-_end63:
+_end64:
 
 ; *** drop ***
-	.byte	_end64-*
+	.byte	_end65-*
 	.byte	$00
 	.word	Drop
 	.byte	$44,$52,$4f,$d0
-_end64:
+_end65:
 
 ; *** dup ***
-	.byte	_end65-*
+	.byte	_end66-*
 	.byte	$00
 	.word	Dup
 	.byte	$44,$55,$d0
-_end65:
+_end66:
 
 ; *** end ***
-	.byte	_end66-*
+	.byte	_end67-*
 	.byte	$00
 	.word	EndProgram
 	.byte	$45,$4e,$c4
-_end66:
+_end67:
 
 ; *** max ***
-	.byte	_end67-*
+	.byte	_end68-*
 	.byte	$00
 	.word	Maximum
 	.byte	$4d,$41,$d8
-_end67:
+_end68:
 
 ; *** min ***
-	.byte	_end68-*
+	.byte	_end69-*
 	.byte	$00
 	.word	Minimum
 	.byte	$4d,$49,$ce
-_end68:
+_end69:
 
 ; *** mod ***
-	.byte	_end69-*
+	.byte	_end70-*
 	.byte	$00
 	.word	Modulus16x16
 	.byte	$4d,$4f,$c4
-_end69:
+_end70:
 
 ; *** negate ***
-	.byte	_end70-*
+	.byte	_end71-*
 	.byte	$00
 	.word	Negate
 	.byte	$4e,$45,$47,$41,$54,$c5
-_end70:
+_end71:
 
 ; *** new ***
-	.byte	_end71-*
+	.byte	_end72-*
 	.byte	$00
 	.word	NewHandler
 	.byte	$4e,$45,$d7
-_end71:
+_end72:
 
 ; *** nip ***
-	.byte	_end72-*
+	.byte	_end73-*
 	.byte	$00
 	.word	Nip
 	.byte	$4e,$49,$d0
-_end72:
+_end73:
 
 ; *** not ***
-	.byte	_end73-*
+	.byte	_end74-*
 	.byte	$00
 	.word	OneComplement
 	.byte	$4e,$4f,$d4
-_end73:
+_end74:
 
 ; *** or ***
-	.byte	_end74-*
+	.byte	_end75-*
 	.byte	$00
 	.word	LogOr
 	.byte	$4f,$d2
-_end74:
+_end75:
 
 ; *** over ***
-	.byte	_end75-*
+	.byte	_end76-*
 	.byte	$00
 	.word	Over
 	.byte	$4f,$56,$45,$d2
-_end75:
+_end76:
 
 ; *** repeat ***
-	.byte	_end76-*
+	.byte	_end77-*
 	.byte	$00
 	.word	RepeatHandler
 	.byte	$52,$45,$50,$45,$41,$d4
-_end76:
+_end77:
 
 ; *** rot ***
-	.byte	_end77-*
+	.byte	_end78-*
 	.byte	$00
 	.word	Rot
 	.byte	$52,$4f,$d4
-_end77:
+_end78:
 
 ; *** stop ***
-	.byte	_end78-*
+	.byte	_end79-*
 	.byte	$00
 	.word	StopCode
 	.byte	$53,$54,$4f,$d0
-_end78:
+_end79:
 
 ; *** swap ***
-	.byte	_end79-*
+	.byte	_end80-*
 	.byte	$00
 	.word	Swap
 	.byte	$53,$57,$41,$d0
-_end79:
+_end80:
 
 ; *** sys ***
-	.byte	_end80-*
+	.byte	_end81-*
 	.byte	$00
 	.word	Call6502
 	.byte	$53,$59,$d3
-_end80:
+_end81:
 
 ; *** until ***
-	.byte	_end81-*
+	.byte	_end82-*
 	.byte	$00
 	.word	UntilHandler
 	.byte	$55,$4e,$54,$49,$cc
-_end81:
+_end82:
 
 ; *** xbreak ***
-	.byte	_end82-*
+	.byte	_end83-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end82:
+_end83:
 
 ; *** xdump ***
-	.byte	_end83-*
+	.byte	_end84-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end83:
+_end84:
 
 ; *** xor ***
-	.byte	_end84-*
+	.byte	_end85-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end84:
+_end85:
 
 	.byte	0
 

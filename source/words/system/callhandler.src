@@ -9,6 +9,101 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
+; *****************************************************************************
+;
+;				Push IP.H IP.L X on the stack, and jump to routine.
+;
+; *****************************************************************************
+
 CallHandler: 	;; 	$$call noexec
-		.byte 	$FF
+		inx									; bump X to the call address.
+		inx 
+		inc 	rsp 						; bump the RSP (first time to zero)
+		ldy 	rsp 						; get return stack and push IP/X on it.
+		cpy 	#$40 						; overflow
+		beq 	_CHOverflow
+		lda 	IP+1
+		sta 	returnStackHigh,y
+		lda 	IP
+		sta 	returnStackLow,y
+		txa
+		sta 	returnStackX,y
+		;
+		txa 								; get the line number into temp1.
+		tay
+		lda 	(IP),y 					
+		sta 	temp1
+		iny 	
+		lda 	(IP),y
+		sta 	temp1+1
+		;
+		set16 	IP,ProgramMemory 			; now search for it.
+		lda 	(IP)						; no program code ?
+		beq 	_CHFail
+		;
+		;		Simple search. May upgrade it for later
+		;
+		ldy 	#1 							; Y = 1 throughout.
+_CHSearch:
+		lda 	(IP),y 						; check LSB of line number
+		cmp 	temp1
+		beq 	_CHFoundLSB
+_CHSearchNext:		
+		advance	IP 							; go forward to next
+		lda 	(IP)						; check reached the end.
+		bne 	_CHSearch
+_CHFail:
+		rerror 	"DEFINITION?"				; usually means line# has changed
+_CHOverflow:
+		rerror 	"STACKDEPTH?"
+		;
+		;		LSB matches, check MSB
+		;
+_CHFoundLSB:		
+		iny 								; get MSB
+		lda 	(IP),y
+		dey
+		cmp 	temp1+1 					; matches, if not contineu
+		bne 	_CHSearchNext
+		;
+		;		IP points to the new line.
+		;
+		ldy 	#3	 						; check it begins with $$define
+		lda 	(IP),y
+		cmp 	#DefineCode & $FF
+		bne 	_CHFail
+		iny
+		lda 	(IP),y 						
+		cmp 	#DefineCode >> 8
+		bne 	_CHFail
+		iny
+		lda 	(IP),y 						; this is the length of the define name
+		clc
+		adc 	#5 							; $$define token, line number, offset
+		tax
+		jmp 	Next+2 						; and execute
+
+; *****************************************************************************
+;
+;								Return from routine
+;
+; *****************************************************************************
 		
+ReturnHandler:	;;	; noexec		
+		ldy 	rsp 						; get rsp
+		bmi 	_RHUnderflow 				; if -ve underflowed
+		dec 	rsp 						; decrement rsp
+		;
+		lda 	returnStackHigh,y 			; restore IP/X
+		sta 	IP+1
+		lda 	returnStackLow,y
+		sta 	IP
+		lda 	returnStackX,y
+		tax
+		beq 	_RHInLoop 					; this means you have done :something for ; next
+		jmp 	Next
+_RHUnderflow:
+		rerror	"RETURN?"		
+_RHInLoop:
+		rerror 	"RETURN IN LOOP?"
+

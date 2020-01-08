@@ -18,9 +18,12 @@
 ; *****************************************************************************
 
 Next: 										; NEXT code (INX INX JSR ($xxxx,X) goes here)
-		.fill 	6
+		.fill 	5
 
 IP = Next+3 								; the IP which points to the current instruction
+
+rsp:										; return stack pointer.
+		.byte 	?
 
 tos:										; top of stack register
 		.word 	?
@@ -57,6 +60,11 @@ stack3High = $103
 azVariables = $600 							; 26 x 2 variables occupying 52 bytes.
 hashTableSize = 16 							; hash tables for variables.
 hashTable = $640 							; hash tables start here.
+
+returnStack = $700							; return stack (1 page)
+returnStackLow = returnStack
+returnStackHigh = returnStack+$40
+returnStackX = returnStack+$80
 
 ; *****************************************************************************
 ;
