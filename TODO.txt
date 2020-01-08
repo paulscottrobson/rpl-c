@@ -1,17 +1,14 @@
 TODO:
-	Implement variable creation.
-	Implement other structures.
+	Implement for/next
+	Implement if/else/endif.
 	Implement other words
 	Write "List" code (keep a skipper for OLD)
 	When the core is written, write the importers and scanners.
 	
 Missing vocabulary:	
-	$$@handler $$!handler
-	alloc vlist
-	else endif for if index list load 
-	next old run save	
-	(old will have to use the listing code to advance the pointer)	
+	alloc else endif for if index next 	
 
+	vlist load save old run
 Encoders/Immediate:
 	repeat	until
 
@@ -20,4 +17,4 @@ Decoders:
 
 Fixes:
 	Optimise the call lookup.
-	
+	AdvanceFreeMem checks high memory for out of memory.

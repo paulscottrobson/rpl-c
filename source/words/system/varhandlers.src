@@ -105,7 +105,6 @@ VariableFind:
 		;		Legal variable, but not A-Z, so look for it in the hash tables.
 		;
 _VFLong:
-		.byte 	$FF
 		lda 	temp2 						; built a hash table index into temp3/temp4
 		ror 	a
 		ror 	a
@@ -115,12 +114,12 @@ _VFLong:
 		eor 	temp2+1
 		and 	#(hashTableSize-1)			; force into range
 		asl 	a
-		adc 	#hashTable & $FF 			; make an address of the head => temp1/4
+		adc 	#hashTable & $FF 			; make an address of the head => temp1/3
 		sta 	temp1
-		sta 	temp4
+		sta 	temp3
 		lda 	#hashTable >> 8
 		sta 	temp1+1
-		sta 	temp4+1
+		sta 	temp3+1
 		;
 		;		Search the variable list at temp3 for the value in temp2. The list element
 		;		is +0:address of next +2: data +4: name (right way round)
@@ -132,7 +131,7 @@ _VFSearch:
 		tay 								; follow the link through.
 		lda 	(temp1)
 		sta 	temp1
-		sty 	temp1
+		sty 	temp1+1
 		ldy 	#4							; check if the name matches
 		lda 	(temp1),y
 		cmp 	temp2
@@ -162,4 +161,41 @@ _VFNotFound:
 		;		Create variable, name in temp2.
 		;				
 _VFCreate:		
-
+		ldy 	#1 							
+		;
+		lda 	(temp3) 					; copy the head link to the first 2 bytes
+		sta 	(nextFreeMem)
+		lda 	(temp3),y
+		sta 	(nextFreeMem),y
+		iny
+		;
+		lda 	#0	 						; write zero initialised data out.
+		sta 	(nextFreeMem),y
+		iny
+		sta 	(nextFreeMem),y
+		iny
+		;
+		lda 	temp2 						; copy the name out
+		sta 	(nextFreeMem),y
+		iny
+		lda 	temp2+1
+		sta 	(nextFreeMem),y
+		;
+		ldy 	#1
+		lda 	nextFreeMem 				; update the head link
+		sta 	(temp3)
+		lda 	nextFreeMem+1
+		sta 	(temp3),y
+		;
+		clc
+		lda 	nextFreeMem 				; put nextFreeMem+2 in temp1 (data pointer)
+		adc 	#2
+		sta 	temp1
+		lda 	nextFreeMem+1
+		adc 	#0
+		sta 	temp1+1
+		;
+		lda 	#6							; shift freemem pointer up 6
+		ldy 	#0
+		jsr 	AdvanceFreeMem
+		rts

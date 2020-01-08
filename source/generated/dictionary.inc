@@ -523,145 +523,159 @@ _end74:
 	.byte	$45,$4e,$c4
 _end75:
 
-; *** max ***
+; *** for ***
 	.byte	_end76-*
+	.byte	$00
+	.word	ForHandler
+	.byte	$46,$4f,$d2
+_end76:
+
+; *** max ***
+	.byte	_end77-*
 	.byte	$00
 	.word	Maximum
 	.byte	$4d,$41,$d8
-_end76:
+_end77:
 
 ; *** min ***
-	.byte	_end77-*
+	.byte	_end78-*
 	.byte	$00
 	.word	Minimum
 	.byte	$4d,$49,$ce
-_end77:
+_end78:
 
 ; *** mod ***
-	.byte	_end78-*
+	.byte	_end79-*
 	.byte	$00
 	.word	Modulus16x16
 	.byte	$4d,$4f,$c4
-_end78:
+_end79:
 
 ; *** negate ***
-	.byte	_end79-*
+	.byte	_end80-*
 	.byte	$00
 	.word	Negate
 	.byte	$4e,$45,$47,$41,$54,$c5
-_end79:
+_end80:
 
 ; *** new ***
-	.byte	_end80-*
+	.byte	_end81-*
 	.byte	$00
 	.word	NewHandler
 	.byte	$4e,$45,$d7
-_end80:
+_end81:
+
+; *** next ***
+	.byte	_end82-*
+	.byte	$01
+	.word	NextHandler
+	.byte	$4e,$45,$58,$d4
+_end82:
 
 ; *** nip ***
-	.byte	_end81-*
+	.byte	_end83-*
 	.byte	$00
 	.word	Nip
 	.byte	$4e,$49,$d0
-_end81:
+_end83:
 
 ; *** not ***
-	.byte	_end82-*
+	.byte	_end84-*
 	.byte	$00
 	.word	OneComplement
 	.byte	$4e,$4f,$d4
-_end82:
+_end84:
 
 ; *** or ***
-	.byte	_end83-*
+	.byte	_end85-*
 	.byte	$00
 	.word	LogOr
 	.byte	$4f,$d2
-_end83:
+_end85:
 
 ; *** over ***
-	.byte	_end84-*
+	.byte	_end86-*
 	.byte	$00
 	.word	Over
 	.byte	$4f,$56,$45,$d2
-_end84:
+_end86:
 
 ; *** repeat ***
-	.byte	_end85-*
+	.byte	_end87-*
 	.byte	$00
 	.word	RepeatHandler
 	.byte	$52,$45,$50,$45,$41,$d4
-_end85:
+_end87:
 
 ; *** rnd ***
-	.byte	_end86-*
+	.byte	_end88-*
 	.byte	$00
 	.word	RandomNumber
 	.byte	$52,$4e,$c4
-_end86:
+_end88:
 
 ; *** rot ***
-	.byte	_end87-*
+	.byte	_end89-*
 	.byte	$00
 	.word	Rot
 	.byte	$52,$4f,$d4
-_end87:
+_end89:
 
 ; *** sgn ***
-	.byte	_end88-*
+	.byte	_end90-*
 	.byte	$00
 	.word	SignTOS
 	.byte	$53,$47,$ce
-_end88:
+_end90:
 
 ; *** stop ***
-	.byte	_end89-*
+	.byte	_end91-*
 	.byte	$00
 	.word	StopCode
 	.byte	$53,$54,$4f,$d0
-_end89:
+_end91:
 
 ; *** swap ***
-	.byte	_end90-*
+	.byte	_end92-*
 	.byte	$00
 	.word	Swap
 	.byte	$53,$57,$41,$d0
-_end90:
+_end92:
 
 ; *** sys ***
-	.byte	_end91-*
+	.byte	_end93-*
 	.byte	$00
 	.word	Call6502
 	.byte	$53,$59,$d3
-_end91:
+_end93:
 
 ; *** until ***
-	.byte	_end92-*
+	.byte	_end94-*
 	.byte	$01
 	.word	UntilHandler
 	.byte	$55,$4e,$54,$49,$cc
-_end92:
+_end94:
 
 ; *** xbreak ***
-	.byte	_end93-*
+	.byte	_end95-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end93:
+_end95:
 
 ; *** xdump ***
-	.byte	_end94-*
+	.byte	_end96-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end94:
+_end96:
 
 ; *** xor ***
-	.byte	_end95-*
+	.byte	_end97-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end95:
+_end97:
 
 	.byte	0
 
