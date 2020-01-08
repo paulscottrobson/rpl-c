@@ -425,117 +425,145 @@ _end60:
 	.byte	$43,$c0
 _end61:
 
-; *** drop ***
+; *** clr ***
 	.byte	_end62-*
+	.byte	$00
+	.word	ClrHandler
+	.byte	$43,$4c,$d2
+_end62:
+
+; *** drop ***
+	.byte	_end63-*
 	.byte	$00
 	.word	Drop
 	.byte	$44,$52,$4f,$d0
-_end62:
+_end63:
 
 ; *** dup ***
-	.byte	_end63-*
+	.byte	_end64-*
 	.byte	$00
 	.word	Dup
 	.byte	$44,$55,$d0
-_end63:
+_end64:
+
+; *** end ***
+	.byte	_end65-*
+	.byte	$00
+	.word	EndProgram
+	.byte	$45,$4e,$c4
+_end65:
 
 ; *** max ***
-	.byte	_end64-*
+	.byte	_end66-*
 	.byte	$00
 	.word	Maximum
 	.byte	$4d,$41,$d8
-_end64:
+_end66:
 
 ; *** min ***
-	.byte	_end65-*
+	.byte	_end67-*
 	.byte	$00
 	.word	Minimum
 	.byte	$4d,$49,$ce
-_end65:
+_end67:
 
 ; *** mod ***
-	.byte	_end66-*
+	.byte	_end68-*
 	.byte	$00
 	.word	Modulus16x16
 	.byte	$4d,$4f,$c4
-_end66:
+_end68:
 
 ; *** negate ***
-	.byte	_end67-*
+	.byte	_end69-*
 	.byte	$00
 	.word	Negate
 	.byte	$4e,$45,$47,$41,$54,$c5
-_end67:
+_end69:
+
+; *** new ***
+	.byte	_end70-*
+	.byte	$00
+	.word	NewHandler
+	.byte	$4e,$45,$d7
+_end70:
 
 ; *** nip ***
-	.byte	_end68-*
+	.byte	_end71-*
 	.byte	$00
 	.word	Nip
 	.byte	$4e,$49,$d0
-_end68:
+_end71:
 
 ; *** not ***
-	.byte	_end69-*
+	.byte	_end72-*
 	.byte	$00
 	.word	OneComplement
 	.byte	$4e,$4f,$d4
-_end69:
+_end72:
 
 ; *** or ***
-	.byte	_end70-*
+	.byte	_end73-*
 	.byte	$00
 	.word	LogOr
 	.byte	$4f,$d2
-_end70:
+_end73:
 
 ; *** over ***
-	.byte	_end71-*
+	.byte	_end74-*
 	.byte	$00
 	.word	Over
 	.byte	$4f,$56,$45,$d2
-_end71:
+_end74:
 
 ; *** rot ***
-	.byte	_end72-*
+	.byte	_end75-*
 	.byte	$00
 	.word	Rot
 	.byte	$52,$4f,$d4
-_end72:
+_end75:
+
+; *** stop ***
+	.byte	_end76-*
+	.byte	$00
+	.word	StopCode
+	.byte	$53,$54,$4f,$d0
+_end76:
 
 ; *** swap ***
-	.byte	_end73-*
+	.byte	_end77-*
 	.byte	$00
 	.word	Swap
 	.byte	$53,$57,$41,$d0
-_end73:
+_end77:
 
 ; *** sys ***
-	.byte	_end74-*
+	.byte	_end78-*
 	.byte	$00
 	.word	Call6502
 	.byte	$53,$59,$d3
-_end74:
+_end78:
 
 ; *** xbreak ***
-	.byte	_end75-*
+	.byte	_end79-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end75:
+_end79:
 
 ; *** xdump ***
-	.byte	_end76-*
+	.byte	_end80-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end76:
+_end80:
 
 ; *** xor ***
-	.byte	_end77-*
+	.byte	_end81-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end77:
+_end81:
 
 	.byte	0
 

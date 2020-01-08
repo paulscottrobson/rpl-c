@@ -17,9 +17,10 @@ RplBuild = $1000 							; code starts here.
 
 		ldx 		#$FF 					; reset the stack
 		txs
-		ldx			#BootCode & $FF 		; boot address
-		ldy 		#BootCode >>8
+		ldx			#ProgramMemory & $FF	; boot address
+		ldy 		#ProgramMemory >>8
 		jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
+		jsr 		ClearVariableSpace 		; clear variables etc.
 		jmp 		Next
 
 		.include 	"core.src"			
@@ -29,6 +30,7 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/arithmetic/multiply.src"
 		.include 	"words/arithmetic/unary.src"
 		.include 	"words/system/callhandler.src"
+		.include 	"words/system/clrnew.src"
 		.include 	"words/system/debug.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/number.src"
@@ -38,9 +40,16 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/data/stack.src"
 		.include 	"words/data/memory.src"
 
+WarmStart:	
+		.byte 	$FF
+		ldx 	#$00
+ErrorHandler:
+		.byte 	$FF
+		ldx 	#$5E
+			
 Dictionary:
 		.include 	"generated/dictionary.inc"
 				
 		* = $3FFF
 		.byte 	$FF
-BootCode:
+ProgramMemory:

@@ -1,0 +1,78 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		clrnew.src
+;		Purpose :	Clr and New
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		8th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;			New erases the current program and clears variables etc.
+;
+; *****************************************************************************
+
+NewHandler:		;; 	new
+		stz 	ProgramMemory 				; Make the first offset zero.
+		jsr 	ClearVariableSpace 			; clear variables, reset pointers
+		jmp 	Next
+
+; *****************************************************************************
+;
+;			Clr clears variables, allocate memory, zero out hash tables.
+;
+; *****************************************************************************
+
+ClrHandler:		;; 	clr
+		jsr 	ClearVariableSpace 			; clear variables, reset pointers
+		jmp 	Next
+		
+; *****************************************************************************
+;
+;		Clear : Erases all memory and allocation, clear out hash tables
+;							  (does not erase A-Z)
+;
+; *****************************************************************************
+
+ClearVariableSpace:
+		set16	nextFreeMem,ProgramMemory	; reset allocated memory pointer.
+		;
+		;		TODO:If using a cache for line lookup, initialise it here.
+		;
+		ldy 	#hashTableSize*2-1 			; erase the hash table (used for variables)
+_CVSHashClear:
+		lda 	#0 							; all the first record pointers are $00
+		sta 	hashTable,y		
+		dey
+		bpl 	_CVSHashClear
+		;
+		;		Skip over the program
+		;
+_CVSFindEnd:
+		advance	nextFreeMem 				; go to next (if empty program will work (x)=0)		
+		lda 	(nextFreeMem)
+		bne 	_CVSFindEnd
+		lda 	#8 							; this puts a gap in, more for clarity than anything.
+		ldy 	#0 
+		jsr 	AdvanceFreeMem				; we need +1 because the previous code leaves the
+		.byte 	$FF
+		rts 								; free mem pointer pointing to the last zero offset
+
+; *****************************************************************************
+;
+;							Advance free memory by YA
+;
+; *****************************************************************************
+
+AdvanceFreeMem:
+		clc
+		adc 	nextFreeMem
+		sta 	nextFreeMem
+		tya
+		adc 	nextFreeMem+1
+		sta 	nextFreeMem+1
+		rts		
+		

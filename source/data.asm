@@ -25,6 +25,9 @@ IP = Next+3 								; the IP which points to the current instruction
 tos:										; top of stack register
 		.word 	?
 
+nextFreeMem:								; next free variable/data memory.
+		.word 	?
+
 temp1:										; general usage zero page
 		.word 	?	
 temp2:	
@@ -53,7 +56,7 @@ stack3High = $103
 
 azVariables = $600 							; 26 x 2 variables occupying 52 bytes.
 hashTableSize = 16 							; hash tables for variables.
-hashTables = $640 							; hash tables start here.
+hashTable = $640 							; hash tables start here.
 
 ; *****************************************************************************
 ;
@@ -62,8 +65,7 @@ hashTables = $640 							; hash tables start here.
 ; *****************************************************************************
 
 rerror	.macro
-		.byte 	$FF
-_w1:	bra 	_w1
+		jsr 	ErrorHandler
 		.text 	\1,0
 		.endm
 
@@ -87,3 +89,13 @@ popTOS 	.macro
 		pla 	 
 		sta 	TOS
 		.endm			
+
+advance	.macro
+		clc
+		lda 	\1
+		adc 	(\1)
+		sta 	\1
+		bcc 	_NoCarryAdv
+		inc 	\1+1
+_NoCarryAdv:
+		.endm				

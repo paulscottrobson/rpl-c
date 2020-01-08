@@ -16,19 +16,13 @@
 ; *****************************************************************************
 
 NextLine: 	;; $$nextline
-		clc 								; add (IP) to IP
-		lda 	IP
-		adc 	(IP)
-		sta 	IP
-		bcc 	_NLNoCarry
-		inc 	IP+1
-_NLNoCarry:
+		advance IP							; push IP to next line.
 		lda 	(IP)						; is there any following program ?
 		beq 	_NLGoEnd
 		ldx 	#3 							; start 3 in
 		jmp 	Next+2 						; avoid the first two INXs
 _NLGoEnd:
-		rerror 	"GOTOEND:TODO"
+		jmp 	WarmStart
 
 ; *****************************************************************************
 ;
