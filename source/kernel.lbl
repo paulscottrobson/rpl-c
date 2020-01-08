@@ -2,6 +2,7 @@ CompareTrue2	= $10b8
 CheckLessEq	= $10ed
 CheckTOSNegate	= $11d3
 WarmStart	= $182f
+BranchTestSucceedsNoPop= $154a
 returnStackX	= 1920
 NHNoFor		= $1502
 Divide16	= $12c7

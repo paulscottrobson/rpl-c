@@ -15,7 +15,7 @@
 ;
 ; *****************************************************************************
 
-BranchIfZero: 
+BranchIfZero: ;; $$0branch noexec hide
 		lda 	TOS 						; check TOS = 0
 		ora 	TOS+1
 		beq 	BranchTestSucceeds
@@ -35,6 +35,8 @@ BranchTestFails:
 
 BranchTestSucceeds:
 		popTOS 								; throw away the test value
+		
+BranchTestSucceedsNoPop:	;; $$branch noexec hide
 		inx 								; advance by two, to the offset
 		inx
 

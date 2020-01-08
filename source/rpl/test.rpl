@@ -1,6 +1,12 @@
 ' comment
-$ABCD
-10 for 333 alloc next
-$CDEF xdump
 
-:tri42 3 for 5 for index next next ;
+0 $9f20 ! 16 $9f22 c!
+
+128 60 * for index 63 and 32 + draw next
+
+repeat 0 until	
+
+
+:draw  dup $9f23 c! $9f23 c! ;
+
+xbreak
