@@ -83,4 +83,25 @@ WordAdd: ;; +! <0>
 		popTOS
 		jmp 	Next
 
+; *****************************************************************************
+;
+;								Allocate memory
+;
+; *****************************************************************************
 
+AllocateMemory: ;; alloc <0>
+		lda 	TOS 						; save memory required on stack.
+		pha
+		lda 	TOS+1
+		pha
+
+		lda 	nextFreeMem 				; copy free mem address to TOS
+		sta 	TOS
+		lda 	nextFreeMem+1
+		sta 	TOS+1
+
+		ply 								; advance the free ram pointer
+		pla
+		jsr 	AdvanceFreeMem
+		jmp 	Next 						; and continue
+		
