@@ -73,4 +73,93 @@ VarWriteHandler:	;; 	$$!handler 	noexec <2>
 ; *****************************************************************************
 
 VariableFind:
-		.byte 	$FF		
+		php 								; save autocreate flag.
+		;
+		;		Extract the name of the variable
+		;
+		inx 								; advance to/over the variable name.
+		inx
+		txa 								; put in Y
+		tay
+		lda 	(IP),y 						; copy name word into temp2, putting it the right way round.
+		sta 	temp2+1
+		iny 	
+		lda 	(IP),y
+		sta 	temp2
+		;
+		; 		Check for, and handle A-Z single letter fixed.
+		;
+		cmp 	#27 						; check for A-Z
+		bcs 	_VFLong
+		lda 	temp2+1
+		bne 	_VFLong
+		;
+		lda 	temp2						; this is the index
+		asl 	a 							; double it
+		sta 	temp1
+		lda 	#azVariables >> 8			; set the MSB
+		sta 	temp1+1
+		plp 								; throw creation flag, it always exists.
+		rts
+		;
+		;		Legal variable, but not A-Z, so look for it in the hash tables.
+		;
+_VFLong:
+		.byte 	$FF
+		lda 	temp2 						; built a hash table index into temp3/temp4
+		ror 	a
+		ror 	a
+		ror 	a
+		ror 	a
+		eor 	temp2
+		eor 	temp2+1
+		and 	#(hashTableSize-1)			; force into range
+		asl 	a
+		adc 	#hashTable & $FF 			; make an address of the head => temp1/4
+		sta 	temp1
+		sta 	temp4
+		lda 	#hashTable >> 8
+		sta 	temp1+1
+		sta 	temp4+1
+		;
+		;		Search the variable list at temp3 for the value in temp2. The list element
+		;		is +0:address of next +2: data +4: name (right way round)
+		;
+_VFSearch:	
+		ldy 	#1							; read MSB of first record
+		lda 	(temp1),y 
+		beq 	_VFNotFound 				; is MSB is zero, can't be a variable record
+		tay 								; follow the link through.
+		lda 	(temp1)
+		sta 	temp1
+		sty 	temp1
+		ldy 	#4							; check if the name matches
+		lda 	(temp1),y
+		cmp 	temp2
+		bne 	_VFSearch 					; if it doesn't, follow the next link.
+		iny 								; same for 2nd byte of name
+		lda 	(temp1),y
+		cmp 	temp2+1
+		bne 	_VFSearch
+		;
+		clc
+		lda 	temp1 						; make temp1 point to the data at offset 2
+		adc 	#2
+		sta 	temp1
+		bcc 	_VFNoPage1
+		inc 	temp1+1
+_VFNoPage1:
+		plp 								; don't need to worry about creation flag
+		rts		
+		;
+		;		Variable not found, check for autocreate, if not report error.
+		;
+_VFNotFound:
+		plp 								; was carry set, e.g. create a new record if not found ?
+		bcs 	_VFCreate
+		rerror 	"VARIABLE?"					; no such variable created.
+		;
+		;		Create variable, name in temp2.
+		;				
+_VFCreate:		
+

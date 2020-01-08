@@ -60,9 +60,10 @@ stack2High = $101							; (which requires saving X, not on the stack !)
 stack3Low = $104
 stack3High = $103
 
-azVariables = $600 							; 26 x 2 variables occupying 52 bytes.
+azVariables = $600 							; 26 x 2 variables occupying 52 bytes * PAGE BOUNDARY *
+
 hashTableSize = 16 							; hash tables for variables.
-hashTable = $640 							; hash tables start here.
+hashTable = $640 							; hash tables start here * ALL ON ONE PAGE *
 
 returnStack = $700							; return stack (1 page)
 returnStackLow = returnStack

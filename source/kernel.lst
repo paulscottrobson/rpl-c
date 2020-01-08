@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.54.1900 listing file
 ; 64tass -q -c -o kernel_nocode.prg -L kernel.lst -l kernel.lbl kernel.asm
-; Wed Jan 08 13:07:16 2020
+; Wed Jan 08 13:35:48 2020
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -38,9 +38,9 @@
 =$101					stack2High = $101							; (which requires saving X, not on the stack !)
 =$104					stack3Low = $104
 =$103					stack3High = $103
-=$600					azVariables = $600 							; 26 x 2 variables occupying 52 bytes.
+=$600					azVariables = $600 							; 26 x 2 variables occupying 52 bytes * PAGE BOUNDARY *
 =16					hashTableSize = 16 							; hash tables for variables.
-=$640					hashTable = $640 							; hash tables start here.
+=$640					hashTable = $640 							; hash tables start here * ALL ON ONE PAGE *
 =$700					returnStack = $700							; return stack (1 page)
 =$700					returnStackLow = returnStack
 =1856					returnStackHigh = returnStack+$40
@@ -296,7 +296,7 @@
 .115e	a5 06		lda $06				lda 	TOS 				; check for division by zero.
 .1160	05 07		ora $07				ora 	TOS+1
 .1162	d0 14		bne $1178			bne 	_BFDOkay
-.1164	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.1164	20 23 17	jsr $1723			jsr 	ErrorHandler
 >1167	44 49 56 49 53 49 4f 4e				.text 	"DIVISION BY ZERO",0
 >116f	20 42 59 20 5a 45 52 4f 00
 .1178					_BFDOkay:
@@ -901,11 +901,11 @@
 .14fc	b2 03		lda ($03)			lda 	(IP)						; check reached the end.
 .14fe	d0 eb		bne $14eb			bne 	_CHSearch
 .1500					_CHFail:
-.1500	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.1500	20 23 17	jsr $1723			jsr 	ErrorHandler
 >1503	44 45 46 49 4e 49 54 49				.text 	"DEFINITION?",0
 >150b	4f 4e 3f 00
 .150f					_CHOverflow:
-.150f	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.150f	20 23 17	jsr $1723			jsr 	ErrorHandler
 >1512	53 54 41 43 4b 44 45 50				.text 	"STACKDEPTH?",0
 >151a	54 48 3f 00
 .151e					_CHFoundLSB:
@@ -941,10 +941,10 @@
 .1553	f0 0e		beq $1563			beq 	_RHInLoop 					; this means you have done :something for ; next
 .1555	4c 00 00	jmp $0000			jmp 	Next
 .1558					_RHUnderflow:
-.1558	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.1558	20 23 17	jsr $1723			jsr 	ErrorHandler
 >155b	52 45 54 55 52 4e 3f 00				.text 	"RETURN?",0
 .1563					_RHInLoop:
-.1563	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.1563	20 23 17	jsr $1723			jsr 	ErrorHandler
 >1566	52 45 54 55 52 4e 20 49				.text 	"RETURN IN LOOP?",0
 >156e	4e 20 4c 4f 4f 50 3f 00
 
@@ -1037,13 +1037,13 @@
 .15e8	85 06		sta $06				sta 	TOS
 .15ea	4c 00 00	jmp $0000			jmp 	Next
 .15ed					_ASFail:
-.15ed	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.15ed	20 23 17	jsr $1723			jsr 	ErrorHandler
 >15f0	41 53 53 45 52 54 00				.text 	"ASSERT",0
 .15f7					StopCode:
-.15f7	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.15f7	20 23 17	jsr $1723			jsr 	ErrorHandler
 >15fa	53 54 4f 50 00					.text 	"STOP",0
 .15ff					EndProgram:
-.15ff	4c e8 16	jmp $16e8			jmp 	WarmStart
+.15ff	4c 20 17	jmp $1720			jmp 	WarmStart
 
 ;******  Return to file: kernel.asm
 
@@ -1139,7 +1139,7 @@
 .1682	a2 03		ldx #$03			ldx 	#3 							; start 3 in
 .1684	4c 02 00	jmp $0002			jmp 	Next+2 						; avoid the first two INXs
 .1687					_NLGoEnd:
-.1687	4c e8 16	jmp $16e8			jmp 	WarmStart
+.1687	4c 20 17	jmp $1720			jmp 	WarmStart
 .168a					SkipComment:
 .168a	e8		inx				inx									; (IP),X points to the length.
 .168b	e8		inx				inx
@@ -1150,7 +1150,7 @@
 .1691	aa		tax				tax 								; put back in X
 .1692	4c 02 00	jmp $0002			jmp 	Next+2 						; continue skipping the pre-increment.
 .1695					DefineCode:
-.1695	20 eb 16	jsr $16eb			jsr 	ErrorHandler
+.1695	20 23 17	jsr $1723			jsr 	ErrorHandler
 >1698	44 45 46 49 4e 49 54 49				.text 	"DEFINITION?",0
 >16a0	4f 4e 3f 00
 
@@ -1198,502 +1198,537 @@
 .16e2	85 06		sta $06				sta 	TOS
 .16e4	4c 00 00	jmp $0000			jmp 	Next
 .16e7					VariableFind:
->16e7	ff						.byte 	$FF
+.16e7	e8		inx				inx 								; advance to/over the variable name.
+.16e8	e8		inx				inx
+.16e9	8a		txa				txa 								; put in Y
+.16ea	a8		tay				tay
+.16eb	b1 03		lda ($03),y			lda 	(IP),y 						; copy name word into temp2, putting it the right way round.
+.16ed	85 0d		sta $0d				sta 	temp2+1
+.16ef	c8		iny				iny
+.16f0	b1 03		lda ($03),y			lda 	(IP),y
+.16f2	85 0c		sta $0c				sta 	temp2
+.16f4	c9 1b		cmp #$1b			cmp 	#27 						; check for A-Z
+.16f6	b0 0e		bcs $1706			bcs 	_VFLong
+.16f8	a5 0d		lda $0d				lda 	temp2+1
+.16fa	d0 0a		bne $1706			bne 	_VFLong
+.16fc	a5 0c		lda $0c				lda 	temp2						; this is the index
+.16fe	0a		asl a				asl 	a 							; double it
+.16ff	85 0a		sta $0a				sta 	temp1
+.1701	a9 06		lda #$06			lda 	#azVariables >> 8			; set the MSB
+.1703	85 0b		sta $0b				sta 	temp1+1
+.1705	60		rts				rts
+.1706					_VFLong:
+>1706	ff						.byte 	$FF
+.1707	a5 0c		lda $0c				lda 	temp2 						; built a hash table index into temp3/temp4
+.1709	6a		ror a				ror 	a
+.170a	6a		ror a				ror 	a
+.170b	6a		ror a				ror 	a
+.170c	6a		ror a				ror 	a
+.170d	45 0c		eor $0c				eor 	temp2
+.170f	45 0d		eor $0d				eor 	temp2+1
+.1711	29 0f		and #$0f			and 	#(hashTableSize-1)			; force into range
+.1713	0a		asl a				asl 	a
+.1714	69 40		adc #$40			adc 	#hashTable & $FF 			; make an address of the head => temp3/4
+.1716	85 0e		sta $0e				sta 	temp3
+.1718	85 10		sta $10				sta 	temp4
+.171a	a9 06		lda #$06			lda 	#hashTable >> 8
+.171c	85 0f		sta $0f				sta 	temp3+1
+.171e	85 11		sta $11				sta 	temp4+1
 
 ;******  Return to file: kernel.asm
 
-.16e8					WarmStart:
->16e8	ff						.byte 	$FF
-.16e9	a2 00		ldx #$00			ldx 	#$00
-.16eb					ErrorHandler:
->16eb	ff						.byte 	$FF
-.16ec	a2 5e		ldx #$5e			ldx 	#$5E
-.16ee					Dictionary:
+.1720					WarmStart:
+>1720	ff						.byte 	$FF
+.1721	a2 00		ldx #$00			ldx 	#$00
+.1723					ErrorHandler:
+>1723	ff						.byte 	$FF
+.1724	a2 5e		ldx #$5e			ldx 	#$5E
+.1726					Dictionary:
 
 ;******  Processing file: generated/dictionary.inc
 
->16ee	05					.byte	_end1-*
->16ef	00					.byte	$00
->16f0	6b 14					.word	WordWrite
->16f2	a1					.byte	$a1
-.16f3					_end1:
->16f3	0e					.byte	_end2-*
->16f4	42					.byte	$42
->16f5	d0 16					.word	VarWriteHandler
->16f7	24 24 21 48 41 4e 44 4c			.byte	$24,$24,$21,$48,$41,$4e,$44,$4c,$45,$d2
->16ff	45 d2
-.1701					_end2:
->1701	0e					.byte	_end3-*
->1702	42					.byte	$42
->1703	a4 16					.word	VarAddressHandler
->1705	24 24 26 48 41 4e 44 4c			.byte	$24,$24,$26,$48,$41,$4e,$44,$4c,$45,$d2
->170d	45 d2
-.170f					_end3:
->170f	0e					.byte	_end4-*
->1710	42					.byte	$42
->1711	b9 16					.word	VarReadHandler
->1713	24 24 40 48 41 4e 44 4c			.byte	$24,$24,$40,$48,$41,$4e,$44,$4c,$45,$d2
->171b	45 d2
-.171d					_end4:
->171d	0a					.byte	_end5-*
->171e	42					.byte	$42
->171f	ba 14					.word	CallHandler
->1721	24 24 43 41 4c cc			.byte	$24,$24,$43,$41,$4c,$cc
-.1727					_end5:
->1727	0d					.byte	_end6-*
->1728	43					.byte	$43
->1729	8a 16					.word	SkipComment
->172b	24 24 43 4f 4d 4d 45 4e			.byte	$24,$24,$43,$4f,$4d,$4d,$45,$4e,$d4
->1733	d4
-.1734					_end6:
->1734	0c					.byte	_end7-*
->1735	43					.byte	$43
->1736	95 16					.word	DefineCode
->1738	24 24 44 45 46 49 4e c5			.byte	$24,$24,$44,$45,$46,$49,$4e,$c5
-.1740					_end7:
->1740	0d					.byte	_end8-*
->1741	42					.byte	$42
->1742	21 10					.word	Literal2Byte
->1744	24 24 4c 49 54 45 52 41			.byte	$24,$24,$4c,$49,$54,$45,$52,$41,$cc
->174c	cc
-.174d					_end8:
->174d	0e					.byte	_end9-*
->174e	80					.byte	$80
->174f	73 16					.word	NextLine
->1751	24 24 4e 45 58 54 4c 49			.byte	$24,$24,$4e,$45,$58,$54,$4c,$49,$4e,$c5
->1759	4e c5
-.175b					_end9:
->175b	0c					.byte	_end10-*
->175c	43					.byte	$43
->175d	37 10					.word	LiteralString
->175f	24 24 53 54 52 49 4e c7			.byte	$24,$24,$53,$54,$52,$49,$4e,$c7
-.1767					_end10:
->1767	05					.byte	_end11-*
->1768	00					.byte	$00
->1769	e7 11					.word	Multiply16x16
->176b	aa					.byte	$aa
-.176c					_end11:
->176c	05					.byte	_end12-*
->176d	00					.byte	$00
->176e	54 10					.word	Add
->1770	ab					.byte	$ab
-.1771					_end12:
->1771	06					.byte	_end13-*
->1772	00					.byte	$00
->1773	7c 14					.word	WordAdd
->1775	2b a1					.byte	$2b,$a1
-.1777					_end13:
->1777	05					.byte	_end14-*
->1778	00					.byte	$00
->1779	63 10					.word	Subtract
->177b	ad					.byte	$ad
-.177c					_end14:
->177c	06					.byte	_end15-*
->177d	00					.byte	$00
->177e	23 13					.word	ConstantMinus1
->1780	2d b1					.byte	$2d,$b1
-.1782					_end15:
->1782	05					.byte	_end16-*
->1783	00					.byte	$00
->1784	38 11					.word	Divide16x16
->1786	af					.byte	$af
-.1787					_end16:
->1787	05					.byte	_end17-*
->1788	00					.byte	$00
->1789	16 13					.word	Constant0
->178b	b0					.byte	$b0
-.178c					_end17:
->178c	06					.byte	_end18-*
->178d	00					.byte	$00
->178e	7c 12					.word	CheckMinus
->1790	30 bc					.byte	$30,$bc
-.1792					_end18:
->1792	06					.byte	_end19-*
->1793	00					.byte	$00
->1794	90 12					.word	CheckZero
->1796	30 bd					.byte	$30,$bd
-.1798					_end19:
->1798	05					.byte	_end20-*
->1799	00					.byte	$00
->179a	32 13					.word	C1
->179c	b1					.byte	$b1
-.179d					_end20:
->179d	06					.byte	_end21-*
->179e	00					.byte	$00
->179f	26 12					.word	Unary1Plus
->17a1	31 ab					.byte	$31,$ab
-.17a3					_end21:
->17a3	06					.byte	_end22-*
->17a4	00					.byte	$00
->17a5	3d 12					.word	Unary1Minus
->17a7	31 ad					.byte	$31,$ad
-.17a9					_end22:
->17a9	06					.byte	_end23-*
+>1726	05					.byte	_end1-*
+>1727	00					.byte	$00
+>1728	6b 14					.word	WordWrite
+>172a	a1					.byte	$a1
+.172b					_end1:
+>172b	0e					.byte	_end2-*
+>172c	42					.byte	$42
+>172d	d0 16					.word	VarWriteHandler
+>172f	24 24 21 48 41 4e 44 4c			.byte	$24,$24,$21,$48,$41,$4e,$44,$4c,$45,$d2
+>1737	45 d2
+.1739					_end2:
+>1739	0e					.byte	_end3-*
+>173a	42					.byte	$42
+>173b	a4 16					.word	VarAddressHandler
+>173d	24 24 26 48 41 4e 44 4c			.byte	$24,$24,$26,$48,$41,$4e,$44,$4c,$45,$d2
+>1745	45 d2
+.1747					_end3:
+>1747	0e					.byte	_end4-*
+>1748	42					.byte	$42
+>1749	b9 16					.word	VarReadHandler
+>174b	24 24 40 48 41 4e 44 4c			.byte	$24,$24,$40,$48,$41,$4e,$44,$4c,$45,$d2
+>1753	45 d2
+.1755					_end4:
+>1755	0a					.byte	_end5-*
+>1756	42					.byte	$42
+>1757	ba 14					.word	CallHandler
+>1759	24 24 43 41 4c cc			.byte	$24,$24,$43,$41,$4c,$cc
+.175f					_end5:
+>175f	0d					.byte	_end6-*
+>1760	43					.byte	$43
+>1761	8a 16					.word	SkipComment
+>1763	24 24 43 4f 4d 4d 45 4e			.byte	$24,$24,$43,$4f,$4d,$4d,$45,$4e,$d4
+>176b	d4
+.176c					_end6:
+>176c	0c					.byte	_end7-*
+>176d	43					.byte	$43
+>176e	95 16					.word	DefineCode
+>1770	24 24 44 45 46 49 4e c5			.byte	$24,$24,$44,$45,$46,$49,$4e,$c5
+.1778					_end7:
+>1778	0d					.byte	_end8-*
+>1779	42					.byte	$42
+>177a	21 10					.word	Literal2Byte
+>177c	24 24 4c 49 54 45 52 41			.byte	$24,$24,$4c,$49,$54,$45,$52,$41,$cc
+>1784	cc
+.1785					_end8:
+>1785	0e					.byte	_end9-*
+>1786	80					.byte	$80
+>1787	73 16					.word	NextLine
+>1789	24 24 4e 45 58 54 4c 49			.byte	$24,$24,$4e,$45,$58,$54,$4c,$49,$4e,$c5
+>1791	4e c5
+.1793					_end9:
+>1793	0c					.byte	_end10-*
+>1794	43					.byte	$43
+>1795	37 10					.word	LiteralString
+>1797	24 24 53 54 52 49 4e c7			.byte	$24,$24,$53,$54,$52,$49,$4e,$c7
+.179f					_end10:
+>179f	05					.byte	_end11-*
+>17a0	00					.byte	$00
+>17a1	e7 11					.word	Multiply16x16
+>17a3	aa					.byte	$aa
+.17a4					_end11:
+>17a4	05					.byte	_end12-*
+>17a5	00					.byte	$00
+>17a6	54 10					.word	Add
+>17a8	ab					.byte	$ab
+.17a9					_end12:
+>17a9	06					.byte	_end13-*
 >17aa	00					.byte	$00
->17ab	4a 13					.word	C10
->17ad	31 b0					.byte	$31,$b0
-.17af					_end23:
->17af	07					.byte	_end24-*
+>17ab	7c 14					.word	WordAdd
+>17ad	2b a1					.byte	$2b,$a1
+.17af					_end13:
+>17af	05					.byte	_end14-*
 >17b0	00					.byte	$00
->17b1	73 13					.word	C100
->17b3	31 30 b0				.byte	$31,$30,$b0
-.17b6					_end24:
->17b6	08					.byte	_end25-*
->17b7	00					.byte	$00
->17b8	a2 13					.word	C1024
->17ba	31 30 32 b4				.byte	$31,$30,$32,$b4
-.17be					_end25:
->17be	07					.byte	_end26-*
->17bf	00					.byte	$00
->17c0	77 13					.word	C127
->17c2	31 32 b7				.byte	$31,$32,$b7
-.17c5					_end26:
->17c5	07					.byte	_end27-*
->17c6	00					.byte	$00
->17c7	7b 13					.word	C128
->17c9	31 32 b8				.byte	$31,$32,$b8
-.17cc					_end27:
->17cc	06					.byte	_end28-*
->17cd	00					.byte	$00
->17ce	4e 13					.word	C15
->17d0	31 b5					.byte	$31,$b5
-.17d2					_end28:
->17d2	06					.byte	_end29-*
->17d3	00					.byte	$00
->17d4	52 13					.word	C16
->17d6	31 b6					.byte	$31,$b6
-.17d8					_end29:
->17d8	07					.byte	_end30-*
->17d9	00					.byte	$00
->17da	b4 12					.word	Times16
->17dc	31 36 aa				.byte	$31,$36,$aa
-.17df					_end30:
->17df	07					.byte	_end31-*
->17e0	00					.byte	$00
->17e1	c7 12					.word	Divide16
->17e3	31 36 af				.byte	$31,$36,$af
-.17e6					_end31:
->17e6	05					.byte	_end32-*
->17e7	00					.byte	$00
->17e8	36 13					.word	C2
->17ea	b2					.byte	$b2
-.17eb					_end32:
->17eb	06					.byte	_end33-*
->17ec	00					.byte	$00
->17ed	c0 12					.word	Times2
->17ef	32 aa					.byte	$32,$aa
-.17f1					_end33:
->17f1	06					.byte	_end34-*
->17f2	00					.byte	$00
->17f3	2f 12					.word	Unary2Plus
->17f5	32 ab					.byte	$32,$ab
-.17f7					_end34:
->17f7	06					.byte	_end35-*
->17f8	00					.byte	$00
->17f9	48 12					.word	Unary2Minus
->17fb	32 ad					.byte	$32,$ad
-.17fd					_end35:
->17fd	06					.byte	_end36-*
+>17b1	63 10					.word	Subtract
+>17b3	ad					.byte	$ad
+.17b4					_end14:
+>17b4	06					.byte	_end15-*
+>17b5	00					.byte	$00
+>17b6	23 13					.word	ConstantMinus1
+>17b8	2d b1					.byte	$2d,$b1
+.17ba					_end15:
+>17ba	05					.byte	_end16-*
+>17bb	00					.byte	$00
+>17bc	38 11					.word	Divide16x16
+>17be	af					.byte	$af
+.17bf					_end16:
+>17bf	05					.byte	_end17-*
+>17c0	00					.byte	$00
+>17c1	16 13					.word	Constant0
+>17c3	b0					.byte	$b0
+.17c4					_end17:
+>17c4	06					.byte	_end18-*
+>17c5	00					.byte	$00
+>17c6	7c 12					.word	CheckMinus
+>17c8	30 bc					.byte	$30,$bc
+.17ca					_end18:
+>17ca	06					.byte	_end19-*
+>17cb	00					.byte	$00
+>17cc	90 12					.word	CheckZero
+>17ce	30 bd					.byte	$30,$bd
+.17d0					_end19:
+>17d0	05					.byte	_end20-*
+>17d1	00					.byte	$00
+>17d2	32 13					.word	C1
+>17d4	b1					.byte	$b1
+.17d5					_end20:
+>17d5	06					.byte	_end21-*
+>17d6	00					.byte	$00
+>17d7	26 12					.word	Unary1Plus
+>17d9	31 ab					.byte	$31,$ab
+.17db					_end21:
+>17db	06					.byte	_end22-*
+>17dc	00					.byte	$00
+>17dd	3d 12					.word	Unary1Minus
+>17df	31 ad					.byte	$31,$ad
+.17e1					_end22:
+>17e1	06					.byte	_end23-*
+>17e2	00					.byte	$00
+>17e3	4a 13					.word	C10
+>17e5	31 b0					.byte	$31,$b0
+.17e7					_end23:
+>17e7	07					.byte	_end24-*
+>17e8	00					.byte	$00
+>17e9	73 13					.word	C100
+>17eb	31 30 b0				.byte	$31,$30,$b0
+.17ee					_end24:
+>17ee	08					.byte	_end25-*
+>17ef	00					.byte	$00
+>17f0	a2 13					.word	C1024
+>17f2	31 30 32 b4				.byte	$31,$30,$32,$b4
+.17f6					_end25:
+>17f6	07					.byte	_end26-*
+>17f7	00					.byte	$00
+>17f8	77 13					.word	C127
+>17fa	31 32 b7				.byte	$31,$32,$b7
+.17fd					_end26:
+>17fd	07					.byte	_end27-*
 >17fe	00					.byte	$00
->17ff	d3 12					.word	Divide2
->1801	32 af					.byte	$32,$af
-.1803					_end36:
->1803	06					.byte	_end37-*
->1804	00					.byte	$00
->1805	56 13					.word	C24
->1807	32 b4					.byte	$32,$b4
-.1809					_end37:
->1809	07					.byte	_end38-*
->180a	00					.byte	$00
->180b	7f 13					.word	C255
->180d	32 35 b5				.byte	$32,$35,$b5
-.1810					_end38:
->1810	07					.byte	_end39-*
+>17ff	7b 13					.word	C128
+>1801	31 32 b8				.byte	$31,$32,$b8
+.1804					_end27:
+>1804	06					.byte	_end28-*
+>1805	00					.byte	$00
+>1806	4e 13					.word	C15
+>1808	31 b5					.byte	$31,$b5
+.180a					_end28:
+>180a	06					.byte	_end29-*
+>180b	00					.byte	$00
+>180c	52 13					.word	C16
+>180e	31 b6					.byte	$31,$b6
+.1810					_end29:
+>1810	07					.byte	_end30-*
 >1811	00					.byte	$00
->1812	8a 13					.word	C256
->1814	32 35 b6				.byte	$32,$35,$b6
-.1817					_end39:
->1817	08					.byte	_end40-*
+>1812	b4 12					.word	Times16
+>1814	31 36 aa				.byte	$31,$36,$aa
+.1817					_end30:
+>1817	07					.byte	_end31-*
 >1818	00					.byte	$00
->1819	da 12					.word	Times256
->181b	32 35 36 aa				.byte	$32,$35,$36,$aa
-.181f					_end40:
->181f	08					.byte	_end41-*
->1820	00					.byte	$00
->1821	e3 12					.word	Divide256
->1823	32 35 36 af				.byte	$32,$35,$36,$af
-.1827					_end41:
->1827	05					.byte	_end42-*
->1828	00					.byte	$00
->1829	3a 13					.word	C3
->182b	b3					.byte	$b3
-.182c					_end42:
->182c	06					.byte	_end43-*
->182d	00					.byte	$00
->182e	67 13					.word	C32
->1830	33 b2					.byte	$33,$b2
-.1832					_end43:
->1832	09					.byte	_end44-*
->1833	00					.byte	$00
->1834	ba 13					.word	C32767
->1836	33 32 37 36 b7				.byte	$33,$32,$37,$36,$b7
-.183b					_end44:
->183b	09					.byte	_end45-*
+>1819	c7 12					.word	Divide16
+>181b	31 36 af				.byte	$31,$36,$af
+.181e					_end31:
+>181e	05					.byte	_end32-*
+>181f	00					.byte	$00
+>1820	36 13					.word	C2
+>1822	b2					.byte	$b2
+.1823					_end32:
+>1823	06					.byte	_end33-*
+>1824	00					.byte	$00
+>1825	c0 12					.word	Times2
+>1827	32 aa					.byte	$32,$aa
+.1829					_end33:
+>1829	06					.byte	_end34-*
+>182a	00					.byte	$00
+>182b	2f 12					.word	Unary2Plus
+>182d	32 ab					.byte	$32,$ab
+.182f					_end34:
+>182f	06					.byte	_end35-*
+>1830	00					.byte	$00
+>1831	48 12					.word	Unary2Minus
+>1833	32 ad					.byte	$32,$ad
+.1835					_end35:
+>1835	06					.byte	_end36-*
+>1836	00					.byte	$00
+>1837	d3 12					.word	Divide2
+>1839	32 af					.byte	$32,$af
+.183b					_end36:
+>183b	06					.byte	_end37-*
 >183c	00					.byte	$00
->183d	c6 13					.word	C32768
->183f	33 32 37 36 b8				.byte	$33,$32,$37,$36,$b8
-.1844					_end45:
->1844	05					.byte	_end46-*
->1845	00					.byte	$00
->1846	3e 13					.word	C4
->1848	b4					.byte	$b4
-.1849					_end46:
->1849	06					.byte	_end47-*
->184a	00					.byte	$00
->184b	bc 12					.word	Times4
->184d	34 aa					.byte	$34,$aa
-.184f					_end47:
->184f	06					.byte	_end48-*
+>183d	56 13					.word	C24
+>183f	32 b4					.byte	$32,$b4
+.1841					_end37:
+>1841	07					.byte	_end38-*
+>1842	00					.byte	$00
+>1843	7f 13					.word	C255
+>1845	32 35 b5				.byte	$32,$35,$b5
+.1848					_end38:
+>1848	07					.byte	_end39-*
+>1849	00					.byte	$00
+>184a	8a 13					.word	C256
+>184c	32 35 b6				.byte	$32,$35,$b6
+.184f					_end39:
+>184f	08					.byte	_end40-*
 >1850	00					.byte	$00
->1851	cf 12					.word	Divide4
->1853	34 af					.byte	$34,$af
-.1855					_end48:
->1855	08					.byte	_end49-*
->1856	00					.byte	$00
->1857	ae 13					.word	C4096
->1859	34 30 39 b6				.byte	$34,$30,$39,$b6
-.185d					_end49:
->185d	05					.byte	_end50-*
->185e	00					.byte	$00
->185f	42 13					.word	C5
->1861	b5					.byte	$b5
-.1862					_end50:
->1862	07					.byte	_end51-*
->1863	00					.byte	$00
->1864	96 13					.word	C512
->1866	35 31 b2				.byte	$35,$31,$b2
-.1869					_end51:
->1869	06					.byte	_end52-*
->186a	00					.byte	$00
->186b	6b 13					.word	C63
->186d	36 b3					.byte	$36,$b3
-.186f					_end52:
->186f	06					.byte	_end53-*
->1870	00					.byte	$00
->1871	6f 13					.word	C64
->1873	36 b4					.byte	$36,$b4
-.1875					_end53:
->1875	05					.byte	_end54-*
->1876	00					.byte	$00
->1877	46 13					.word	C8
->1879	b8					.byte	$b8
-.187a					_end54:
->187a	06					.byte	_end55-*
->187b	00					.byte	$00
->187c	b8 12					.word	Times8
->187e	38 aa					.byte	$38,$aa
-.1880					_end55:
->1880	06					.byte	_end56-*
->1881	00					.byte	$00
->1882	cb 12					.word	Divide8
->1884	38 af					.byte	$38,$af
-.1886					_end56:
->1886	05					.byte	_end57-*
->1887	40					.byte	$40
->1888	3f 15					.word	ReturnHandler
->188a	bb					.byte	$bb
-.188b					_end57:
->188b	05					.byte	_end58-*
->188c	00					.byte	$00
->188d	d4 10					.word	CheckLess
->188f	bc					.byte	$bc
-.1890					_end58:
->1890	06					.byte	_end59-*
->1891	00					.byte	$00
->1892	ed 10					.word	CheckLessEq
->1894	3c bd					.byte	$3c,$bd
-.1896					_end59:
->1896	06					.byte	_end60-*
->1897	00					.byte	$00
->1898	9d 10					.word	CheckNotEqual
->189a	3c be					.byte	$3c,$be
-.189c					_end60:
->189c	05					.byte	_end61-*
->189d	00					.byte	$00
->189e	a0 10					.word	CheckEqual
->18a0	bd					.byte	$bd
-.18a1					_end61:
->18a1	05					.byte	_end62-*
+>1851	da 12					.word	Times256
+>1853	32 35 36 aa				.byte	$32,$35,$36,$aa
+.1857					_end40:
+>1857	08					.byte	_end41-*
+>1858	00					.byte	$00
+>1859	e3 12					.word	Divide256
+>185b	32 35 36 af				.byte	$32,$35,$36,$af
+.185f					_end41:
+>185f	05					.byte	_end42-*
+>1860	00					.byte	$00
+>1861	3a 13					.word	C3
+>1863	b3					.byte	$b3
+.1864					_end42:
+>1864	06					.byte	_end43-*
+>1865	00					.byte	$00
+>1866	67 13					.word	C32
+>1868	33 b2					.byte	$33,$b2
+.186a					_end43:
+>186a	09					.byte	_end44-*
+>186b	00					.byte	$00
+>186c	ba 13					.word	C32767
+>186e	33 32 37 36 b7				.byte	$33,$32,$37,$36,$b7
+.1873					_end44:
+>1873	09					.byte	_end45-*
+>1874	00					.byte	$00
+>1875	c6 13					.word	C32768
+>1877	33 32 37 36 b8				.byte	$33,$32,$37,$36,$b8
+.187c					_end45:
+>187c	05					.byte	_end46-*
+>187d	00					.byte	$00
+>187e	3e 13					.word	C4
+>1880	b4					.byte	$b4
+.1881					_end46:
+>1881	06					.byte	_end47-*
+>1882	00					.byte	$00
+>1883	bc 12					.word	Times4
+>1885	34 aa					.byte	$34,$aa
+.1887					_end47:
+>1887	06					.byte	_end48-*
+>1888	00					.byte	$00
+>1889	cf 12					.word	Divide4
+>188b	34 af					.byte	$34,$af
+.188d					_end48:
+>188d	08					.byte	_end49-*
+>188e	00					.byte	$00
+>188f	ae 13					.word	C4096
+>1891	34 30 39 b6				.byte	$34,$30,$39,$b6
+.1895					_end49:
+>1895	05					.byte	_end50-*
+>1896	00					.byte	$00
+>1897	42 13					.word	C5
+>1899	b5					.byte	$b5
+.189a					_end50:
+>189a	07					.byte	_end51-*
+>189b	00					.byte	$00
+>189c	96 13					.word	C512
+>189e	35 31 b2				.byte	$35,$31,$b2
+.18a1					_end51:
+>18a1	06					.byte	_end52-*
 >18a2	00					.byte	$00
->18a3	f0 10					.word	CheckGreater
->18a5	be					.byte	$be
-.18a6					_end62:
->18a6	06					.byte	_end63-*
->18a7	00					.byte	$00
->18a8	d1 10					.word	CheckGreaterEq
->18aa	3e bd					.byte	$3e,$bd
-.18ac					_end63:
->18ac	08					.byte	_end64-*
->18ad	00					.byte	$00
->18ae	db 13					.word	TestDup
->18b0	3f 44 55 d0				.byte	$3f,$44,$55,$d0
-.18b4					_end64:
->18b4	05					.byte	_end65-*
->18b5	00					.byte	$00
->18b6	50 14					.word	WordRead
->18b8	c0					.byte	$c0
-.18b9					_end65:
->18b9	07					.byte	_end66-*
->18ba	00					.byte	$00
->18bb	56 12					.word	Absolute
->18bd	41 42 d3				.byte	$41,$42,$d3
-.18c0					_end66:
->18c0	07					.byte	_end67-*
->18c1	00					.byte	$00
->18c2	76 10					.word	And
->18c4	41 4e c4				.byte	$41,$4e,$c4
-.18c7					_end67:
->18c7	0a					.byte	_end68-*
->18c8	00					.byte	$00
->18c9	de 15					.word	AssertCode
->18cb	41 53 53 45 52 d4			.byte	$41,$53,$53,$45,$52,$d4
-.18d1					_end68:
->18d1	09					.byte	_end69-*
->18d2	00					.byte	$00
->18d3	a9 12					.word	ByteSwap
->18d5	42 53 57 41 d0				.byte	$42,$53,$57,$41,$d0
-.18da					_end69:
->18da	06					.byte	_end70-*
->18db	00					.byte	$00
->18dc	5e 14					.word	ByteWrite
->18de	43 a1					.byte	$43,$a1
-.18e0					_end70:
->18e0	06					.byte	_end71-*
->18e1	00					.byte	$00
->18e2	47 14					.word	ByteRead
->18e4	43 c0					.byte	$43,$c0
-.18e6					_end71:
->18e6	07					.byte	_end72-*
->18e7	00					.byte	$00
->18e8	7f 15					.word	ClrHandler
->18ea	43 4c d2				.byte	$43,$4c,$d2
-.18ed					_end72:
->18ed	08					.byte	_end73-*
->18ee	00					.byte	$00
->18ef	d2 13					.word	Drop
->18f1	44 52 4f d0				.byte	$44,$52,$4f,$d0
-.18f5					_end73:
->18f5	07					.byte	_end74-*
->18f6	00					.byte	$00
->18f7	e4 13					.word	Dup
->18f9	44 55 d0				.byte	$44,$55,$d0
-.18fc					_end74:
->18fc	07					.byte	_end75-*
->18fd	00					.byte	$00
->18fe	ff 15					.word	EndProgram
->1900	45 4e c4				.byte	$45,$4e,$c4
-.1903					_end75:
->1903	07					.byte	_end76-*
->1904	00					.byte	$00
->1905	0d 11					.word	Maximum
->1907	4d 41 d8				.byte	$4d,$41,$d8
-.190a					_end76:
->190a	07					.byte	_end77-*
->190b	00					.byte	$00
->190c	09 11					.word	Minimum
->190e	4d 49 ce				.byte	$4d,$49,$ce
-.1911					_end77:
->1911	07					.byte	_end78-*
->1912	00					.byte	$00
->1913	49 11					.word	Modulus16x16
->1915	4d 4f c4				.byte	$4d,$4f,$c4
-.1918					_end78:
->1918	0a					.byte	_end79-*
+>18a3	6b 13					.word	C63
+>18a5	36 b3					.byte	$36,$b3
+.18a7					_end52:
+>18a7	06					.byte	_end53-*
+>18a8	00					.byte	$00
+>18a9	6f 13					.word	C64
+>18ab	36 b4					.byte	$36,$b4
+.18ad					_end53:
+>18ad	05					.byte	_end54-*
+>18ae	00					.byte	$00
+>18af	46 13					.word	C8
+>18b1	b8					.byte	$b8
+.18b2					_end54:
+>18b2	06					.byte	_end55-*
+>18b3	00					.byte	$00
+>18b4	b8 12					.word	Times8
+>18b6	38 aa					.byte	$38,$aa
+.18b8					_end55:
+>18b8	06					.byte	_end56-*
+>18b9	00					.byte	$00
+>18ba	cb 12					.word	Divide8
+>18bc	38 af					.byte	$38,$af
+.18be					_end56:
+>18be	05					.byte	_end57-*
+>18bf	40					.byte	$40
+>18c0	3f 15					.word	ReturnHandler
+>18c2	bb					.byte	$bb
+.18c3					_end57:
+>18c3	05					.byte	_end58-*
+>18c4	00					.byte	$00
+>18c5	d4 10					.word	CheckLess
+>18c7	bc					.byte	$bc
+.18c8					_end58:
+>18c8	06					.byte	_end59-*
+>18c9	00					.byte	$00
+>18ca	ed 10					.word	CheckLessEq
+>18cc	3c bd					.byte	$3c,$bd
+.18ce					_end59:
+>18ce	06					.byte	_end60-*
+>18cf	00					.byte	$00
+>18d0	9d 10					.word	CheckNotEqual
+>18d2	3c be					.byte	$3c,$be
+.18d4					_end60:
+>18d4	05					.byte	_end61-*
+>18d5	00					.byte	$00
+>18d6	a0 10					.word	CheckEqual
+>18d8	bd					.byte	$bd
+.18d9					_end61:
+>18d9	05					.byte	_end62-*
+>18da	00					.byte	$00
+>18db	f0 10					.word	CheckGreater
+>18dd	be					.byte	$be
+.18de					_end62:
+>18de	06					.byte	_end63-*
+>18df	00					.byte	$00
+>18e0	d1 10					.word	CheckGreaterEq
+>18e2	3e bd					.byte	$3e,$bd
+.18e4					_end63:
+>18e4	08					.byte	_end64-*
+>18e5	00					.byte	$00
+>18e6	db 13					.word	TestDup
+>18e8	3f 44 55 d0				.byte	$3f,$44,$55,$d0
+.18ec					_end64:
+>18ec	05					.byte	_end65-*
+>18ed	00					.byte	$00
+>18ee	50 14					.word	WordRead
+>18f0	c0					.byte	$c0
+.18f1					_end65:
+>18f1	07					.byte	_end66-*
+>18f2	00					.byte	$00
+>18f3	56 12					.word	Absolute
+>18f5	41 42 d3				.byte	$41,$42,$d3
+.18f8					_end66:
+>18f8	07					.byte	_end67-*
+>18f9	00					.byte	$00
+>18fa	76 10					.word	And
+>18fc	41 4e c4				.byte	$41,$4e,$c4
+.18ff					_end67:
+>18ff	0a					.byte	_end68-*
+>1900	00					.byte	$00
+>1901	de 15					.word	AssertCode
+>1903	41 53 53 45 52 d4			.byte	$41,$53,$53,$45,$52,$d4
+.1909					_end68:
+>1909	09					.byte	_end69-*
+>190a	00					.byte	$00
+>190b	a9 12					.word	ByteSwap
+>190d	42 53 57 41 d0				.byte	$42,$53,$57,$41,$d0
+.1912					_end69:
+>1912	06					.byte	_end70-*
+>1913	00					.byte	$00
+>1914	5e 14					.word	ByteWrite
+>1916	43 a1					.byte	$43,$a1
+.1918					_end70:
+>1918	06					.byte	_end71-*
 >1919	00					.byte	$00
->191a	5d 12					.word	Negate
->191c	4e 45 47 41 54 c5			.byte	$4e,$45,$47,$41,$54,$c5
-.1922					_end79:
->1922	07					.byte	_end80-*
->1923	00					.byte	$00
->1924	76 15					.word	NewHandler
->1926	4e 45 d7				.byte	$4e,$45,$d7
-.1929					_end80:
->1929	07					.byte	_end81-*
->192a	00					.byte	$00
->192b	18 14					.word	Nip
->192d	4e 49 d0				.byte	$4e,$49,$d0
-.1930					_end81:
->1930	07					.byte	_end82-*
->1931	00					.byte	$00
->1932	6d 12					.word	OneComplement
->1934	4e 4f d4				.byte	$4e,$4f,$d4
-.1937					_end82:
->1937	06					.byte	_end83-*
->1938	00					.byte	$00
->1939	90 10					.word	LogOr
->193b	4f d2					.byte	$4f,$d2
-.193d					_end83:
->193d	08					.byte	_end84-*
->193e	00					.byte	$00
->193f	00 14					.word	Over
->1941	4f 56 45 d2				.byte	$4f,$56,$45,$d2
-.1945					_end84:
->1945	0a					.byte	_end85-*
->1946	00					.byte	$00
->1947	93 14					.word	RepeatHandler
->1949	52 45 50 45 41 d4			.byte	$52,$45,$50,$45,$41,$d4
-.194f					_end85:
->194f	07					.byte	_end86-*
->1950	00					.byte	$00
->1951	ec 12					.word	RandomNumber
->1953	52 4e c4				.byte	$52,$4e,$c4
-.1956					_end86:
->1956	07					.byte	_end87-*
->1957	00					.byte	$00
->1958	1d 14					.word	Rot
->195a	52 4f d4				.byte	$52,$4f,$d4
-.195d					_end87:
->195d	07					.byte	_end88-*
->195e	00					.byte	$00
->195f	98 12					.word	SignTOS
->1961	53 47 ce				.byte	$53,$47,$ce
-.1964					_end88:
->1964	08					.byte	_end89-*
->1965	00					.byte	$00
->1966	f7 15					.word	StopCode
->1968	53 54 4f d0				.byte	$53,$54,$4f,$d0
-.196c					_end89:
->196c	08					.byte	_end90-*
->196d	00					.byte	$00
->196e	ed 13					.word	Swap
->1970	53 57 41 d0				.byte	$53,$57,$41,$d0
-.1974					_end90:
->1974	07					.byte	_end91-*
->1975	00					.byte	$00
->1976	c7 15					.word	Call6502
->1978	53 59 d3				.byte	$53,$59,$d3
-.197b					_end91:
->197b	09					.byte	_end92-*
->197c	01					.byte	$01
->197d	96 14					.word	UntilHandler
->197f	55 4e 54 49 cc				.byte	$55,$4e,$54,$49,$cc
-.1984					_end92:
->1984	0a					.byte	_end93-*
->1985	40					.byte	$40
->1986	c3 15					.word	BreakCmd
->1988	58 42 52 45 41 cb			.byte	$58,$42,$52,$45,$41,$cb
-.198e					_end93:
->198e	09					.byte	_end94-*
+>191a	47 14					.word	ByteRead
+>191c	43 c0					.byte	$43,$c0
+.191e					_end71:
+>191e	07					.byte	_end72-*
+>191f	00					.byte	$00
+>1920	7f 15					.word	ClrHandler
+>1922	43 4c d2				.byte	$43,$4c,$d2
+.1925					_end72:
+>1925	08					.byte	_end73-*
+>1926	00					.byte	$00
+>1927	d2 13					.word	Drop
+>1929	44 52 4f d0				.byte	$44,$52,$4f,$d0
+.192d					_end73:
+>192d	07					.byte	_end74-*
+>192e	00					.byte	$00
+>192f	e4 13					.word	Dup
+>1931	44 55 d0				.byte	$44,$55,$d0
+.1934					_end74:
+>1934	07					.byte	_end75-*
+>1935	00					.byte	$00
+>1936	ff 15					.word	EndProgram
+>1938	45 4e c4				.byte	$45,$4e,$c4
+.193b					_end75:
+>193b	07					.byte	_end76-*
+>193c	00					.byte	$00
+>193d	0d 11					.word	Maximum
+>193f	4d 41 d8				.byte	$4d,$41,$d8
+.1942					_end76:
+>1942	07					.byte	_end77-*
+>1943	00					.byte	$00
+>1944	09 11					.word	Minimum
+>1946	4d 49 ce				.byte	$4d,$49,$ce
+.1949					_end77:
+>1949	07					.byte	_end78-*
+>194a	00					.byte	$00
+>194b	49 11					.word	Modulus16x16
+>194d	4d 4f c4				.byte	$4d,$4f,$c4
+.1950					_end78:
+>1950	0a					.byte	_end79-*
+>1951	00					.byte	$00
+>1952	5d 12					.word	Negate
+>1954	4e 45 47 41 54 c5			.byte	$4e,$45,$47,$41,$54,$c5
+.195a					_end79:
+>195a	07					.byte	_end80-*
+>195b	00					.byte	$00
+>195c	76 15					.word	NewHandler
+>195e	4e 45 d7				.byte	$4e,$45,$d7
+.1961					_end80:
+>1961	07					.byte	_end81-*
+>1962	00					.byte	$00
+>1963	18 14					.word	Nip
+>1965	4e 49 d0				.byte	$4e,$49,$d0
+.1968					_end81:
+>1968	07					.byte	_end82-*
+>1969	00					.byte	$00
+>196a	6d 12					.word	OneComplement
+>196c	4e 4f d4				.byte	$4e,$4f,$d4
+.196f					_end82:
+>196f	06					.byte	_end83-*
+>1970	00					.byte	$00
+>1971	90 10					.word	LogOr
+>1973	4f d2					.byte	$4f,$d2
+.1975					_end83:
+>1975	08					.byte	_end84-*
+>1976	00					.byte	$00
+>1977	00 14					.word	Over
+>1979	4f 56 45 d2				.byte	$4f,$56,$45,$d2
+.197d					_end84:
+>197d	0a					.byte	_end85-*
+>197e	00					.byte	$00
+>197f	93 14					.word	RepeatHandler
+>1981	52 45 50 45 41 d4			.byte	$52,$45,$50,$45,$41,$d4
+.1987					_end85:
+>1987	07					.byte	_end86-*
+>1988	00					.byte	$00
+>1989	ec 12					.word	RandomNumber
+>198b	52 4e c4				.byte	$52,$4e,$c4
+.198e					_end86:
+>198e	07					.byte	_end87-*
 >198f	00					.byte	$00
->1990	bd 15					.word	ExitDump
->1992	58 44 55 4d d0				.byte	$58,$44,$55,$4d,$d0
-.1997					_end94:
->1997	07					.byte	_end95-*
->1998	00					.byte	$00
->1999	83 10					.word	Xor
->199b	58 4f d2				.byte	$58,$4f,$d2
-.199e					_end95:
->199e	00					.byte	0
+>1990	1d 14					.word	Rot
+>1992	52 4f d4				.byte	$52,$4f,$d4
+.1995					_end87:
+>1995	07					.byte	_end88-*
+>1996	00					.byte	$00
+>1997	98 12					.word	SignTOS
+>1999	53 47 ce				.byte	$53,$47,$ce
+.199c					_end88:
+>199c	08					.byte	_end89-*
+>199d	00					.byte	$00
+>199e	f7 15					.word	StopCode
+>19a0	53 54 4f d0				.byte	$53,$54,$4f,$d0
+.19a4					_end89:
+>19a4	08					.byte	_end90-*
+>19a5	00					.byte	$00
+>19a6	ed 13					.word	Swap
+>19a8	53 57 41 d0				.byte	$53,$57,$41,$d0
+.19ac					_end90:
+>19ac	07					.byte	_end91-*
+>19ad	00					.byte	$00
+>19ae	c7 15					.word	Call6502
+>19b0	53 59 d3				.byte	$53,$59,$d3
+.19b3					_end91:
+>19b3	09					.byte	_end92-*
+>19b4	01					.byte	$01
+>19b5	96 14					.word	UntilHandler
+>19b7	55 4e 54 49 cc				.byte	$55,$4e,$54,$49,$cc
+.19bc					_end92:
+>19bc	0a					.byte	_end93-*
+>19bd	40					.byte	$40
+>19be	c3 15					.word	BreakCmd
+>19c0	58 42 52 45 41 cb			.byte	$58,$42,$52,$45,$41,$cb
+.19c6					_end93:
+>19c6	09					.byte	_end94-*
+>19c7	00					.byte	$00
+>19c8	bd 15					.word	ExitDump
+>19ca	58 44 55 4d d0				.byte	$58,$44,$55,$4d,$d0
+.19cf					_end94:
+>19cf	07					.byte	_end95-*
+>19d0	00					.byte	$00
+>19d1	83 10					.word	Xor
+>19d3	58 4f d2				.byte	$58,$4f,$d2
+.19d6					_end95:
+>19d6	00					.byte	0
 
 ;******  Return to file: kernel.asm
 

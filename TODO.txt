@@ -1,5 +1,5 @@
 TODO:
-	Implement variables
+	Implement variable creation.
 	Implement other structures.
 	Implement other words
 	Write "List" code (keep a skipper for OLD)
