@@ -57,7 +57,7 @@ _NHNoBorrow:
 		beq 	_NHComplete 				; if so then complete, else loop.
 		inx 								; advance to branch
 		inx 
-		jmp 	BranchBackwardsAlways
+		jmp 	BranchAlways
 		;
 _NHComplete:
 		inx 								; skip over the branch quantity

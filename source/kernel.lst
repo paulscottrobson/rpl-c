@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.54.1900 listing file
 ; 64tass -q -c -o kernel_nocode.prg -L kernel.lst -l kernel.lbl kernel.asm
-; Wed Jan 08 16:08:08 2020
+; Wed Jan 08 16:10:42 2020
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -857,7 +857,7 @@
 .14df	f0 05		beq $14e6			beq 	_NHComplete 				; if so then complete, else loop.
 .14e1	e8		inx				inx 								; advance to branch
 .14e2	e8		inx				inx
-.14e3	4c 36 15	jmp $1536			jmp 	BranchBackwardsAlways
+.14e3	4c 36 15	jmp $1536			jmp 	BranchAlways
 .14e6					_NHComplete:
 .14e6	e8		inx				inx 								; skip over the branch quantity
 .14e7	c6 05		dec $05				dec 	rsp 						; drop the indx
@@ -891,17 +891,17 @@
 .1518					RepeatHandler:
 .1518	4c 00 00	jmp $0000			jmp 	Next
 .151b					UntilHandler:
-.151b	4c 1e 15	jmp $151e			jmp 	BranchBackwardsIfZero
+.151b	4c 1e 15	jmp $151e			jmp 	BranchIfZero
 
 ;******  Return to file: kernel.asm
 
 
 ;******  Processing file: words/system/branch.src
 
-.151e					BranchBackwardsIfZero:
+.151e					BranchIfZero:
 .151e	a5 06		lda $06				lda 	TOS 						; check TOS = 0
 .1520	05 07		ora $07				ora 	TOS+1
-.1522	f0 0a		beq $152e			beq 	BranchBackwardsTestSucceeds
+.1522	f0 0a		beq $152e			beq 	BranchTestSucceeds
 .1524					BranchTestFails:
 .1524	68		pla				pla
 .1525	85 07		sta $07				sta 	TOS+1
@@ -909,17 +909,17 @@
 .1528	85 06		sta $06				sta 	TOS
 .152a	e8		inx				inx 								; skip over the relative branch.
 .152b	4c 00 00	jmp $0000			jmp 	Next
-.152e					BranchBackwardsTestSucceeds:
+.152e					BranchTestSucceeds:
 .152e	68		pla				pla
 .152f	85 07		sta $07				sta 	TOS+1
 .1531	68		pla				pla
 .1532	85 06		sta $06				sta 	TOS
 .1534	e8		inx				inx 								; advance by two, to the offset
 .1535	e8		inx				inx
-.1536					BranchBackwardsAlways:
+.1536					BranchAlways:
 .1536	8a		txa				txa 								; A = Y = position
-.1537	a8		tay				tay 								; (IP),Y now points to the back branch.
-.1538	b1 03		lda ($03),y			lda 	(IP),y 						; adjust the position backwards
+.1537	a8		tay				tay 								; (IP),Y now points to the branch target
+.1538	b1 03		lda ($03),y			lda 	(IP),y 						; adjust the position
 .153a	aa		tax				tax 								; position back in this line.
 .153b	4c 02 00	jmp $0002			jmp 	Next+2 						; and continue
 

@@ -1,5 +1,4 @@
 TODO:
-	Fixup repeat/until ?
 	Implement alloc
 	Implement if/else/endif.
 	Write "List" code (keep a skipper for OLD)

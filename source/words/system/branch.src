@@ -15,10 +15,10 @@
 ;
 ; *****************************************************************************
 
-BranchBackwardsIfZero: 
+BranchIfZero: 
 		lda 	TOS 						; check TOS = 0
 		ora 	TOS+1
-		beq 	BranchBackwardsTestSucceeds
+		beq 	BranchTestSucceeds
 		;
 		;		Come here if branch test fails.
 		;
@@ -29,20 +29,20 @@ BranchTestFails:
 
 ; *****************************************************************************
 ;
-;				 Unconditional Branch Backwards with Drop
+;				 Unconditional Branch  with Drop
 ;
 ; *****************************************************************************
 
-BranchBackwardsTestSucceeds:
+BranchTestSucceeds:
 		popTOS 								; throw away the test value
 		inx 								; advance by two, to the offset
 		inx
 
-BranchBackwardsAlways:
+BranchAlways:
 		txa 								; A = Y = position
-		tay 								; (IP),Y now points to the back branch.
+		tay 								; (IP),Y now points to the branch target
 		;
-		lda 	(IP),y 						; adjust the position backwards
+		lda 	(IP),y 						; adjust the position 
 		tax 								; position back in this line.
 		jmp 	Next+2 						; and continue
 

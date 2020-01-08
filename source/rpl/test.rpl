@@ -1,6 +1,7 @@
 ' comment
 $ABCD
-tri42
+5 
+repeat dup 1- dup 0= until
 $CDEF xdump
 
 :tri42 3 for 5 for index next next ;

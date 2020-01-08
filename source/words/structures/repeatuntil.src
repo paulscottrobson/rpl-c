@@ -25,6 +25,6 @@ RepeatHandler:	;; repeat <0>
 ; *****************************************************************************
 
 UntilHandler:	;; until <1>
-		jmp 	BranchBackwardsIfZero
+		jmp 	BranchIfZero
 
 		
