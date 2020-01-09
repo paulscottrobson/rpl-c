@@ -65,6 +65,8 @@ azVariables = $600 							; 26 x 2 variables occupying 52 bytes * PAGE BOUNDARY 
 hashTableSize = 16 							; hash tables for variables.
 hashTable = $640 							; hash tables start here * ALL ON ONE PAGE *
 
+textBuffer = $810 							; buffer for text.
+
 returnStack = $700							; return stack (1 page)
 returnStackLow = returnStack
 returnStackHigh = returnStack+$40
@@ -88,13 +90,17 @@ set16 	.macro
 		sta 	1+(\1)
 		.endm
 
-pushTOS .macro
-		lda 	TOS
+pushWord .macro
+		lda 	\1
 		pha
-		lda 	TOS+1
+		lda 	\1+1
 		pha
 		.endm
 		
+pushTOS .macro
+		pushWord 	TOS
+		.endm
+				
 popTOS 	.macro
 		pla
 		sta 	TOS+1

@@ -1,8 +1,8 @@
 ; *****************************************************************************
 ; *****************************************************************************
 ;
-;		Name :		number.src
-;		Purpose :	Convert the word at [TOS]+1 to a number
+;		Name :		toint.src
+;		Purpose :	Convert ASCIIZ to integer. 
 ;		Author :	Paul Robson (paul@robsons.org.uk)
 ;		Date : 		6th January 2020
 ;
@@ -11,7 +11,33 @@
 
 ; *****************************************************************************
 ;
-;	  Convert word at [TOS] to a number in temp3. CS if okay, CC if bad.
+;			Convert word at TOS to 2nd. TOS = -1 (ok) 0 (fail)
+;
+; *****************************************************************************
+
+NumToInt: ;; to.integer
+		lda 	TOS 						; TOS to temp4
+		sta 	temp4
+		lda		TOS+1
+		sta 	temp4+1
+		jsr 	ConvertToInteger
+		bcc 	_NTIFail
+		;
+		pushWord temp3 						; push result on the stack
+		lda 	#$FF 						; TOS = -1
+		sta 	TOS
+		sta 	TOS+1
+		jmp 	Next
+
+_NTIFail:
+		stz 	TOS 						; zero TOS and push on stack as null answer
+		stz 	TOS+1
+		pushTOS
+		jmp 	Next
+
+; *****************************************************************************
+;
+;	  Convert word at temp4 to a number in temp3. CS if okay, CC if bad.
 ;
 ; *****************************************************************************
 
@@ -25,14 +51,20 @@ ConvertToInteger:
 		stz 	temp3+1	
 		stz 	temp1 						; temp1 = 0 (decimal) 255 (hex)
 		ldy 	#0 							; look at first character
-		lda 	(TOS),y 	
+		lda 	(temp4),y
+		eor 	#"-"						; zero if '-'
+		sta 	temp1+1 					; save this in temp1+1
+		bne 	_CTINotMinus
+		iny									; skip -
+_CTINotMinus:										
+		lda 	(temp4),y 	
 		cmp		#'$'						; if $ then skip it and set hex flag
 		bne 	_CTILoop
 		dec 	temp1
 		iny
 		;
 _CTILoop: 									; multiply temp1 by 10 or 16
-		lda 	(TOS),y 					; next digit
+		lda 	(temp4),y 					; next digit
 		;
 		and 	#$7F 						; drop end of word flag
 		sec
@@ -47,7 +79,7 @@ _CTILoop: 									; multiply temp1 by 10 or 16
 		cmp 	#16 						; out of range ?
 		bcs 	_CTIFail		
 _CTILegal:
-		sta 	temp1+1 					; save digit value.
+		pha 								; save digit value.
 		dbltemp3 							; x 2
 		lda 	temp3 						; copy x2 into temp2
 		sta 	temp2
@@ -58,6 +90,7 @@ _CTILegal:
 		bit 	temp1 						; hexadecimal
 		bpl 	_CTIDecimal
 		dbltemp3 							; x 16
+		pla 								; get digit back
 		bra 	_CTIAddLoop
 _CTIDecimal:
 		clc 								; x 8 + x 2 = x 10
@@ -67,22 +100,29 @@ _CTIDecimal:
 		lda 	temp3+1
 		adc 	temp2+1
 		sta 	temp3+1
-		lda 	temp1+1 					; check digit 0-9
+		pla 					; check digit 0-9
 		cmp 	#10
 		bcs 	_CTIFail
 		;
 _CTIAddLoop:								; add digit value.
 		clc
-		lda 	temp3
-		adc 	temp1+1
+		adc 	temp3
 		sta 	temp3
 		bcc 	_CTINoCarry
 		inc 	temp3+1
 _CTINoCarry:
-		lda 	(TOS),y 					; was this the last character
 		iny
-		asl 	a
-		bcc 	_CTILoop 					; no, go back.
+		lda 	(temp4),y 					; was this the last character
+		bne 	_CTILoop 					; no, go back.
+		lda 	temp1+1 					; was it - ?
+		bne 	_CTIOkay
+		sec
+		lda 	#0 							; negate temp3.
+		sbc 	temp3
+		sta 	temp3
+		lda 	#0
+		sbc 	temp3+1
+		sta 	temp3+1
 _CTIOkay:
 		sec
 		rts

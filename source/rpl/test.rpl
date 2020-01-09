@@ -1,6 +1,7 @@
 ' comment
 
-10 for index 3 mod 1 = if 99 else 42 endif next
+-7 to.string
+
 xdump
 
 

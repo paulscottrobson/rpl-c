@@ -38,10 +38,9 @@ stack = [ mem[tosAddr]+mem[tosAddr+1]*256 ]
 for i in range(sp,253,2):
 	stack.append(mem[0x102+i]+mem[0x101+i]*256)
 
-fmt = ["${0:04x}".format(c) for c in stack]
-print("Hex:\n{0}".format("\n".join(["\t{0:7}".format(s) for s in fmt])))
-fmt = ["{0}".format(c-0x10000 if (c & 0x8000) else c) for c in stack]
-print("Dec:\n{0}".format("\n".join(["\t{0:7}".format(s) for s in fmt])))
+print("Stack")
+for n in stack:
+	print("\t{0:<7} ${1:04x}".format(n-0x10000 if (n & 0x8000) else n,n & 0xFFFF))
 
 print("Fixed:")
 azv = labels["azvariables"]

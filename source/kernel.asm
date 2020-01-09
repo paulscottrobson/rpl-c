@@ -43,8 +43,9 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/system/clrnew.src"
 		.include 	"words/system/debug.src"
 		.include 	"words/system/miscellany.src"
-		.include 	"words/system/number.src"
+		.include 	"words/system/toint.src"
 		.include 	"words/system/skipper.src"
+		.include 	"words/system/tostr.src"
 		.include 	"words/system/varhandlers.src"
 
 WarmStart:	

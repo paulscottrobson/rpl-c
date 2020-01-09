@@ -1,0 +1,85 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		tostr.src
+;		Purpose :	Convert integer to ASCIIZ
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		6th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;				Convert TOS to string in buffer on TOS (decimal only)
+;
+; *****************************************************************************
+
+IntToString: 	;; to.string 
+		set16 	temp2,textBuffer 			; where it goes.	
+		lda 	TOS 						; value in YA
+		ldy 	TOS+1
+		jsr 	ConvertToString
+		set16 	TOS,textBuffer				; return this value.
+		jmp 	Next
+
+; *****************************************************************************
+;
+;					Convert YA to ASCIIZ string at temp2
+;
+; *****************************************************************************
+
+ConvertToString:
+		sec
+		bra 	CTSMain
+ConvertToStringUnsigned:
+		clc
+CTSMain:
+		.byte 	$FF
+		pha 								; save AXY
+		phx
+		phy
+		sta 	temp1 						; save YA in temp1
+		sty 	temp1+1
+		ldy 	#0 							; index to result.
+		bcc 	_CTSUnsigned 				; if carry clear do not adjust for -
+		lda 	temp1+1 					; is it negative
+		bpl 	_CTSUnsigned
+		;
+		lda 	#"-"						; output - sign
+		sta 	(temp2),y
+		iny
+		sec 								; negate temp1
+		lda 	#0
+		sbc 	temp1
+		sta 	temp1
+		lda 	#0
+		sbc 	temp1+1
+		sta 	temp1+1
+_CTSUnsigned:
+		ldx 	#0 							; index into subtraction table
+;
+_CTSLoop:
+		lda 	temp1+1 					; < 10
+		bne 	_CTSNotDone
+		lda 	temp1
+		cmp 	#10
+		bcc 	_CTSComplete 				; result < 10, so complete.
+_CTSNotDone:
+		.byte 	$FF
+
+_CTSComplete:
+		lda		temp1 						; get remainder 0-9
+		ora 	#48 						; ASCII
+		sta 	(temp2),y					; write out
+		iny
+		lda 	#0							; make ASCIIZ
+		sta 	(temp2),y
+		ply									; pull and exit.
+		plx
+		pla
+		rts
+
+_CTSTable:
+		.word 	10000,1000,100,10 			; subtractors, this is a simple version.
+
