@@ -1,21 +1,23 @@
 TODO:
-	Implement if/else/endif.
-	Write "List" code (keep a skipper for OLD)
+	Write "List" code and exporters 
 	Implement other words
 	When the core is written, write the importers and scanners etc.
 	
 Missing vocabulary:	
-	else endif if
 	list
 	vlist load save old run
 
 Encoders/Immediate:
 	repeat	until 
 	for 	next
+	if 		else 	endif
 
 Decoders:
-	$$call 	$$comment $$string $$@handler $$!handler
+	$$call 	$$comment $$string $$@handler $$!handler $$literal
 
 Fixes:
 	Optimise the call lookup.
 	AdvanceFreeMem checks high memory for out of memory.
+	How do we do escape ? Interrupt hack ?
+	
+

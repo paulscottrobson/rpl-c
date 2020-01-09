@@ -130,6 +130,9 @@ class LineConverter(object):
 		if word == "FOR" or word == "NEXT":									# for/next
 			self.forNext(word)
 			return nextCode
+		if word == "IF" or word == "ELSE" or word == "ENDIF":				# if/else/endif
+			self.ifElseEndif(word)
+			return nextCode
 		#
 		if self.rplDictionary.isWord(word):									# is it a known word
 			self.appendWord(word) 											# (e.g. a dictionary word)
@@ -203,10 +206,12 @@ class LineConverter(object):
 	#		Handle repeat/until
 	#
 	def repeatUntil(self,word):
+		#
 		if word == "REPEAT":												# REPEAT
 			self.appendWord("REPEAT")										# Compile dummy repeat
 			self.rStack.append(self.currentPos())							# Save loop address
 			self.rStack.append(LineConverter.REPEAT)						# Save repeat marker
+		#
 		if word == "UNTIL":
 			self.checkPop(LineConverter.REPEAT)								# convertor ?
 			self.appendWord("UNTIL")										# Loop action
@@ -215,17 +220,45 @@ class LineConverter(object):
 	#		Handle for/next
 	#
 	def forNext(self,word):
+		#
 		if word == "FOR":													# For
 			self.appendWord("FOR")											# Compile for (n->r)
 			self.rStack.append(self.currentPos())							# Save loop address
 			self.rStack.append(LineConverter.FOR)							# Save for marker
+		#
 		if word == "NEXT":
 			self.checkPop(LineConverter.FOR)								# convertor ?
 			self.appendWord("NEXT")											# Loop action
 			self.code.append(self.rStack.pop()+3)							# branch back X value
+	#
+	#		Handle if/else/endif
+	#
+	def ifElseEndif(self,word):
+		#
+		if word == "IF":
+			self.appendWord("IF")											# if (branch if zero)
+			self.rStack.append(self.currentPos())							# save branch pos
+			self.rStack.append(LineConverter.IF)							# save IF marker
+			self.code.append(0)												# dummy branch.
+
+		if word == "ELSE":													# else (branch always)
+			self.checkPop(LineConverter.IF)									# check it was an if
+			self.appendWord("ELSE")											# branch out.
+			elseBranch = self.currentPos()									# branch out patch.
+			self.code.append(0)												# dummy branch
+			self.code[self.rStack.pop()] = self.currentPos()+3 				# back-patch if.
+			self.rStack.append(elseBranch)									# patch this later
+			self.rStack.append(LineConverter.IF)							# save IF marker
+
+		if word == "ENDIF":
+			self.checkPop(LineConverter.IF)									# check it was an if
+			self.appendWord("ENDIF")										# marker
+			self.code[self.rStack.pop()] = self.currentPos()+3 				# back-patch if.
+
 
 LineConverter.REPEAT = 'R'
 LineConverter.FOR = 'F'
+LineConverter.IF = 'I'
 
 if __name__ == "__main__":
 	prg = RPLProgram()

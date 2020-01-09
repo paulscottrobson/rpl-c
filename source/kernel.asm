@@ -35,6 +35,7 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/data/memory.src"
 
 		.include 	"words/structures/fornext.src"
+		.include 	"words/structures/ifelseendif.src"
 		.include 	"words/structures/repeatuntil.src"
 
 		.include 	"words/system/branch.src"
