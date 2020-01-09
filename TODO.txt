@@ -1,6 +1,8 @@
 TODO:
-	Complete Int -> Str (subtraction loop)
-	Write "List" code and exporters 
+	Write remaining exporters and complete List operation.
+		Output arbitrary constant to line.
+		$$call 	$$@handler $$!handler $$literal
+		Line Number
 	Implement other words
 	When the core is written, write the importers and scanners etc.
 	
@@ -14,7 +16,6 @@ Encoders/Immediate:
 	if 		else 	endif
 
 Decoders:
-	$$call 	$$comment $$string $$@handler $$!handler $$literal
 
 Fixes:
 	Optimise the call lookup.

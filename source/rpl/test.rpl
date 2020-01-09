@@ -1,7 +1,8 @@
-' comment
+list "hello !" :test12 to.string -1342 if for next else test endif a@ bc9! 'bye to the rest of the line
 
--7 to.string
+test test xdump
 
+:test 55 ;
 xdump
 
 

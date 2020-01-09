@@ -40,6 +40,18 @@ SkipComment: 	;; $$comment noexec <n>
 		tax 								; put back in X
 		jmp 	Next+2 						; continue skipping the pre-increment.
 
+CommentDecoder: ;; $$comment decode
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		lda 	#"'"
+		jsr 	DecodeWriteBuffer
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		jsr 	DecodeOutputData
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		rts
+
 ; *****************************************************************************
 ;
 ;			If you run into a definition it generates an error.
@@ -48,3 +60,13 @@ SkipComment: 	;; $$comment noexec <n>
 
 DefineCode:	;; $$define noexec <n>
 		rerror "DEFINITION?"
+
+DefineDecoder: ;; $$define decode
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		lda 	#":"
+		jsr 	DecodeWriteBuffer
+		jsr 	DecodeOutputData
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		rts

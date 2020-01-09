@@ -35,10 +35,10 @@ ConvertToString:
 ConvertToStringUnsigned:
 		clc
 CTSMain:
-		.byte 	$FF
 		pha 								; save AXY
 		phx
 		phy
+		stz 	SignCount 					; this is zero suppression
 		sta 	temp1 						; save YA in temp1
 		sty 	temp1+1
 		ldy 	#0 							; index to result.
@@ -60,14 +60,39 @@ _CTSUnsigned:
 		ldx 	#0 							; index into subtraction table
 ;
 _CTSLoop:
-		lda 	temp1+1 					; < 10
-		bne 	_CTSNotDone
+		lda 	#"0"-1						; set the digit to '0' code.
+		sta 	(temp2),y
+_CTSSubLoop:
+		lda 	(temp2),y 					; bump the count
+		inc 	a
+		sta 	(temp2),y
+		;
+		sec 								; do subtraction saving interim result
 		lda 	temp1
-		cmp 	#10
-		bcc 	_CTSComplete 				; result < 10, so complete.
-_CTSNotDone:
-		.byte 	$FF
-
+		sbc 	_CTSTable,x
+		pha
+		lda 	temp1+1
+		sbc 	_CTSTable+1,x
+		bcc 	_CTSCantSubtract 			; end of subtraction.
+		;
+		sta 	temp1+1 					; save result back
+		pla
+		sta 	temp1
+		bra 	_CTSSubLoop
+		;
+_CTSCantSubtract:
+		pla 								; throw away interim
+		inx 								; next subtractor
+		inx				
+		lda 	(temp2),y 					; update leading zero
+		eor 	#"0"
+		ora 	SignCount
+		sta 	SignCount
+		beq		_CTSLZ 						; if all zeros so far suppress.
+		iny 								; next character
+_CTSLZ:		
+		cpx 	#_CTSTableEnd-_CTSTable 	; done them all ?
+		bne 	_CTSLoop
 _CTSComplete:
 		lda		temp1 						; get remainder 0-9
 		ora 	#48 						; ASCII
@@ -82,4 +107,5 @@ _CTSComplete:
 
 _CTSTable:
 		.word 	10000,1000,100,10 			; subtractors, this is a simple version.
+_CTSTableEnd:
 

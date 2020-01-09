@@ -71,3 +71,12 @@ LiteralString: ;; $$string noexec <n>
 		adc 	(IP),y
 		tax
 		jmp 	Next+2 					; jump without pre-increment
+
+LiteralStringDecoder: ;; $$string decode
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		lda 	#'"'
+		jsr 	DecodeWriteBuffer
+		jsr 	DecodeOutputData
+		jsr 	DecodeWriteBuffer
+		rts

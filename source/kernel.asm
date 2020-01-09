@@ -24,6 +24,9 @@ RplBuild = $1000 							; code starts here.
 		jmp 		Next
 
 		.include 	"core.src"			
+
+		.include 	"decode/list.src"
+
 		.include 	"words/arithmetic/binary.src"
 		.include 	"words/arithmetic/compare.src"
 		.include 	"words/arithmetic/divide.src"
@@ -33,6 +36,7 @@ RplBuild = $1000 							; code starts here.
 		.include 	"words/data/literals.src"
 		.include 	"words/data/stack.src"
 		.include 	"words/data/memory.src"
+
 
 		.include 	"words/structures/fornext.src"
 		.include 	"words/structures/ifelseendif.src"

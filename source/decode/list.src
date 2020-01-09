@@ -1,0 +1,259 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		list.src
+;		Purpose :	Program Listing
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		9th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+listcode: 	;; list
+		set16	bufPtr,textBuffer
+		lda 	#$00
+		ldy 	#$40
+		jsr 	DecodeLineIntoBufPtr
+h1:		.byte 	$FF
+		bra 	h1
+
+; *****************************************************************************
+;
+;		Decode source line at YA into (bufPtr), advancing it appropriately.
+;		(does not decode line number)
+;
+; *****************************************************************************
+
+DecodeLineIntoBufPtr:
+		pha
+		phx
+		phy
+		sta 	srcPtr 						; save the source line.
+		sty 	srcPtr+1		
+		ldy 	#3 							; initial position.
+_DecodeLoop:
+		;
+		;		Copy the current 2 byte word into the temp1 word for analysis.
+		;
+		lda 	(srcPtr),y 					; copy the current character to temp1 
+		sta 	temp1 						; must be an execution address.
+		iny
+		lda 	(srcPtr),y
+		sta 	temp1+1		
+		iny 								; y points to the byte after it.
+		;
+		;		Have we reached NextLine, if so, we are done.
+		;
+		lda 	temp1
+		cmp 	#NextLine & $FF
+		bne 	_DecodeNotEOL
+		lda 	temp1+1
+		cmp 	#NextLine >> 8
+		beq 	_DecodeEOL
+_DecodeNotEOL:		
+		;
+		;		Look at the next word. Identify what it is. 
+		;
+		jsr 	IdentifyCodeWord
+		;
+		;		Decode it locally or with helper function accordingly. matchPtr now points
+		;		to the dictionary record.
+		;	
+		jsr 	DecodeFoundWord
+		;
+		;		Advance Y to next using the byte type in the dictionary element for this word
+		;
+		jsr 	AdvanceToNext 				; advance to next entry in the line.
+		bra 	_DecodeLoop 				; and go round again
+		;
+		;		Line has been decoded completely, so put EOL out and exit.
+		;
+_DecodeEOL:
+		lda 	#0
+		sta 	(bufPtr)
+		ply 								; restore registers and exit
+		plx
+		pla
+		rts
+
+; *****************************************************************************
+;
+;		Set matchPtr to point to the 2 byte command in temp1. Causes an 
+;		error if it can't be found (which is an internal/corruption error)
+;
+; *****************************************************************************
+
+IdentifyCodeWord:		
+		phy 								; save current position on the stack.
+		set16 	matchPtr,Dictionary 		; start searching here to find out what the word is.
+_DecodeIdentify:
+		ldy 	#2 							; have we found a match ?
+		lda 	(matchPtr),y
+		cmp 	temp1
+		bne 	_DecodeIdNext
+		iny
+		lda 	(matchPtr),y
+		cmp 	temp1+1
+		beq 	_DecodeIdFound
+_DecodeIdNext: 								; go to next.
+		clc
+		lda 	(matchPtr)
+		beq 	_DecodeIdIssue
+		adc 	matchPtr
+		sta 	matchPtr
+		bcc 	_DecodeIdentify
+		inc 	matchPtr+1
+		bra 	_DecodeIdentify
+_DecodeIdIssue:
+		rerror 	"DECODE?"					; couldn't find it. Internal error.
+_DecodeIdFound:
+		ply 								; restore position.
+		rts		
+
+; *****************************************************************************
+;
+;		  Advance Y skipping over parameters as defined by the matchPtr
+;
+; *****************************************************************************
+
+AdvanceToNext:
+		phy 								; get the parameter count from bits 0-1 of the type byte
+		ldy 	#1
+		lda 	(matchPtr),y
+		and 	#3 							; bits 0-1.
+		ply
+		cmp 	#3 							; is it n-bytes e.g. specified by the next byte
+		bne 	_ATN012
+		lda 	(srcPtr),y 					; if so, use that byte as the overall length.
+_ATN012:
+		sta 	temp2 						; now add that to Y
+		tya
+		clc
+		adc 	temp2
+		tay
+		rts		
+
+; *****************************************************************************
+;
+;					Decode the word found in matchPtr
+;
+; *****************************************************************************
+
+DecodeFoundWord:
+		phy 								; save current position
+		sty		temp2 						; put it in temp2 as well.
+		;
+		ldy 	#1 							; get the type byte
+		lda 	(matchPtr),y 				; is there a special decoder check (bit 4 set) ?
+		and 	#$10
+		bne 	_DFWSpecialDecoder
+		lda 	(matchPtr),y 				; reget it.
+		bmi 	_DFWExit 					; if hidden word (bit 7 set)
+		lda 	#" "						; output a space to the buffer
+		jsr 	DecodeWriteBuffer
+		jsr 	DecodeCurrentWord 			; expand that.
+_DFWExit:
+		ply 								; restore current position
+		rts
+		;
+		;		Must decode self, including leading space.
+		;
+_DFWSpecialDecoder:
+		ldy 	#4 							; the decode word address is at offset 4,5
+		lda 	(matchPtr),y 				; copy this into temp2
+		sta 	temp2
+		iny
+		lda 	(matchPtr),y
+		sta 	temp2+1
+		ply 	 							; restore current position into Y
+		pha 								; save registers
+		phx
+		phy
+		jsr 	_DFWCallDecoder				; call the decoder routine
+		ply 								; restore registers and exit
+		plx
+		pla
+		rts
+_DFWCallDecoder:
+		jmp 	(temp2)
+
+; *****************************************************************************
+;
+;			  Write the current word (MatchPtr) to the output buffer
+;			(Ignore the hide flag, which is tested in DecodeFoundWord)
+;
+; *****************************************************************************
+
+DecodeCurrentWord:
+		phy
+		ldy 	#1 							; read type byte
+		lda 	(matchPtr),y
+		ldy 	#4 							; original offset
+		lsr 	a 							; encoder/decoder bits in 0-1
+		lsr 	a 							; add 2 to Y for each encoder/decoder
+		lsr 	a 							; bit set.
+		lsr 	a
+		;
+		lsr 	a 							; decoder bit
+		bcc 	_DWBNoDec
+		iny
+		iny
+_DWBNoDec: 									; encoder bit
+		lsr 	a		
+		bcc 	_DWBNoEnc
+		iny
+		iny
+_DWBNoEnc: 									; encoder bit
+		;
+_DWBWordOut:
+		lda 	(matchPtr),y 				; output until bit 7 set.
+		pha
+		and 	#$7F
+		jsr		DecodeWriteBuffer
+		iny
+		pla
+		bpl 	_DWBWordOut
+		ply 								; restore Y and exit
+		rts
+
+; *****************************************************************************
+;
+;						Write A to the output buffer
+;
+; *****************************************************************************
+
+DecodeWriteBuffer:
+		sta 	(bufPtr)
+		inc 	bufPtr
+		bne 	_DWBNoCarry
+		inc 	bufPtr+1
+_DWBNoCarry:
+		rts
+
+; *****************************************************************************
+;
+;		Output the data sequence (ASCII) at (srcPtr),y ; for strings and
+;		comments and so on.
+;
+; *****************************************************************************
+
+DecodeOutputData:	
+		pha
+		phx
+		phy
+		lda 	(srcPtr),y 					; length + 1
+		tax
+_DODLoop:
+		dex 								; done it all ?
+		beq		_DODExit
+		iny 								; output next character
+		lda 	(srcPtr),y
+		and 	#$7F
+		beq 	_DODLoop 					; don't print NULL
+		jsr 	DecodeWriteBuffer
+		bra 	_DODLoop
+_DODExit:		
+		ply
+		plx
+		pla
+		rts

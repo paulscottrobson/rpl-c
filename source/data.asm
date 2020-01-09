@@ -28,7 +28,19 @@ rsp:										; return stack pointer.
 tos:										; top of stack register
 		.word 	?
 
+srcPtr:										; source pointer for encoding/decoding
+		.word 	?
+
+bufPtr:										; target pointer for encoding/decoding
+		.word 	?
+
+matchPtr:									; address of target word in dictionary when decoding
+		.word 	?
+
 nextFreeMem:								; next free variable/data memory.
+		.word 	?
+
+freeMemory:									; start of free memory
 		.word 	?
 
 temp1:										; general usage zero page
@@ -40,8 +52,6 @@ temp3:
 temp4:
 		.word 	?
 		
-freeMemory:									; start of free memory
-		.word 	?
 
 ; *****************************************************************************
 ;
