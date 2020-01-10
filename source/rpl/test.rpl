@@ -1,4 +1,5 @@
-list 42 5 19 !bc9 !z @bc9 &z xdump
+list 42 5 19 !bc9 !z @bc9 &z repeat 1 until 
+xdump
 list "hello !" :test12 to.string -1342 $2A if for next else test endif &a !bc9 @z0z 
 
 test test xdump

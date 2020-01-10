@@ -40,9 +40,6 @@ matchPtr:									; address of target word in dictionary when decoding
 nextFreeMem:								; next free variable/data memory.
 		.word 	?
 
-freeMemory:									; start of free memory
-		.word 	?
-
 temp1:										; general usage zero page
 		.word 	?	
 temp2:	
@@ -83,6 +80,22 @@ returnStackHigh = returnStack+$40
 returnStackX = returnStack+$80
 
 NumberStackBase = $80 						; number stack down from here.
+
+; *****************************************************************************
+;
+;										Colours.
+;
+; *****************************************************************************
+
+COL_BLACK = 0 		
+COL_RED = 1
+COL_GREEN = 2
+COL_YELLOW = 3
+COL_BLUE = 4
+COL_MAGENTA = 5
+COL_CYAN = 6
+COL_WHITE = 7
+COL_RVS = 8
 
 ; *****************************************************************************
 ;
@@ -135,3 +148,4 @@ resetStack .macro
 		ldx 	#NumberStackBase 
 		txs
 		.endm		
+

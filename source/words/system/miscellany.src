@@ -9,6 +9,14 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
+RunProgram: 	;; run <0>
+		resetStack
+		jsr 		ClearVariableSpace 		; clear variables etc.
+		ldx			#ProgramMemory & $FF	; boot address
+		ldy 		#ProgramMemory >>8
+		jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
+		jmp 		Next
+
 ; *****************************************************************************
 ;
 ;						Call a machine code routine

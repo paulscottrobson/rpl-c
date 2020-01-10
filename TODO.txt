@@ -1,5 +1,4 @@
 TODO:
-	Add I/O handler.
 	Add List proper.
 	Add [x] indexing handler
 	Add [] indexing handler
@@ -8,7 +7,7 @@ TODO:
 	
 Missing vocabulary:	
 	list
-	vlist load save old run
+	vlist load save old
 
 Encoders/Immediate:
 	repeat	until 

@@ -671,75 +671,82 @@ _end94:
 	.byte	$52,$4f,$d4
 _end95:
 
-; *** sgn ***
+; *** run ***
 	.byte	_end96-*
+	.byte	$00
+	.word	RunProgram
+	.byte	$52,$55,$ce
+_end96:
+
+; *** sgn ***
+	.byte	_end97-*
 	.byte	$00
 	.word	SignTOS
 	.byte	$53,$47,$ce
-_end96:
+_end97:
 
 ; *** stop ***
-	.byte	_end97-*
+	.byte	_end98-*
 	.byte	$00
 	.word	StopCode
 	.byte	$53,$54,$4f,$d0
-_end97:
+_end98:
 
 ; *** swap ***
-	.byte	_end98-*
+	.byte	_end99-*
 	.byte	$00
 	.word	Swap
 	.byte	$53,$57,$41,$d0
-_end98:
+_end99:
 
 ; *** sys ***
-	.byte	_end99-*
+	.byte	_end100-*
 	.byte	$00
 	.word	Call6502
 	.byte	$53,$59,$d3
-_end99:
+_end100:
 
 ; *** to.integer ***
-	.byte	_end100-*
+	.byte	_end101-*
 	.byte	$00
 	.word	NumToInt
 	.byte	$54,$4f,$2e,$49,$4e,$54,$45,$47,$45,$d2
-_end100:
+_end101:
 
 ; *** to.string ***
-	.byte	_end101-*
+	.byte	_end102-*
 	.byte	$00
 	.word	IntToString
 	.byte	$54,$4f,$2e,$53,$54,$52,$49,$4e,$c7
-_end101:
+_end102:
 
 ; *** until ***
-	.byte	_end102-*
+	.byte	_end103-*
 	.byte	$01
 	.word	UntilHandler
 	.byte	$55,$4e,$54,$49,$cc
-_end102:
+_end103:
 
 ; *** xbreak ***
-	.byte	_end103-*
+	.byte	_end104-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end103:
+_end104:
 
 ; *** xdump ***
-	.byte	_end104-*
+	.byte	_end105-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end104:
+_end105:
 
 ; *** xor ***
-	.byte	_end105-*
+	.byte	_end106-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end105:
+_end106:
 
 	.byte	0
 
