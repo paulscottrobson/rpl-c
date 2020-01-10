@@ -7,22 +7,25 @@ _end1:
 
 ; *** $$!handler ***
 	.byte	_end2-*
-	.byte	$42
+	.byte	$52
 	.word	VarWriteHandler
+	.word	VarWriteHandlerDecode
 	.byte	$24,$24,$21,$48,$41,$4e,$44,$4c,$45,$d2
 _end2:
 
 ; *** $$&handler ***
 	.byte	_end3-*
-	.byte	$42
+	.byte	$52
 	.word	VarAddressHandler
+	.word	VarAddrHandlerDecode
 	.byte	$24,$24,$26,$48,$41,$4e,$44,$4c,$45,$d2
 _end3:
 
 ; *** $$@handler ***
 	.byte	_end4-*
-	.byte	$42
+	.byte	$52
 	.word	VarReadHandler
+	.word	VarReadHandlerDecode
 	.byte	$24,$24,$40,$48,$41,$4e,$44,$4c,$45,$d2
 _end4:
 

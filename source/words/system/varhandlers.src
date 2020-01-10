@@ -26,6 +26,10 @@ VarAddressHandler:	;; 	$$&handler noexec <2>
 		sta 	TOS+1
 		jmp 	Next
 
+VarAddrHandlerDecode: ;; $$&handler decode
+		lda 	#"&"
+		jmp 	VarHandlerDecode
+
 ; *****************************************************************************
 ;
 ;					Push the variable value on the stack
@@ -44,6 +48,10 @@ VarReadHandler:		;; 	$$@handler 	noexec <2>
 		lda 	(temp1),y
 		sta 	TOS+1
 		jmp 	Next
+
+VarReadHandlerDecode: ;; $$@handler decode
+		lda 	#"@"
+		jmp 	VarHandlerDecode
 
 ; *****************************************************************************
 ;
@@ -64,6 +72,10 @@ VarWriteHandler:	;; 	$$!handler 	noexec <2>
 		popTOS 								; get the next value off the stack and loop
 		jmp 	Next
 
+VarWriteHandlerDecode: ;; $$!handler decode
+		lda 	#"!"
+		jmp 	VarHandlerDecode
+
 ; *****************************************************************************
 ;
 ;		Extract the variable name, find where it is and place address of 
@@ -81,11 +93,11 @@ VariableFind:
 		inx
 		txa 								; put in Y
 		tay
-		lda 	(IP),y 						; copy name word into temp2, putting it the right way round.
-		sta 	temp2+1
+		lda 	(IP),y 						; copy name word into temp2
+		sta 	temp2
 		iny 	
 		lda 	(IP),y
-		sta 	temp2
+		sta 	temp2+1
 		;
 		; 		Check for, and handle A-Z single letter fixed.
 		;
@@ -198,4 +210,67 @@ _VFCreate:
 		lda 	#6							; shift freemem pointer up 6
 		ldy 	#0
 		jsr 	AdvanceFreeMem
+		rts
+
+; *****************************************************************************
+;
+;				Common Decoder code - A contains type (! & @)
+;
+; *****************************************************************************
+
+VarHandlerDecode:
+		pha 								; save, leading space
+		lda 	#" "
+		jsr 	DecodeWriteBuffer
+
+		.byte 	$FF
+		lda 	(srcPtr),y 					; copy to temp1
+		sta 	temp1
+		iny
+		lda 	(srcPtr),y
+		sta 	temp1+1
+		;
+		lda 	temp1 						; output the first character
+		and 	#31
+		jsr 	VHOutVarChar
+		ldx 	#5 							; divide temp1 by 32
+_VHDShift:
+		lsr 	temp1+1
+		ror 	temp1
+		dex 
+		bne 	_VHDShift
+		;
+		ldx 	#255 						; now divide that by 40 by repeated subtraction.
+_VHDDiv40:
+		inx
+		sec
+		lda 	temp1
+		sbc 	#40
+		tay
+		lda 	temp1+1
+		sbc 	#0
+		bcc 	_VHDivDone
+		sta 	temp1+1
+		sty 	temp1
+		bra 	_VHDDiv40
+_VHDivDone:
+		lda 	temp1 						; remainder
+		jsr 	VHOutVarChar		
+		txa
+		jsr 	VHOutVarChar 				; and result.
+		pla 								; restore and write type
+		jsr 	DecodeWriteBuffer
+		rts
+
+VHOutVarChar:
+		cmp 	#0
+		beq 	_VHOExit
+		clc
+		adc 	#64 						; 65-90 A-Z 91-100 0-9
+		cmp 	#91 						; convert back ?
+		bcc 	_VHOOut
+		sbc 	#91-48 						; adjust to digit
+_VHOOut:
+		jsr 	DecodeWriteBuffer		
+_VHOExit:
 		rts

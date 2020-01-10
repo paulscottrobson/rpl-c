@@ -1,4 +1,4 @@
-list "hello !" :test12 to.string -1342 $2A if for next else test endif a@ bc9! 'bye to the rest of the line
+list "hello !" :test12 to.string -1342 $2A if for next else test endif a& bc9! z0z@ 'bye to the rest of the line
 
 test test xdump
 
