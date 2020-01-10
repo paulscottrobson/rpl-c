@@ -65,3 +65,63 @@ StopCode:	;; stop <0>
 
 EndProgram:	;; end <0>
 		jmp 	WarmStart
+
+; *****************************************************************************
+;
+;								Vocabulary List
+;
+; *****************************************************************************
+
+VlistCode: ;; vlist <0>
+		set16 	temp1,Dictionary 			; work down the dictionary
+_VLLoop:ldy 	#1							; type byte
+		lda 	(temp1),y
+		ldy 	#4 							; Y = 4
+		lsr 	a 							; shift bits 4 and 5 to 0,1
+		lsr 	a
+		lsr		a
+		lsr 	a
+
+		lsr 	a 							; add those bits in
+		bcc 	_VLNoDec
+		iny
+		iny
+_VLNoDec:		
+		lsr 	a
+		bcc 	_VLNoEnc
+		iny
+		iny
+_VLNoEnc:		
+		lda 	(temp1),y 					; remove $$ words
+		cmp 	#"$"
+		bne 	_VLPrint
+		iny
+		eor 	(temp1),y
+		beq 	_VLNext
+		dey
+		;
+_VLPrint:									; print name out
+		lda 	(temp1),y
+		pha
+		iny
+		and 	#$7F
+		jsr 	ExternPrint
+		pla
+		asl 	a	
+		bcc 	_VLPrint
+		lda 	#32
+		jsr 	ExternPrint
+		;
+_VLNext:		
+		clc 								; go to next
+		lda 	(temp1)	
+		adc 	temp1
+		sta 	temp1
+		bcc 	_VLNoCarry
+		inc 	temp1+1
+_VLNoCarry:
+		lda 	(temp1)
+		bne 	_VLLoop
+		lda 	#13
+		jsr 	ExternPrint
+		jmp 	Next

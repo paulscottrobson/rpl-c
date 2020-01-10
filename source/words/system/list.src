@@ -15,6 +15,15 @@ listcode: 	;; list
 		ldy 	#$40
 		sec
 		jsr 	DecodeLineIntoBufPtr
+		ldy 	#0
+_LCLoop:lda 	textBuffer,y
+		beq 	_LCEnd
+		jsr 	ExternPrint
+		iny
+		bra 	_LCLoop
+_LCEnd:	lda 	#13
+		jsr 	ExternPrint
+						
 		jmp 	Next
 
 ; *****************************************************************************

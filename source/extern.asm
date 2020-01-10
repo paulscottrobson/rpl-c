@@ -109,8 +109,6 @@ ExternInput:
 		sta 	temp3
 		lda 	#(textBuffer >> 8)
 		sta 	temp3+1
-		lda 	#COL_WHITE
-		jsr 	ExternColour
 _EIRead:jsr 	$FFCF
 		and 	#$7F
 		cmp 	#13

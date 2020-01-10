@@ -24,8 +24,12 @@ RplBuild = $1000 							; code starts here.
 WarmStartBlankStack:				
 		resetStack 							; set up S to point to empty number stack
 WarmStart:	
-		jsr 		ExternInput
-		jmp 		RunProgram	
+		lda 	#COL_Yellow
+		jsr 	ExternColour
+		jsr 	ExternInput
+		lda 	#COL_Cyan
+		jsr 	ExternColour
+		jmp 	RunProgram	
 
 ErrorHandler:
 		.byte 	$FF

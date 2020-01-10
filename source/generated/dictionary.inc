@@ -727,26 +727,33 @@ _end102:
 	.byte	$55,$4e,$54,$49,$cc
 _end103:
 
-; *** xbreak ***
+; *** vlist ***
 	.byte	_end104-*
+	.byte	$00
+	.word	VlistCode
+	.byte	$56,$4c,$49,$53,$d4
+_end104:
+
+; *** xbreak ***
+	.byte	_end105-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end104:
+_end105:
 
 ; *** xdump ***
-	.byte	_end105-*
+	.byte	_end106-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end105:
+_end106:
 
 ; *** xor ***
-	.byte	_end106-*
+	.byte	_end107-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end106:
+_end107:
 
 	.byte	0
 
