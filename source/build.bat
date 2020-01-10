@@ -6,9 +6,10 @@ del /Q *.bin
 del /Q generated\* 
 del /Q kernel.prg
 rem
-rem 	Scan files and build dictionary of known words
+rem 	Scan files and build dictionary of known words and generate timestamp
 rem
 python scripts\scanner.py
+python scripts\timestamp.py >generated\timestamp.inc
 rem
 rem		Build the kernel, with no code.
 rem

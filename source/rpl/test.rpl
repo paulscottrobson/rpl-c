@@ -1,10 +1,25 @@
-list end 42 5 19 !bc9 !z @bc9 &z repeat 1 until 
+' this is a comment
+vlist test xdump
+list 42 5 19 !bc9 !z @bc9 &z end
 xdump
 list "hello !" :test12 to.string -1342 $2A if for next else test endif &a !bc9 @z0z 
 
 test test xdump
 
-:test 55 ;
-xdump
-
+:test 55 
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+;
 

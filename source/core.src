@@ -48,7 +48,7 @@ Literal2Byte:	;; $$literal noexec <2>
 		jmp 	Next
 
 Literal2ByteDecode: ;; $$literal decode
-		lda 	#32
+		lda 	#CTH_Keyword
 		jsr 	DecodeWriteBuffer
 		lda 	(srcPtr),y
 		tax
@@ -86,7 +86,7 @@ LiteralString: ;; $$string noexec <n>
 		jmp 	Next+2 					; jump without pre-increment
 
 LiteralStringDecoder: ;; $$string decode
-		lda 	#32
+		lda 	#CTH_String
 		jsr 	DecodeWriteBuffer
 		lda 	#'"'
 		jsr 	DecodeWriteBuffer

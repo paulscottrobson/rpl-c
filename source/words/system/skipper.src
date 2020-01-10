@@ -41,11 +41,11 @@ SkipComment: 	;; $$comment noexec <n>
 		jmp 	Next+2 						; continue skipping the pre-increment.
 
 CommentDecoder: ;; $$comment decode
-		lda 	#32
+		lda 	#CTH_Keyword
 		jsr 	DecodeWriteBuffer
 		lda 	#"'"
 		jsr 	DecodeWriteBuffer
-		lda 	#32
+		lda 	#CTH_Comment
 		jsr 	DecodeWriteBuffer
 		jsr 	DecodeOutputData
 		lda 	#32
@@ -62,7 +62,7 @@ DefineCode:	;; $$define noexec <n>
 		rerror "DEFINITION?"
 
 DefineDecoder: ;; $$define decode
-		lda 	#32
+		lda 	#CTH_Definition
 		jsr 	DecodeWriteBuffer
 		lda 	#":"
 		jsr 	DecodeWriteBuffer

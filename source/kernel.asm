@@ -36,7 +36,11 @@ ErrorHandler:
 		ldx 	#$5E
 
 BootMsg:
-		.text 	"*** RPL/C INTERPRETER ***",13,13,"WRITTEN BY PAUL ROBSON BUILT 20-01-10",13,13,0
+		.text 	"*** RPL/C INTERPRETER ***",13,13
+		.text	"WRITTEN BY PAUL ROBSON 2020",13,13
+		.text 	"BUILD: "
+		.include 	"generated/timestamp.inc"
+		.byte 	13,13,0
 
 		.include 	"core.src"			
 		.include 	"extern.asm"
@@ -59,6 +63,7 @@ BootMsg:
 		.include 	"words/system/callhandler.src"
 		.include 	"words/system/clrnew.src"
 		.include 	"words/system/debug.src"
+		.include 	"words/system/decode.src"
 		.include 	"words/system/list.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/toint.src"

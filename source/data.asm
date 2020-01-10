@@ -49,6 +49,8 @@ temp3:
 temp4:
 		.word 	?
 		
+listPtr:									; list pointer as working through code.
+		.word 	?
 
 ; *****************************************************************************
 ;
@@ -60,8 +62,14 @@ SignCount:
 		.byte 	?
 
 RandomSeed:
-		.byte 	?
-		
+		.word 	?
+
+ListCount:
+		.byte 	?		
+
+ListLowest:
+		.word 	?
+
 stack2Low = $102							; access other stack members following tsx
 stack2High = $101							; (which requires saving X, not on the stack !)
 stack3Low = $104
@@ -96,6 +104,13 @@ COL_MAGENTA = 5
 COL_CYAN = 6
 COL_WHITE = 7
 COL_RVS = 8
+
+CTH_LineNo = COL_Green
+CTH_Keyword = COL_Cyan
+CTH_Comment = COL_Yellow+COL_Rvs
+CTH_Definition = COL_White
+CTH_String = COL_Magenta
+CTH_Call = COL_Yellow
 
 ; *****************************************************************************
 ;

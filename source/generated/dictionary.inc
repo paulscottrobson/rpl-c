@@ -576,7 +576,7 @@ _end81:
 ; *** list ***
 	.byte	_end82-*
 	.byte	$00
-	.word	listcode
+	.word	ListCode
 	.byte	$4c,$49,$53,$d4
 _end82:
 

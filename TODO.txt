@@ -1,5 +1,5 @@
 TODO:
-	Add List proper.
+	Code tokeniser.
 	Add [x] indexing handler
 	Add [] indexing handler
 	Implement other words
@@ -7,7 +7,6 @@ TODO:
 	When encoder written check vlist works.
 	
 Missing vocabulary:	
-	list
 	load save old
 
 Encoders/Immediate:

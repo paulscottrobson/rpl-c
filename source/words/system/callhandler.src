@@ -114,7 +114,7 @@ _RHInLoop:
 ; *****************************************************************************
 
 CallHandlerDecode:	;; $$call 	decode
-		lda 	#" "						; space
+		lda 	#CTH_Call					; space
 		jsr 	DecodeWriteBuffer
 		lda 	(srcPtr),y 					; get line number into YA
 		tax
