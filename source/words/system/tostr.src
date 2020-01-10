@@ -26,17 +26,17 @@ IntToString: 	;; to.string
 ; *****************************************************************************
 ;
 ;					Convert YA to ASCIIZ string at temp2
+;						 Return # chars conveted in A
 ;
 ; *****************************************************************************
 
 ConvertToString:
 		sec
-		bra 	CTSMain
+		bra 	ConvertToStringMain
 ConvertToStringUnsigned:
 		clc
-CTSMain:
-		pha 								; save AXY
-		phx
+ConvertToStringMain:
+		phx									; save XY
 		phy
 		stz 	SignCount 					; this is zero suppression
 		sta 	temp1 						; save YA in temp1
@@ -100,9 +100,9 @@ _CTSComplete:
 		iny
 		lda 	#0							; make ASCIIZ
 		sta 	(temp2),y
+		tya 								; size in A
 		ply									; pull and exit.
 		plx
-		pla
 		rts
 
 _CTSTable:

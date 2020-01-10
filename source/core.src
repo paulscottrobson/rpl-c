@@ -47,6 +47,19 @@ Literal2Byte:	;; $$literal noexec <2>
 		sta 	TOS+1
 		jmp 	Next
 
+Literal2ByteDecode: ;; $$literal decode
+		lda 	#32
+		jsr 	DecodeWriteBuffer
+		lda 	(srcPtr),y
+		tax
+		iny
+		lda 	(srcPtr),y
+		tay
+		txa
+		sec 							; output signed
+		jsr 	DecodeYAToBuffer		
+		rts
+
 ; *****************************************************************************
 ;
 ;				Word that loads a string address onto the stack

@@ -1,8 +1,6 @@
 TODO:
 	Write remaining exporters and complete List operation.
-		Output arbitrary constant to line.
-		$$call 	$$@handler $$!handler $$literal
-		Line Number
+		$$call 	$$@handler $$!handler
 	Implement other words
 	When the core is written, write the importers and scanners etc.
 	
@@ -20,6 +18,7 @@ Decoders:
 Fixes:
 	Optimise the call lookup.
 	AdvanceFreeMem checks high memory for out of memory.
+	Seperate type for $constants ?
 	How do we do escape ? Interrupt hack ?
 	
 

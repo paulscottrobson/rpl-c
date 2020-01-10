@@ -51,8 +51,9 @@ _end7:
 
 ; *** $$literal ***
 	.byte	_end8-*
-	.byte	$42
+	.byte	$52
 	.word	Literal2Byte
+	.word	Literal2ByteDecode
 	.byte	$24,$24,$4c,$49,$54,$45,$52,$41,$cc
 _end8:
 

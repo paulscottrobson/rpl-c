@@ -13,6 +13,7 @@ listcode: 	;; list
 		set16	bufPtr,textBuffer
 		lda 	#$00
 		ldy 	#$40
+		sec
 		jsr 	DecodeLineIntoBufPtr
 h1:		.byte 	$FF
 		bra 	h1
@@ -20,7 +21,7 @@ h1:		.byte 	$FF
 ; *****************************************************************************
 ;
 ;		Decode source line at YA into (bufPtr), advancing it appropriately.
-;		(does not decode line number)
+;		(does not decode line number). CS to decode line number as well.
 ;
 ; *****************************************************************************
 
@@ -30,6 +31,25 @@ DecodeLineIntoBufPtr:
 		phy
 		sta 	srcPtr 						; save the source line.
 		sty 	srcPtr+1		
+		bcc 	_DecodeNoLineNumber
+		ldy 	#1 							; get line # to YA
+		lda 	(srcPtr),y
+		tax
+		iny
+		lda 	(srcPtr),y
+		tay
+		txa
+		clc
+		jsr 	DecodeYAToBuffer 			; convert to string in buffer
+		tax 								; count in X
+_DecodeLineSpace:
+		cpx 	#5
+		beq 	_DecodeNoLineNumber
+		lda 	#" " 						; pad to 5 spaces
+		jsr 	DecodeWriteBuffer
+		inx
+		bra 	_DecodeLineSpace
+_DecodeNoLineNumber:		
 		ldy 	#3 							; initial position.
 _DecodeLoop:
 		;
@@ -257,3 +277,32 @@ _DODExit:
 		plx
 		pla
 		rts
+
+; *****************************************************************************
+;
+;			Decode YA to bufPtr, and return characters used in A
+;			CS = Signed, CC = Unsigned
+;
+; *****************************************************************************
+
+DecodeYAToBuffer:
+		phx
+		phy
+		pha
+		lda 	bufPtr 						; copy bufPtr to temp2
+		sta 	temp2
+		lda 	bufPtr+1
+		sta 	temp2+1
+		pla
+		jsr 	ConvertToStringMain 		; convert YA to string there
+		tax 								; chars output to X
+		clc
+		adc 	bufPtr 						; add to buffer pointer
+		sta 	bufPtr
+		bcc 	_DYABNoCarry
+		inc 	bufPtr+1
+_DYABNoCarry:
+		txa 								; count in A
+		ply									; restore and exit.
+		plx
+		rts		
