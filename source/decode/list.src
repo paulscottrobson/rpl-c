@@ -15,8 +15,7 @@ listcode: 	;; list
 		ldy 	#$40
 		sec
 		jsr 	DecodeLineIntoBufPtr
-h1:		.byte 	$FF
-		bra 	h1
+		jmp 	Next
 
 ; *****************************************************************************
 ;

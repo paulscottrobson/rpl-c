@@ -17,10 +17,12 @@ RplBuild = $1000 							; code starts here.
 
 		ldx 		#$FF 					; reset the stack
 		txs
+		
+		resetStack		
+		jsr 		ClearVariableSpace 		; clear variables etc.
 		ldx			#ProgramMemory & $FF	; boot address
 		ldy 		#ProgramMemory >>8
 		jsr 		InitialiseCoreCode 		; initialise the NEXT routine at $00
-		jsr 		ClearVariableSpace 		; clear variables etc.
 		jmp 		Next
 
 		.include 	"core.src"			

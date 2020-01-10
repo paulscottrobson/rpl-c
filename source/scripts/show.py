@@ -35,7 +35,7 @@ sp = mem[labels["temp1"]]
 #
 tosAddr = labels["tos"]
 stack = [ mem[tosAddr]+mem[tosAddr+1]*256 ]
-for i in range(sp,253,2):
+for i in range(sp,labels["numberstackbase"]-2,2):
 	stack.append(mem[0x102+i]+mem[0x101+i]*256)
 
 print("Stack")

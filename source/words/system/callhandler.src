@@ -107,3 +107,104 @@ _RHUnderflow:
 _RHInLoop:
 		rerror 	"RETURN IN LOOP?"
 
+; *****************************************************************************
+;
+;							Decode call handler
+;
+; *****************************************************************************
+
+CallHandlerDecode:	;; $$call 	decode
+		lda 	#" "						; space
+		jsr 	DecodeWriteBuffer
+		lda 	(srcPtr),y 					; get line number into YA
+		tax
+		iny
+		lda 	(srcPtr),y
+		tay	
+		txa
+		jsr 	FindLine 					; try to locate that line.
+		bcs 	_CHDFound 					; if found .....
+		;
+		;		Not found or no :Define (e.g. $$define on the found line)
+		;
+_CHDLineOnly:								
+		pha
+		lda 	#"<"
+		jsr 	DecodeWriteBuffer
+		pla
+		clc 								; output unsigned
+		jsr 	DecodeYAToBuffer		
+		lda 	#">"
+		jsr 	DecodeWriteBuffer
+		rts
+		;
+		;		Found the line number in temp1
+		;
+_CHDFound:
+		pha 								; save YA
+		phy
+		ldy 	#3 							; check first is $$define
+		lda 	(temp1),y
+		cmp 	#DefineCode & 255
+		bne 	_CHDNoDefine
+		iny
+		lda 	(temp1),y
+		cmp 	#DefineCode >> 8
+		beq 	_CHDFoundDefine 
+		;
+_CHDNoDefine:
+		ply									; restore the line number and print it in <>
+		pla		
+		bra 	_CHDLineOnly
+		;
+_CHDFoundDefine:
+		pla 								; throw saved line number.
+		pla
+		ldy 	#5 							; 3,4 $$define 5 length, name has bit 7 set at end
+_CHDOutName:
+		iny 								; next
+		lda 	(temp1),y 					; print char no bit 7
+		pha
+		and 	#$7F
+		jsr 	DecodeWriteBuffer
+		pla
+		asl 	a 							; bit 7 to carry
+		bcc 	_CHDOutName
+		rts
+
+; *****************************************************************************
+;
+;			Put address of line YA in temp1, CS found, CC not found
+;
+; *****************************************************************************
+
+FindLine:
+		pha 								; save registers
+		phx
+		phy
+		sta 	temp2 						; temp2 = target line#
+		sty 	temp2+1
+		set16 	temp1,ProgramMemory 		; temp1 = search
+_FLLoop:
+		lda 	(temp1) 					; found end ?
+		clc									; if so exit with CC.
+		beq 	_FLExit
+		ldy 	#1 							; check line # match
+		lda 	(temp1),y
+		cmp 	temp2
+		bne 	_FLNext
+		iny
+		lda 	(temp1),y
+		cmp 	temp2+1
+		sec 								; if so exit with CS
+		beq 	_FLExit
+_FLNext:
+		advance temp1 						; next line
+		bra 	_FLLoop 					; keep looking.			
+_FLExit:
+		ply
+		plx
+		pla
+		rts		
+		clc
+		rts

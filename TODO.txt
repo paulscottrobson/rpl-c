@@ -1,6 +1,6 @@
 TODO:
-	Write remaining exporters and complete List operation.
-		$$call
+	Add I/O handler.
+	Add List proper.
 	Add [x] indexing handler
 	Add [] indexing handler
 	Implement other words

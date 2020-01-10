@@ -82,6 +82,8 @@ returnStackLow = returnStack
 returnStackHigh = returnStack+$40
 returnStackX = returnStack+$80
 
+NumberStackBase = $80 						; number stack down from here.
+
 ; *****************************************************************************
 ;
 ;										Macros
@@ -127,3 +129,9 @@ advance	.macro
 		inc 	\1+1
 _NoCarryAdv:
 		.endm				
+
+resetStack .macro
+		
+		ldx 	#NumberStackBase 
+		txs
+		.endm		

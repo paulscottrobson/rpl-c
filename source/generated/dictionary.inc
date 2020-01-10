@@ -31,8 +31,9 @@ _end4:
 
 ; *** $$call ***
 	.byte	_end5-*
-	.byte	$42
+	.byte	$52
 	.word	CallHandler
+	.word	CallHandlerDecode
 	.byte	$24,$24,$43,$41,$4c,$cc
 _end5:
 
