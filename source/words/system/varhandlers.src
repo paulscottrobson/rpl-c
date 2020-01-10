@@ -2,7 +2,7 @@
 ; *****************************************************************************
 ;
 ;		Name :		varhandlers.src
-;		Purpose :	Handlers for var! and var@
+;		Purpose :	Handlers for @var !var &var
 ;		Author :	Paul Robson (paul@robsons.org.uk)
 ;		Date : 		6th January 2020
 ;
@@ -222,8 +222,9 @@ VarHandlerDecode:
 		pha 								; save, leading space
 		lda 	#" "
 		jsr 	DecodeWriteBuffer
+		pla 								; restore and write type
+		jsr 	DecodeWriteBuffer
 
-		.byte 	$FF
 		lda 	(srcPtr),y 					; copy to temp1
 		sta 	temp1
 		iny
@@ -258,8 +259,6 @@ _VHDivDone:
 		jsr 	VHOutVarChar		
 		txa
 		jsr 	VHOutVarChar 				; and result.
-		pla 								; restore and write type
-		jsr 	DecodeWriteBuffer
 		rts
 
 VHOutVarChar:

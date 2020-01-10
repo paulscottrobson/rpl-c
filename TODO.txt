@@ -1,6 +1,8 @@
 TODO:
 	Write remaining exporters and complete List operation.
 		$$call
+	Add [x] indexing handler
+	Add [] indexing handler
 	Implement other words
 	When the core is written, write the importers and scanners etc.
 	
