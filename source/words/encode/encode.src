@@ -16,7 +16,7 @@ EncodeTest:
 		.byte 	$FF
 _EncTest:
 		.text	"1025 "
-		.text 	'"STR"'
+		.text 	'"STR" DUP '
 		.text	" 'HELLO",0
 
 ; *****************************************************************************
@@ -86,8 +86,34 @@ _EPNotComStr:
 		;		by setting the last bit of the last character. The dictionary
 		;		and defined words both use this.
 		;
-		; TODO: Set Bit 7.
-		; TODO: Check Dictionary words/encodings built in
+		sec
+		jsr 	EncSetBit7Word
+		;
+		;		Check to see if the word is in the built in dictionary
+		;
+		jsr 	EncodeSearchDictionary		; look it up
+		bcc 	_EPNotInDictionary
+		sta 	temp1 						; save dictionary record address
+		sty 	temp1+1
+		ldy 	#1
+		lda 	(temp1),y 					; check if has an encode bit
+		and 	#$20
+		bne 	_EPEncodeRoutine 			; if so, do special routine.
+		ldy 	#2 							; write out the routine address
+		lda 	(temp1),y
+		jsr 	EncodeWriteByte
+		iny
+		lda 	(temp1),y
+		jsr 	EncodeWriteByte
+		jsr 	EncodeMoveNextWord 			; advance to the next and loop
+		bra 	EncodeLoop
+_EPEncodeRoutine:
+		.byte 	$FF		
+
+
+_EPNotInDictionary:		
+		.byte 	$FF
+		bra 	_EPNotInDictionary
 		; TODO: Defined words in the program code
 		; TODO: Constants (Hex/Dec)
 		; TODO: Definitions

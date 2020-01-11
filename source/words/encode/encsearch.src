@@ -1,0 +1,78 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		encsearch.src
+;		Purpose :	Find word in the dictionary.
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		11th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;		Find word at srcPtr in dictionary, CS if found, CC if not found.
+;		Returns Dictionary address in YA
+;
+; *****************************************************************************
+
+EncodeSearchDictionary:
+		set16 	temp1,Dictionary 			; search forward through it.
+_ESDLoop:
+		lda 	(temp1) 					; end of dictionary return with CC.							
+		clc
+		beq 	_ESDExit
+		ldy 	#1 							; get control bits, get offset to name.
+		lda 	(temp1),y
+		lsr 	a 							; encode/decode bits move to 0,1
+		lsr 	a
+		lsr 	a
+		lsr 	a
+		iny 								; Y = 2
+		lsr 	a 
+		bcc 	_ESDNotDec
+		iny
+_ESDNotDec:				
+		lsr 	a 
+		bcc 	_ESDNotInc
+		iny
+_ESDNotInc:									; Y is 2,3 or 4
+		tya
+		asl 	a 							; A is now 4,6,8 offset to name.
+		tay
+		lda 	(temp1),y 					; quick check of first character
+		cmp 	(srcPtr) 					
+		bne 	_ESDNext 					; do not match, go to next
+		;
+		tya 								; make temp2 point to the name in
+		clc 								; the dictionary.
+		adc 	temp1 						
+		sta 	temp2 
+		lda 	temp1+1
+		adc 	#0
+		sta 	temp2+1
+		ldy 	#255 						; now start matching up.
+_ESDCompare:
+		iny
+		lda 	(srcPtr),y
+		cmp 	(temp2),y
+		bne 	_ESDNext
+		asl 	a
+		bcc 	_ESDCompare
+		;
+		lda 	temp1 						; return address in YA and carry set.
+		ldy 	temp1+1
+		sec
+		bra 	_ESDExit
+
+_ESDNext:									; next dictionary entry.
+		clc
+		lda 	temp1
+		adc 	(temp1)
+		sta 	temp1
+		bcc 	_ESDLoop
+		inc 	temp1+1
+		bra 	_ESDLoop		
+
+_ESDExit:
+		rts		

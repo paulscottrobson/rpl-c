@@ -50,6 +50,22 @@ _CIDFail:
 
 ; *****************************************************************************
 ;
+;						Skip forward to next space/EOL
+;
+; *****************************************************************************
+
+EncodeMoveNextWord:
+		ldy 	#255 						; search forward
+_EPNWLoop:
+		iny
+		lda 	(srcPtr),y 			
+		cmp 	#" "+1						; looking for <= space
+		bcs 	_EPNWLoop
+		tya				
+		bra 	EncodeAddSrcPtr
+
+; *****************************************************************************
+;
 ;						Add A to the source pointer
 ;
 ; *****************************************************************************
@@ -78,4 +94,26 @@ EncodeGetConstant:
 		lda 	temp3 						; get result into YA
 		ldy 	temp3+1
 _EGCExit:
+		rts
+
+; *****************************************************************************
+;
+;		Set the last bit of the word srcPtr points to to Carry
+;
+; *****************************************************************************
+
+EncSetBit7Word:	
+		php 								; save carry
+		ldy 	#255 						; scan forward for space/NULL
+_ESB7Loop:
+		iny
+		lda 	(srcPtr),y
+		cmp 	#" "+1 						; while > ' '	
+		bcs 	_ESB7Loop
+		dey									; previous character
+		lda 	(srcPtr),y 					; read it
+		asl 	a 							; shift bit 7 out
+		plp 								; restore carry
+		ror 	a 							; shift it in
+		sta 	(srcPtr),y 					; write back and exit
 		rts

@@ -61,6 +61,7 @@ BootMsg:
 		.include 	"words/encode/encode.src"
 		.include 	"words/encode/comstr.src"
 		.include 	"words/encode/encutils.src"
+		.include 	"words/encode/encsearch.src"
 		
 		.include 	"words/structures/fornext.src"
 		.include 	"words/structures/ifelseendif.src"
