@@ -18,6 +18,11 @@
 IfHandler: ;; if <1>
 		jmp 	BranchIfZero
 
+IfEncodeHandler: ;; if encode
+		lda 	#$FF
+		jsr	 	EncodeWriteByte
+		rts
+
 ; *****************************************************************************
 ;
 ;						Else does a branch always

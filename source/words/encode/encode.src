@@ -16,7 +16,7 @@ EncodeTest:
 		.byte 	$FF
 _EncTest:
 		.text	"1025 "
-		.text 	'"STR" DUP '
+		.text 	'"STR" DUP IF '
 		.text	" 'HELLO",0
 
 ; *****************************************************************************
@@ -107,11 +107,38 @@ _EPNotComStr:
 		jsr 	EncodeWriteByte
 		jsr 	EncodeMoveNextWord 			; advance to the next and loop
 		bra 	EncodeLoop
+		;
+		;		Special routine for calling encoder (a bit like immediate)
+		;
 _EPEncodeRoutine:
-		.byte 	$FF		
-
-
+		ldy 	#1							; get type bit
+		lda 	(temp1),y
+		ldy 	#4							; encoder here if no decoder
+		and 	#$10 						; but decoder comes first
+		beq 	_EPENoDecoder
+		iny 								; so if it exists, adjust for it.
+		iny
+_EPENoDecoder:
+		lda 	(temp1),y 					; copy exec addr to temp2
+		sta 	temp2
+		iny
+		lda 	(temp1),y
+		sta 	temp2+1
+		pha 								; call routine preserving state
+		phx
+		phy
+		jsr 	_EPECallTemp2		
+		ply
+		plx
+		pla
+		jsr 	EncodeMoveNextWord 			; advance to the next and loop
+		bra 	EncodeLoop
+_EPECallTemp2:		
+		jmp 	(temp2)
 _EPNotInDictionary:		
+		;
+		;		See if it is a defined word as part of the program code.
+		;
 		.byte 	$FF
 		bra 	_EPNotInDictionary
 		; TODO: Defined words in the program code

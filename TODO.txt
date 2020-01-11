@@ -1,7 +1,5 @@
 TODO:
-	Code tokeniser.
-		- Autoencoding routines
-		- Complete various options.		
+	Code tokeniser complete
 	Add [x] indexing handler (?)
 	Add [] indexing handler
 	Implement other words

@@ -1,4 +1,4 @@
-20 for bm6 next xdump
+list 20 for bm6 next xdump for if  endif next
 
 :bm1 
 1000 for next

@@ -561,8 +561,9 @@ _end79:
 
 ; *** if ***
 	.byte	_end80-*
-	.byte	$01
+	.byte	$21
 	.word	IfHandler
+	.word	IfEncodeHandler
 	.byte	$49,$c6
 _end80:
 
