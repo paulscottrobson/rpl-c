@@ -1,0 +1,65 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		comstr.src
+;		Purpose :	Encode comment or string
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		11th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+EncodeCommentString:
+		lda 	(srcPtr) 					; get first character
+		stz 	temp1 						; other terminator = EOL
+		tax 								; save in X
+		lda 	#(SkipComment & $FF)		; get the routine to use
+		ldy 	#(SkipComment >> 8)		
+		cpx 	#"'"						
+		beq 	_ECSGotCmd
+		stx		temp1 						; other terminator = "
+		lda 	#(LiteralString & $FF)
+		ldy 	#(LiteralString >> 8)		
+_ECSGotCmd:
+		jsr 	EncodeWriteWord 			; write word out.
+		ldx 	encodeBuffer 				; keep offset to buffer in X.
+		lda 	#1
+		jsr 	EncodeWriteByte 			; write total length, so far 1.
+		ldy 	#1 							; for reading the actual text
+_ECSCopyText:
+		lda 	(srcPtr),y 					; get next 
+		beq 	_ECSEndOfLine 				; end of line ?
+		cmp 	temp1						; is it the other terminator
+		beq 	_ECSEndOfString 			; if so must be closing quote.
+		jsr 	EncodeWriteByte 			; write the byte out
+		inc 	encodeBuffer,x				; increase length
+		iny 								; next character
+		bra 	_ECSCopyText
+		;
+		;		Found closing quote
+		;	
+_ECSEndOfString:
+		iny 								; skip closing quote.
+		lda 	#0 							; write out ASCIIZ
+		jsr 	EncodeWriteByte
+		inc 	encodeBuffer,x 				; fix the length up.
+		bra 	_ECSComplete 				; and just patching up srcPtr to do.
+		;
+		;		End of line.
+		;
+_ECSEndOfLine:
+		lda 	temp1 						; missing closing quote
+		beq 	_ECSComplete 				; if we were doing a string.
+		rerror	"QUOTE?"
+		;
+		;		Adjust srcptr to end of string/comment
+		;		
+_ECSComplete:
+		tya
+		clc
+		adc 	srcPtr
+		sta 	srcPtr
+		bcc 	_ECSExit
+		inc 	srcPtr+1
+_ECSExit:
+		rts				

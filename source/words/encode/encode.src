@@ -15,7 +15,9 @@ EncodeTest:
 		jsr 	EncodeProgram
 		.byte 	$FF
 _EncTest:
-		.text	"1025 ",0
+		.text	"1025 "
+		.text 	'"STR"'
+		.text	" 'HELLO",0
 
 ; *****************************************************************************
 ;
@@ -66,20 +68,30 @@ _EPEndEncode:
 		pla
 		rts
 		;
+		;		First check for a quoted string "hello" or a comment ' do this
+		;		these use the same code.
+		;
 _EPNotSpace:
-		.byte 	$FF
+		lda 	(srcPtr)
 		cmp 	#'"'						; is it a quoted string or comment ?
 		beq 	_EPIsComStr
 		cmp 	#"'"
 		bne 	_EPNotComStr
 _EPIsComStr:		
-		; TODO: Comments / Strings
+		jsr 	EncodeCommentString
+		bra 	EncodeLoop
 _EPNotComStr:		
+		;
+		;		Convert the next word in the buffer to a 'bit 7' word
+		;		by setting the last bit of the last character. The dictionary
+		;		and defined words both use this.
+		;
 		; TODO: Set Bit 7.
 		; TODO: Check Dictionary words/encodings built in
 		; TODO: Defined words in the program code
 		; TODO: Constants (Hex/Dec)
 		; TODO: Definitions
 		; TODO: Variable access
+		; TODO: <line> encoding.
 		; TODO: Error
 
