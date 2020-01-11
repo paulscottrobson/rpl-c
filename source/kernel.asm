@@ -26,7 +26,7 @@ WarmStartBlankStack:
 WarmStart:	
 		lda 	#COL_Yellow
 		jsr 	ExternColour
-		jsr 	ExternInput
+;		jsr 	ExternInput
 		lda 	#COL_Cyan
 		jsr 	ExternColour
 		jmp 	RunProgram	
