@@ -11,33 +11,8 @@
 
 ; *****************************************************************************
 ;
-;			Convert word at TOS to 2nd. TOS = -1 (ok) 0 (fail)
-;
-; *****************************************************************************
-
-NumToInt: ;; to.integer
-		lda 	TOS 						; TOS to temp4
-		sta 	temp4
-		lda		TOS+1
-		sta 	temp4+1
-		jsr 	ConvertToInteger
-		bcc 	_NTIFail
-		;
-		pushWord temp3 						; push result on the stack
-		lda 	#$FF 						; TOS = -1
-		sta 	TOS
-		sta 	TOS+1
-		jmp 	Next
-
-_NTIFail:
-		stz 	TOS 						; zero TOS and push on stack as null answer
-		stz 	TOS+1
-		pushTOS
-		jmp 	Next
-
-; *****************************************************************************
-;
-;	  Convert word at temp4 to a number in temp3. CS if okay, CC if bad.
+;	  Convert word at YA to a number in temp3. CS if okay, CC if bad.
+;	  Characters consumed in A. Goes as far as <= space, ignores bit 7.
 ;
 ; *****************************************************************************
 
@@ -47,6 +22,8 @@ dbltemp3 .macro
 		.endm
 
 ConvertToInteger:	
+		sty 	temp4+1
+		sta 	temp4
 		stz 	temp3 						; reset value
 		stz 	temp3+1	
 		stz 	temp1 						; temp1 = 0 (decimal) 255 (hex)
@@ -100,7 +77,7 @@ _CTIDecimal:
 		lda 	temp3+1
 		adc 	temp2+1
 		sta 	temp3+1
-		pla 					; check digit 0-9
+		pla 								; check digit 0-9
 		cmp 	#10
 		bcs 	_CTIFail
 		;
@@ -113,7 +90,8 @@ _CTIAddLoop:								; add digit value.
 _CTINoCarry:
 		iny
 		lda 	(temp4),y 					; was this the last character
-		bne 	_CTILoop 					; no, go back.
+		cmp 	#32+1
+		bcs 	_CTILoop 					; no, go back.
 		lda 	temp1+1 					; was it - ?
 		bne 	_CTIOkay
 		sec
@@ -124,6 +102,7 @@ _CTINoCarry:
 		sbc 	temp3+1
 		sta 	temp3+1
 _CTIOkay:
+		tya
 		sec
 		rts
 

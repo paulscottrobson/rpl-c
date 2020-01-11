@@ -23,6 +23,9 @@ RplBuild = $1000 							; code starts here.
 		jsr 	EXPrintString
 WarmStartBlankStack:				
 		resetStack 							; set up S to point to empty number stack
+
+		jmp 	EncodeTest
+				
 WarmStart:	
 		lda 	#COL_Yellow
 		jsr 	ExternColour
@@ -55,6 +58,9 @@ BootMsg:
 		.include 	"words/data/stack.src"
 		.include 	"words/data/memory.src"
 
+		.include 	"words/encode/encode.src"
+		.include 	"words/encode/encutils.src"
+		
 		.include 	"words/structures/fornext.src"
 		.include 	"words/structures/ifelseendif.src"
 		.include 	"words/structures/repeatuntil.src"

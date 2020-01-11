@@ -10,7 +10,7 @@ repeat @k 1+ dup !k 1000 >= until ;
 
 :bm3
 0 !k
-repeat @k 1+ !k @k @k  / @k * @k + @k - !a @k 1000 >= until ;
+repeat @k 1+ !k @k @k  / @k * @k + @k - !a @k 1000 >= until ;	
 
 :bm4
 0 !k

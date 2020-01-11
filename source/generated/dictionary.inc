@@ -706,54 +706,47 @@ _end99:
 	.byte	$53,$59,$d3
 _end100:
 
-; *** to.integer ***
-	.byte	_end101-*
-	.byte	$00
-	.word	NumToInt
-	.byte	$54,$4f,$2e,$49,$4e,$54,$45,$47,$45,$d2
-_end101:
-
 ; *** to.string ***
-	.byte	_end102-*
+	.byte	_end101-*
 	.byte	$00
 	.word	IntToString
 	.byte	$54,$4f,$2e,$53,$54,$52,$49,$4e,$c7
-_end102:
+_end101:
 
 ; *** until ***
-	.byte	_end103-*
+	.byte	_end102-*
 	.byte	$01
 	.word	UntilHandler
 	.byte	$55,$4e,$54,$49,$cc
-_end103:
+_end102:
 
 ; *** vlist ***
-	.byte	_end104-*
+	.byte	_end103-*
 	.byte	$00
 	.word	VlistCode
 	.byte	$56,$4c,$49,$53,$d4
-_end104:
+_end103:
 
 ; *** xbreak ***
-	.byte	_end105-*
+	.byte	_end104-*
 	.byte	$40
 	.word	BreakCmd
 	.byte	$58,$42,$52,$45,$41,$cb
-_end105:
+_end104:
 
 ; *** xdump ***
-	.byte	_end106-*
+	.byte	_end105-*
 	.byte	$00
 	.word	ExitDump
 	.byte	$58,$44,$55,$4d,$d0
-_end106:
+_end105:
 
 ; *** xor ***
-	.byte	_end107-*
+	.byte	_end106-*
 	.byte	$00
 	.word	Xor
 	.byte	$58,$4f,$d2
-_end107:
+_end106:
 
 	.byte	0
 

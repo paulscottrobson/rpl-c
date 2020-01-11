@@ -89,6 +89,8 @@ returnStackX = returnStack+$80
 
 NumberStackBase = $80 						; number stack down from here.
 
+encodeBuffer = $910 						; buffer for encoded program
+
 ; *****************************************************************************
 ;
 ;										Colours.

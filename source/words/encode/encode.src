@@ -1,0 +1,85 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		encode.src
+;		Purpose :	Encode ASCIIZ string to program line
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		11th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+EncodeTest:
+		lda 	#(_EncTest & $FF)
+		ldy 	#(_EncTest >> 8)
+		jsr 	EncodeProgram
+		.byte 	$FF
+_EncTest:
+		.text	"1025 ",0
+
+; *****************************************************************************
+;
+;				Encode ASCIIZ string at YA to encodeBuffer
+;						(same code as in rplconv.py)
+;
+; *****************************************************************************
+
+EncodeProgram:
+		pha 								; save registers.
+		phx
+		phy
+		sty 	srcPtr+1					; save source pointer.
+		sta		srcPtr
+		;
+		lda 	#3 							; reset the encode Buffer
+		sta 	encodeBuffer 				; this is also the write ptr/offset
+		stz 	encodeBuffer+1 				; the line number
+		stz 	encodeBuffer+2 				; which is initially zero.
+		;
+		lda 	(srcPtr) 					; check if first character is digit
+		jsr 	CheckIsDigit
+		bcc 	_EPNoLineNumber 			; if so there is a line number
+		jsr 	EncodeGetConstant 			; extract that constant from the source
+		sta 	encodeBuffer+1 				; that is the line number
+		sty 	encodeBuffer+2
+_EPNoLineNumber:
+		;
+		;		This is the main encoding loop
+		;
+EncodeLoop:
+		lda 	(srcPtr) 					; skip over spaces/ reached end
+		beq 	_EPEndEncode
+		cmp 	#32
+		bne 	_EPNotSpace
+		lda 	#1
+		jsr 	EncodeAddSrcPtr
+		bra	 	EncodeLoop
+		;
+		;		Encode Ends, compile $$NextLine
+		;
+_EPEndEncode:
+		lda 	#NextLine & $FF 			; compile $$nextline to mark eol
+		ldy 	#NextLine >> 8
+		jsr 	EncodeWriteWord
+		ply									; restore and exit.
+		plx
+		pla
+		rts
+		;
+_EPNotSpace:
+		.byte 	$FF
+		cmp 	#'"'						; is it a quoted string or comment ?
+		beq 	_EPIsComStr
+		cmp 	#"'"
+		bne 	_EPNotComStr
+_EPIsComStr:		
+		; TODO: Comments / Strings
+_EPNotComStr:		
+		; TODO: Set Bit 7.
+		; TODO: Check Dictionary words/encodings built in
+		; TODO: Defined words in the program code
+		; TODO: Constants (Hex/Dec)
+		; TODO: Definitions
+		; TODO: Variable access
+		; TODO: Error
+

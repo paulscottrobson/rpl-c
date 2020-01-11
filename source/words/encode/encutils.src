@@ -1,0 +1,81 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		encutils.src
+;		Purpose :	Encoder utility functions
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		11th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;							Write encoded byte/word
+;
+; *****************************************************************************
+
+EncodeWriteWord:
+		pha
+		jsr 	EncodeWriteByte
+		tya
+		jsr 	EncodeWriteByte
+		pla
+		rts
+EncodeWriteByte:
+		phx
+		ldx 	encodeBuffer
+		sta 	encodeBuffer,x
+		stz 	encodeBuffer+1,x
+		inc 	encodeBuffer
+		plx
+		rts		
+
+; *****************************************************************************
+;
+;						Return CS if A is a digit 0-9
+;
+; *****************************************************************************
+
+CheckIsDigit:
+		cmp 	#"0"						; return CC if 0..9
+		bcc 	_CIDFail
+		cmp 	#"9"+1
+		bcs 	_CIDFail
+		sec
+		rts
+_CIDFail:
+		clc
+		rts
+
+; *****************************************************************************
+;
+;						Add A to the source pointer
+;
+; *****************************************************************************
+
+EncodeAddSrcPtr:
+		clc 								; add offset
+		adc 	srcPtr
+		sta 	srcPtr
+		bcc 	_EASPNoCarry
+		inc 	srcPtr+1					; carry through
+_EASPNoCarry:
+		rts
+
+; *****************************************************************************
+;
+;			Extract a constant out to YA, CS if okay, CC if failed.
+;
+; *****************************************************************************
+
+EncodeGetConstant:
+		lda 	srcPtr 						; get source
+		ldy 	srcPtr+1
+		jsr 	ConvertToInteger 			; call converter
+		bcc 	_EGCExit
+		jsr 	EncodeAddSrcPtr 			; if passed add chars to src ptr
+		lda 	temp3 						; get result into YA
+		ldy 	temp3+1
+_EGCExit:
+		rts
