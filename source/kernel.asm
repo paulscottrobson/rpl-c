@@ -24,8 +24,10 @@ RplBuild = $1000 							; code starts here.
 WarmStartBlankStack:				
 		resetStack 							; set up S to point to empty number stack
 
+		.if encode == 1
 		jmp 	EncodeTest
-				
+		.endif
+
 WarmStart:	
 		lda 	#COL_Yellow
 		jsr 	ExternColour
@@ -63,7 +65,6 @@ BootMsg:
 		.include 	"words/encode/encdef.src"
 		.include 	"words/encode/encutils.src"
 		.include 	"words/encode/encsearch.src"
-		
 		.include 	"words/structures/fornext.src"
 		.include 	"words/structures/ifelseendif.src"
 		.include 	"words/structures/repeatuntil.src"
@@ -80,10 +81,25 @@ BootMsg:
 		.include 	"words/system/tostr.src"
 		.include 	"words/system/varhandlers.src"
 
-
+		
 Dictionary:
 		.include 	"generated/dictionary.inc"
-				
+		
+		.if encode == 1
+EncodeTest:
+		lda 	#(EncodeTestLine & $FF)
+		ldy 	#(EncodeTestLine >> 8)
+		jsr 	EncodeProgram
+		set16 	bufPtr,textBuffer
+		ldy 	#encodeBuffer>>8
+		lda 	#encodeBuffer & $FF
+		sec
+		jsr 	DecodeLineIntoBufPtr
+		jmp 	$FFFF
+EncodeTestLine:
+		.include 	"generated/edtext.inc"
+		.endif
+
 		* = $3FFF
 		.byte 	$FF
 ProgramMemory:

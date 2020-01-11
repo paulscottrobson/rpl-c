@@ -11,7 +11,7 @@ python scripts/timestamp.py >generated/timestamp.inc
 #
 #		Build the kernel, with no code.
 #
-64tass -q -c kernel.asm -o kernel_nocode.prg -L kernel.lst -l kernel.lbl
+64tass -q -D encode=0 -c kernel.asm -o kernel_nocode.prg -L kernel.lst -l kernel.lbl
 #
 #		Convert rpl/test.rpl to RPL tokenised/compiled code
 #

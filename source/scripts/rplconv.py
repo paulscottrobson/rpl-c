@@ -30,6 +30,13 @@ class RPLProgram(object):
 		src = [x.replace("\t"," ").upper().strip() for x in open(srcFile).readlines() if x.strip() != ""]
 		self.lines += src
 	#
+	#		Add a line
+	#
+	def addLine(self,l):
+		l = l.strip()
+		if l != "":
+			self.lines.append(l)
+	#
 	#		Convert a file
 	#
 	def convert(self,convertObject):

@@ -9,21 +9,6 @@
 ; *****************************************************************************
 ; *****************************************************************************
 
-EncodeTest:
-		lda 	#(_EncTest & $FF)
-		ldy 	#(_EncTest >> 8)
-		jsr 	EncodeProgram
-		set16 	bufPtr,textBuffer
-		ldy 	#encodeBuffer>>8
-		lda 	#encodeBuffer & $FF
-		sec
-		jsr 	DecodeLineIntoBufPtr
-		.byte 	$FF
-_EncTest:
-		.text	"1025 "
-		.text 	'"STR" DUP BM6 BM2 SUB700'
-		.text	" 'HELLO   ",0
-
 ; *****************************************************************************
 ;
 ;				Encode ASCIIZ string at YA to encodeBuffer
