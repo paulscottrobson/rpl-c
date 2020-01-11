@@ -1,5 +1,10 @@
 TODO:
-	Code tokeniser complete
+	Code tokeniser completion
+		- strip end spaces from input line
+		- constants
+		- <x>
+		- variables
+	Auto-testing of the conversion.
 	Add [x] indexing handler (?)
 	Add [] indexing handler
 	Implement other words

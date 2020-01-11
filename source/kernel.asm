@@ -15,9 +15,9 @@ RplBuild = $1000 							; code starts here.
 
 		* = RplBuild
 
-		ldx 		#$FF 					; reset the stack
+		ldx 	#$FF 						; reset the stack
 		txs
-		jsr 		ExternInitialise
+		jsr 	ExternInitialise
 		lda 	#BootMsg & $FF
 		ldy 	#BootMsg >> 8
 		jsr 	EXPrintString
@@ -60,6 +60,7 @@ BootMsg:
 
 		.include 	"words/encode/encode.src"
 		.include 	"words/encode/comstr.src"
+		.include 	"words/encode/encdef.src"
 		.include 	"words/encode/encutils.src"
 		.include 	"words/encode/encsearch.src"
 		

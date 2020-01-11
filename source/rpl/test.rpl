@@ -1,27 +1,20 @@
-list 20 for bm6 next xdump for if  endif next
-
+list 20 for bm6 next xdump for if endif next
 :bm1 
 1000 for next
 ;
-
 :bm2
 0 !k
 repeat @k 1+ dup !k 1000 >= until ;
-
 :bm3
 0 !k
 repeat @k 1+ !k @k @k  / @k * @k + @k - !a @k 1000 >= until ;	
-
 :bm4
 0 !k
 repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a @k 1000 >= until ;
-
 :bm5
 0 !k
 repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 @k 1000 >= until ;
-
 :bm6
 0 !k
 repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 5 for next @k 1000 >= until ;
-
 :sub700 ;

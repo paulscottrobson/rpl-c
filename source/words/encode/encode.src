@@ -13,11 +13,16 @@ EncodeTest:
 		lda 	#(_EncTest & $FF)
 		ldy 	#(_EncTest >> 8)
 		jsr 	EncodeProgram
+		set16 	bufPtr,textBuffer
+		ldy 	#encodeBuffer>>8
+		lda 	#encodeBuffer & $FF
+		sec
+		jsr 	DecodeLineIntoBufPtr
 		.byte 	$FF
 _EncTest:
 		.text	"1025 "
-		.text 	'"STR" DUP IF '
-		.text	" 'HELLO",0
+		.text 	'"STR" DUP BM6 BM2 SUB700'
+		.text	" 'HELLO   ",0
 
 ; *****************************************************************************
 ;
@@ -139,12 +144,26 @@ _EPNotInDictionary:
 		;
 		;		See if it is a defined word as part of the program code.
 		;
-		.byte 	$FF
-		bra 	_EPNotInDictionary
-		; TODO: Defined words in the program code
+		jsr 	EncodeSearchUserDefined 	; are there any user defined routines
+		bcc 	_EPNotDefined
+		pha
+		lda	 	#CallHandler & $FF 			; write code call handler
+		jsr 	EncodeWriteByte
+		lda	 	#CallHandler >> 8
+		jsr 	EncodeWriteByte 			; write line number
+		pla 					
+		jsr 	EncodeWriteByte
+		tya
+		jsr 	EncodeWriteByte
+		jsr 	EncodeMoveNextWord 			; advance to the next and loop
+		jmp 	EncodeLoop
+_EPNotDefined:		
+		;
+		;		See if it is a constant (hex or decimal)
+		;
+
 		; TODO: Constants (Hex/Dec)
-		; TODO: Definitions
-		; TODO: Variable access
 		; TODO: <line> encoding.
+		; TODO: Variable access
 		; TODO: Error
 

@@ -1,0 +1,68 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		encdef.src
+;		Purpose :	Search program code for defined routines.
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		11th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;		Look through program code for :<name>, return line# in YA and
+;		CS if found, CC if failed.
+;
+; *****************************************************************************
+
+EncodeSearchUserDefined:
+		sec 								; temp1 = srcPtr-6 because the
+		lda 	srcPtr				 		; name is 6 in (offset line# $$call len)
+		sbc		#6
+		sta 	temp1
+		lda 	srcPtr+1
+		sbc 	#0
+		sta 	temp1+1
+		set16 	temp2,ProgramMemory 		; temp2 = program to search.
+		;
+_ESULoop:
+		lda 	(temp2) 					; reached the end (offset 0)
+		beq 	_ESUFail
+		;
+		ldy 	#3 							; check it is $$define
+		lda 	(temp2),y
+		cmp 	#DefineCode & $FF
+		bne 	_ESUNext
+		iny
+		lda 	(temp2),y
+		cmp 	#DefineCode >> 8
+		bne 	_ESUNext
+		iny 								; skip length byte.
+_ESUCompare:								; now compare the names
+		iny
+		lda 	(temp2),y
+		cmp 	(temp1),y
+		bne 	_ESUNext
+		asl 	a 							; bit 7 set => found it.
+		bcc 	_ESUCompare
+		;
+		;		Found the definition.
+		;
+		ldy 	#1
+		lda 	(temp2),y 					; read in the line number to YA
+		tax
+		iny
+		lda 	(temp2),y
+		tay
+		txa
+		sec 								; return with carry set as found
+		rts
+
+_ESUNext:
+		advance temp2 						; next line of code
+		bra 	_ESULoop 					; and loop round
+
+_ESUFail:				
+		clc
+		rts
