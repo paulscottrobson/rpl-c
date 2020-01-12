@@ -48,5 +48,6 @@ print("Org",s1)
 print("Dec",s2)
 if s1 != s2:
 	print("Error")
-	sys.exit(-1)
+	while True:
+		pass
 sys.exit(0)	
