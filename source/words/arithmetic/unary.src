@@ -20,8 +20,7 @@ Unary1Plus:		;; 1+ <0>
 		bne 	_U1PSkip
 		inc 	TOS+1
 _U1PSkip:
-		jmp 	Next
-
+		doNext
 Unary2Plus:		;; 2+ <0>
 		clc
 		lda 	TOS
@@ -30,7 +29,7 @@ Unary2Plus:		;; 2+ <0>
 		bcc 	_U1PSkip
 		inc 	TOS+1
 _U1PSkip:
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -44,8 +43,7 @@ Unary1Minus:	;; 1- <0>
 		dec 	TOS+1
 _U1MSkip:
 		dec 	TOS
-		jmp 	Next
-
+		doNext
 Unary2Minus:	;; 2- <0>
 		sec
 		lda 	TOS
@@ -54,8 +52,7 @@ Unary2Minus:	;; 2- <0>
 		bcs 	_U1PSkip
 		dec 	TOS+1
 _U1PSkip:
-		jmp 	Next
-
+		doNext
 ; *****************************************************************************
 ;
 ;								Absolute Value
@@ -65,7 +62,7 @@ _U1PSkip:
 Absolute: ;; abs <0>
 		lda 	TOS+1
 		bmi 	Negate
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -81,7 +78,7 @@ Negate: 	;; negate <0>
 		lda 	#0
 		sbc 	TOS+1
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -96,7 +93,7 @@ OneComplement: 	;; not <0>
 		lda 	TOS+1
 		eor 	#$FF
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -107,15 +104,16 @@ OneComplement: 	;; not <0>
 CheckMinus:	;; 0< <0>
 		lda 	TOS+1
 		bmi 	UnaryTrue
+		
 UnaryFalse:
 		stz 	TOS
 		stz 	TOS+1
-		jmp 	Next
+		doNext
 UnaryTrue:
 		lda 	#$FF
 		sta 	TOS
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 CheckZero: 	;; 0= <0>
 		lda 	TOS
@@ -137,8 +135,7 @@ SignTOS: ;; sgn <0>
 		lda 	#1
 		sta 	TOS
 		stz		TOS+1
-		jmp 	Next
-
+		doNext
 ; *****************************************************************************
 ;
 ;									Byte swap
@@ -150,7 +147,7 @@ ByteSwap:	;; bswap <0>
 		ldy 	TOS+1
 		sta 	TOS+1
 		sty 	TOS
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -170,8 +167,7 @@ Times4:	;; 4* <0>
 Times2:	;; 2* <0>
 		asl 	TOS
 		rol 	TOS+1
-		jmp 	Next
-
+		doNext
 Divide16:	;; 16/ <0>
 		lsr 	TOS+1
 		ror 	TOS
@@ -184,19 +180,17 @@ Divide4:	;; 4/ <0>
 Divide2:	;; 2/ <0>
 		lsr 	TOS+1
 		ror 	TOS
-		jmp 	Next
-
+		doNext
 Times256:	;; 256* <0>
 		lda 	TOS
 		sta 	TOS+1
 		stz 	TOS
-		jmp 	Next
-
+		doNext
 Divide256:	;; 256/ <0>
 		lda 	TOS+1
 		sta 	TOS
 		stz 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -226,4 +220,4 @@ _RH_NoEor:
         sta 	TOS+1
         lda 	randomSeed
         sta 	TOS
-		jmp 	Next
+		doNext

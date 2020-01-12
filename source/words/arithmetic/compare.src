@@ -43,7 +43,7 @@ CompareTrue2:
 		lda 	#$FF
 		sta 	TOS
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 		;
 CompareFalse:				
 		ldx 	temp1
@@ -54,7 +54,7 @@ CompareFalse2:
 		pla
 		stz 	TOS
 		stz 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -138,5 +138,5 @@ _MMNoCopy:
 		ldx 	temp1
 		pla
 		pla
-		jmp 	Next
+		doNext
 

@@ -24,7 +24,7 @@ VarAddressHandler:	;; 	$$&handler noexec <2>
 		sta 	TOS
 		lda		temp1+1
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 VarAddrHandlerDecode: ;; $$&handler decode
 		lda 	#"&"
@@ -47,7 +47,7 @@ VarReadHandler:		;; 	$$@handler 	noexec <2>
 		ldy 	#1
 		lda 	(temp1),y
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 VarReadHandlerDecode: ;; $$@handler decode
 		lda 	#"@"
@@ -70,7 +70,7 @@ VarWriteHandler:	;; 	$$!handler 	noexec <2>
 		sta 	(temp1),y
 
 		popTOS 								; get the next value off the stack and loop
-		jmp 	Next
+		doNext
 
 VarWriteHandlerDecode: ;; $$!handler decode
 		lda 	#"!"

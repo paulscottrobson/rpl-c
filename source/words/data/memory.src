@@ -19,7 +19,7 @@ ByteRead: 	;; c@ <0>
 		lda 	(TOS)
 		sta 	TOS
 		stz 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -34,7 +34,7 @@ WordRead: 	;; @ <0>
 		lda 	(TOS)
 		sta 	TOS
 		sty 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -47,7 +47,7 @@ ByteWrite: 	;; c! <0>
 		pla	
 		sta 	(TOS)	
 		popTOS
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -62,7 +62,7 @@ WordWrite: 	;; ! <0>
 		pla
 		sta 	(TOS)
 		popTOS
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -81,7 +81,7 @@ WordAdd: ;; +! <0>
 		adc 	(TOS),y
 		sta 	(TOS),y
 		popTOS
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -103,5 +103,5 @@ AllocateMemory: ;; alloc <0>
 		ply 								; advance the free ram pointer
 		pla
 		jsr 	AdvanceFreeMem
-		jmp 	Next 						; and continue
+		doNext 						; and continue
 		

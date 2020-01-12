@@ -79,9 +79,9 @@ _CHFoundLSB:
 		iny
 		lda 	(IP),y 						; this is the length of the define name
 		clc
-		adc 	#5 							; $$define token, line number, offset
+		adc 	#5-2 						; $$define token, line number, offset - 2 for Next
 		tax
-		jmp 	Next+2 						; and execute
+		doNext 								; and execute
 
 ; *****************************************************************************
 ;
@@ -101,7 +101,7 @@ ReturnHandler:	;;	; noexec <0>
 		lda 	returnStackX,y
 		tax
 		beq 	_RHInLoop 					; this means you have done :something for ; next
-		jmp 	Next
+		doNext
 _RHUnderflow:
 		rerror	"RETURN?"		
 _RHInLoop:

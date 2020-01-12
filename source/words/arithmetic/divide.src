@@ -15,7 +15,7 @@ Divide16x16: 	;; / <0>
 		jsr 	IntegerDivide
 		popTOS
 		ldx 	temp2
-		jmp 	Next
+		doNext
 
 Modulus16x16:	;; mod <0>
 		stx 	temp2
@@ -28,7 +28,7 @@ Modulus16x16:	;; mod <0>
 		sta 	TOS
 		lda 	temp1+1
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 ;
 ;		Divide tos by tos2. Quotient in tos2, remainder in temp1

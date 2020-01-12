@@ -39,4 +39,4 @@ _MultNoAdd:
 		;
 		ldx 	temp1 						; restore X load result
 		popTOS
-		jmp 	Next
+		doNext

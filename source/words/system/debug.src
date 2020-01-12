@@ -28,4 +28,4 @@ ExitDump: ;; xdump <0>
 
 BreakCmd:	;; xbreak noexec <0>
 		.byte 	$FF
-		jmp 	Next
+		doNext

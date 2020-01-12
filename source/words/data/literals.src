@@ -19,14 +19,14 @@ Constant0:		;; 	0 <0>
 		pushTOS
 		stz 	TOS
 		stz 	TOS+1
-		jmp 	Next
+		doNext
 
 ConstantMinus1:	;; 	-1 <0>
 		pushTOS
 		lda 	#$FF
 		sta 	TOS
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -55,7 +55,7 @@ Const1Byte:
 		pushTOS
 		sty 	TOS
 		stz 	TOS+1
-		jmp 	Next		
+		doNext		
 
 C32: 	const1 32 							;; 32 <0>
 C63: 	const1 63 							;; 63 <0>
@@ -82,7 +82,7 @@ const2	.macro
 Const2Byte:
 		sta 	TOS
 		sty 	TOS+1
-		jmp 	Next
+		doNext
 
 C256: 	const2 	256 						;; 256 <0>
 C512: 	const2 	512 						;; 512 <0>

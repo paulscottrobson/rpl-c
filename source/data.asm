@@ -17,10 +17,10 @@
 ;
 ; *****************************************************************************
 
-Next: 										; NEXT code (INX INX JSR ($xxxx,X) goes here)
+NextCode: 									; NEXT code (INX INX JSR ($xxxx,X) goes here)
 		.fill 	5
 
-IP = Next+3 								; the IP which points to the current instruction
+IP = NextCode+3 							; the IP which points to the current instruction
 
 rsp:										; return stack pointer.
 		.byte 	?
@@ -119,6 +119,10 @@ CTH_Call = COL_Yellow
 ;										Macros
 ;
 ; *****************************************************************************
+
+donext 	.macro
+		jmp 	NextCode
+		.endm
 
 rerror	.macro
 		jsr 	ErrorHandler

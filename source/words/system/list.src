@@ -63,5 +63,5 @@ _LCNext:
 		advance listPtr 					; next line
 		bra 	_LCLoop 					; go round again.
 _LCExit:
-		jmp 	Next
+		doNext
 

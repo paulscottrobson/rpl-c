@@ -18,12 +18,12 @@
 
 InitialiseCoreCode:
 		lda 	#$E8 					; Copy INX INX 			4 cycles when run
-		sta 	Next
-		sta 	Next+1
+		sta 	NextCode
+		sta 	NextCode+1
 		lda 	#$7C 					; Copy JMP ($aaaa,x) 	6 cycles when run
-		sta 	Next+2 
-		stx 	Next+3 					; set the indirect address (IP)
-		sty 	Next+4
+		sta 	NextCode+2 
+		stx 	NextCode+3 				; set the indirect address (IP)
+		sty 	NextCode+4
 		ldx 	#1 						; set up to run from provided word.
 		rts								; (2 INX skip offset and line#)
 
@@ -45,7 +45,7 @@ Literal2Byte:	;; $$literal noexec <2>
 		iny 							; read and push the MSB
 		lda 	(IP),y
 		sta 	TOS+1
-		jmp 	Next
+		doNext
 
 Literal2ByteDecode: ;; $$literal decode
 		lda 	#CTH_Keyword
@@ -83,7 +83,9 @@ LiteralString: ;; $$string noexec <n>
 		clc
 		adc 	(IP),y
 		tax
-		jmp 	Next+2 					; jump without pre-increment
+		dex
+		dex
+		doNext							; jump
 
 LiteralStringDecoder: ;; $$string decode
 		lda 	#CTH_String

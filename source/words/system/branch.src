@@ -25,7 +25,7 @@ BranchIfZero:
 BranchTestFails:		
 		popTOS 								; drop
 		inx 								; skip over the relative branch.
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
@@ -46,6 +46,8 @@ BranchAlways:
 		;
 		lda 	(IP),y 						; adjust the position 
 		tax 								; position back in this line.
-		jmp 	Next+2 						; and continue
+		dex
+		dex
+		doNext 								; and continue
 
 		

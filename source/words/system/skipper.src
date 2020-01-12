@@ -19,8 +19,8 @@ NextLine: 	;; $$nextline hide <0>
 		advance IP							; push IP to next line.
 		lda 	(IP)						; is there any following program ?
 		beq 	_NLGoEnd
-		ldx 	#3 							; start 3 in
-		jmp 	Next+2 						; avoid the first two INXs
+		ldx 	#1 							; start 3 in (-2 for Next)
+		doNext
 _NLGoEnd:
 		jmp 	WarmStart
 
@@ -38,7 +38,9 @@ SkipComment: 	;; $$comment noexec <n>
 		clc
 		adc 	(IP),y 						; add the length to X
 		tax 								; put back in X
-		jmp 	Next+2 						; continue skipping the pre-increment.
+		dex
+		dex
+		doNext 								; and skip
 
 CommentDecoder: ;; $$comment decode
 		lda 	#CTH_Keyword

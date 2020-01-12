@@ -27,7 +27,7 @@ ForHandler:	;; for <0>
 		lda 	#$FF
 		sta 	returnStackX,y
 		popTOS 								; update TOS, losing loop variable
-		jmp 	Next 						
+		doNext 						
 _FHOverflow:
 		rerror	"FOR STACK?"
 
@@ -62,7 +62,7 @@ _NHNoBorrow:
 _NHComplete:
 		inx 								; skip over the branch quantity
 		dec 	rsp 						; drop the indx
-		jmp 	Next
+		doNext
 
 NHNoFor:
 		rerror 	"NO FOR?"
@@ -89,4 +89,5 @@ GetIndex: 	;; index <0>
 		sbc 	#0
 		sta 	TOS+1
 		;
-		jmp 	Next
+		doNext
+		

@@ -21,7 +21,7 @@ IntToString: 	;; to.string
 		ldy 	TOS+1
 		jsr 	ConvertToString
 		set16 	TOS,textBuffer				; return this value.
-		jmp 	Next
+		doNext
 
 ; *****************************************************************************
 ;
