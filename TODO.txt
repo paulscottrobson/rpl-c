@@ -1,7 +1,5 @@
 TODO:
 	Code tokeniser completion
-		- strip end spaces from input line
-		- strip spaces before comments.
 		- constants
 		- <x> code.
 		- variables (3 types)

@@ -117,3 +117,44 @@ _ESB7Loop:
 		ror 	a 							; shift it in
 		sta 	(srcPtr),y 					; write back and exit
 		rts
+
+; *****************************************************************************
+;
+;									Skip Spaces
+;
+; *****************************************************************************
+
+EncSkipSpaces:
+		lda 	(srcPtr) 					; skip over spaces/ reached end
+		cmp 	#32
+		bne 	_ESNotSpace
+		lda 	#1
+		jsr 	EncodeAddSrcPtr
+		bra	 	EncSkipSpaces
+_ESNotSpace:
+		rts		
+
+; *****************************************************************************
+;
+;					Remove trailing spaces from (srcPtr) buffer
+;
+; *****************************************************************************
+
+EncodeTrimTrailingSpaces:
+		ldy 	#255 						; find EOS
+_ETTFindEnd:
+		iny
+		lda 	(srcPtr),y
+		bne 	_ETTFindEnd		
+_ETTRemoveSpace:
+		cpy 	#0 							; start of string
+		beq 	_ETTExit
+		dey 								; previous character 1..32
+		lda 	(srcPtr),y
+		cmp 	#32+1
+		bcs 	_ETTExit
+		lda 	#0 							; erase it and go round again
+		sta 	(srcPtr),y
+		bra 	_ETTRemoveSpace
+_ETTExit:
+		rts

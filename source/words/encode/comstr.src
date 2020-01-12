@@ -22,10 +22,16 @@ EncodeCommentString:
 		ldy 	#(LiteralString >> 8)		
 _ECSGotCmd:
 		jsr 	EncodeWriteWord 			; write word out.
+		lda 	#1 							; skip over ' or "
+		jsr 	EncodeAddSrcPtr
+		cpx 	#"'"						; if ' then skip spaces
+		bne 	_ECNoSkipSpaces
+		jsr 	EncSkipSpaces
+_ECNoSkipSpaces:		
 		ldx 	encodeBuffer 				; keep offset to buffer in X.
 		lda 	#1
 		jsr 	EncodeWriteByte 			; write total length, so far 1.
-		ldy 	#1 							; for reading the actual text
+		ldy 	#0 							; for reading the actual text
 _ECSCopyText:
 		lda 	(srcPtr),y 					; get next 
 		beq 	_ECSEndOfLine 				; end of line ?
@@ -55,12 +61,7 @@ _ECSEndOfLine:
 		;		Adjust srcptr to end of string/comment
 		;		
 _ECSComplete:
-		tya
-		clc
-		adc 	srcPtr
-		sta 	srcPtr
-		bcc 	_ECSExit
-		inc 	srcPtr+1
-_ECSExit:
+		tya									; skip over.
+		jsr 	EncodeAddSrcPtr
 		rts				
 

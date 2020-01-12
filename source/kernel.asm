@@ -95,8 +95,10 @@ EncodeTest:
 		lda 	#encodeBuffer & $FF
 		sec
 		jsr 	DecodeLineIntoBufPtr
+		;.byte 	$FF
 		jmp 	$FFFF
 EncodeTestLine:
+		;.text 	"518 '  hi  ",0
 		.include 	"generated/edtext.inc"
 		.endif
 

@@ -22,6 +22,7 @@ EncodeProgram:
 		phy
 		sty 	srcPtr+1					; save source pointer.
 		sta		srcPtr
+		jsr 	EncodeTrimTrailingSpaces 	; remove trailing spaces.
 		;
 		lda 	#3 							; reset the encode Buffer
 		sta 	encodeBuffer 				; this is also the write ptr/offset
@@ -39,13 +40,9 @@ _EPNoLineNumber:
 		;		This is the main encoding loop
 		;
 EncodeLoop:
-		lda 	(srcPtr) 					; skip over spaces/ reached end
-		beq 	_EPEndEncode
-		cmp 	#32
-		bne 	_EPNotSpace
-		lda 	#1
-		jsr 	EncodeAddSrcPtr
-		bra	 	EncodeLoop
+		jsr 	EncSkipSpaces 				; skip over spaces
+		lda 	(srcPtr) 					; reached end ?
+		bne 	_EPNotEnd
 		;
 		;		Encode Ends, compile $$NextLine
 		;
@@ -61,7 +58,7 @@ _EPEndEncode:
 		;		First check for a quoted string "hello" or a comment ' do this
 		;		these use the same code.
 		;
-_EPNotSpace:
+_EPNotEnd:
 		lda 	(srcPtr)
 		cmp 	#'"'						; is it a quoted string or comment ?
 		beq 	_EPIsComStr

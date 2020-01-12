@@ -83,6 +83,7 @@ while len(" ".join(s)) < 220:
 #		Output it to an include file.
 #
 s = " ".join(s).strip().upper()
+s = s + (" " * random.randint(0,5))
 print(s)
 s = s + chr(0)
 h = open("generated"+os.sep+"edtext.inc","w")
