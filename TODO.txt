@@ -1,6 +1,8 @@
 TODO:
-	Encoders for structures (change generation to be legit)
 	Line editing.
+	- :x doesn't encode ?
+
+	Encoders for structures (change generation to be legit)
 	Escape/Stack check.
 	Add [x] indexing handler (?)
 	Add [] indexing handler

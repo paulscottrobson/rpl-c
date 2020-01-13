@@ -51,7 +51,9 @@ WarmStart:
 
 
 LineEditor:
-		.byte 	$FF
+		jsr 	EditProgram
+		bra 	WarmStartBlankStack			
+		
 ErrorHandler:
 		.byte 	$FF
 		ldx 	#$5E
@@ -92,6 +94,7 @@ BootMsg:
 		.include 	"words/system/clrnew.src"
 		.include 	"words/system/debug.src"
 		.include 	"words/system/decode.src"
+		.include 	"words/system/edit.src"
 		.include 	"words/system/list.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/toint.src"

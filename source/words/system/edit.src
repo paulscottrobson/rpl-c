@@ -1,0 +1,158 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		edit.src
+;		Purpose :	Edit program line
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		13th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *******************************************************************************************
+;
+;									Handle Program Editing. 
+;
+; *******************************************************************************************
+
+EditProgram:
+		jsr 	EDFindLine					; find line address -> temp1
+		bcc 	_EPNotFound 				; if missing don't delete it.
+		lda 	temp1 						; save line address
+		pha
+		lda 	temp1+1
+		pha
+		jsr 	EDDeleteLine 				; delete the line
+		pla 								; restore line address
+		sta 	temp1+1
+		pla 
+		sta 	temp1
+		;
+_EPNotFound:		
+		lda 	encodeBuffer 				; is there anything in the line.
+		cmp 	#5 							; <offset> <line#> <next line>
+		beq 	_EPNoInsert
+		jsr 	EDInsertLine 				; insert line back in.
+_EPNoInsert:
+		jsr 	ClearVariableSpace
+		rts
+
+; *******************************************************************************************
+;
+;								Delete line at temp1
+;
+; *******************************************************************************************
+
+EDDeleteLine:	
+		jsr 	ClearVariableSpace
+		ldy 	#0 							; this is the offset to copy down.
+		ldx 	#0
+		lda 	(temp1),y
+		tay 								; put in Y
+_EDDelLoop:
+		lda 	(temp1),y 					; get it
+		sta 	(temp1,x) 					; write it.
+		;
+		lda 	temp1 						; check if pointer has reached the end of 
+		cmp		nextFreeMem 				; low memory. We will have copied down an
+		bne 	_EDDelNext 					; extra pile of stuff - technically should
+		lda 	temp1+1 					; check the upper value (e.g. temp1+y)
+		cmp 	nextFreeMem+1				; doesn't really matter.
+		beq		_EDDelExit
+		;
+_EDDelNext:		
+		inc 	temp1 						; go to next byte.
+		bne 	_EDDelLoop
+		inc 	temp1+1
+		bra 	_EDDelLoop
+_EDDelExit:
+		rts 	
+
+; *******************************************************************************************
+;
+;				Insert line in encodeBuffer in program space at temp1
+;
+; *******************************************************************************************
+
+EDInsertLine:
+		jsr 	ClearVariableSpace
+		;
+		lda 	nextFreeMem 				; copy high memory to temp3
+		sta 	temp3
+		lda 	nextFreeMem+1
+		sta 	temp3+1
+		;
+		;		Shift up memory to make room.
+		;
+		ldy 	encodeBuffer 				; space to move it to in Y
+		ldx 	#0 			
+_EDInsLoop:
+		lda 	(temp3,x)					; copy it up
+		sta 	(temp3),y
+		;
+		lda 	temp3 						; reached the insert point (temp1)
+		cmp 	temp1
+		bne 	_EDINextShift
+		lda 	temp3+1
+		cmp 	temp1+1
+		beq 	_EDIShiftOver
+		;
+_EDINextShift:		
+		lda 	temp3 						; decrement the copy pointer.
+		bne 	_EDINoBorrow
+		dec 	temp3+1
+_EDINoBorrow:
+		dec 	temp3			
+		bra 	_EDInsLoop
+		;
+		;		Shift is done. So copy the new stuff in.
+		;
+_EDIShiftOver:		
+		ldy 	#0 			 							
+_EDICopyCode:
+		lda 	encodeBuffer,y				; read from the current line
+		sta 	(temp1),y 					; write out
+		iny 								; bump pointers
+		cpy 	encodeBuffer 				; done the whole lot ?
+		bne 	_EDICopyCode
+		rts
+
+; *******************************************************************************************
+;
+;		Find line. If found then return CS and temp1 points to the line. If
+;		not found return CC and temp1 points to the next line after it.
+;
+;		Line# is in encodeBuffer
+;
+; *******************************************************************************************
+
+EDFindLine:		
+		set16 	temp1,programMemory
+_EDFLLoop:
+		lda 	(temp1) 					; check offset	
+		beq 	_EDFLFail 					; then obviously that's the end ;-) (great comment !)
+		;
+		ldy 	#1							; look at line #
+		sec
+		lda 	encodeBuffer+1				; subtract the current from the target
+		sbc 	(temp1),y 					; so if searching for 100 and this one is 90, 
+		tax	 								; this will return 10.
+		lda 	encodeBuffer+2
+		iny
+		sbc 	(temp1),y
+		bcc 	_EDFLFail					; if target < current then failed.
+		bne 	_EDFLNext 					; if non-zero then goto next
+		cpx 	#0 							; same for the LSB - zero if match found.
+		beq 	_EDFLFound
+_EDFLNext:									; go to the next.
+		advance temp1
+		bra 	_EDFLLoop
+
+_EDFLFail:
+		clc
+		rts		
+_EDFLFound:
+		sec
+		rts		
+
+		
