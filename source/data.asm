@@ -113,6 +113,7 @@ CTH_Comment = COL_Yellow+COL_Rvs
 CTH_Definition = COL_White
 CTH_String = COL_Magenta
 CTH_Call = COL_Yellow
+CTH_Variable = COL_White
 
 ; *****************************************************************************
 ;

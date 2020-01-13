@@ -12,7 +12,7 @@
 ListCode: 	;; list
 		stz 	ListLowest 					; zero lowest line#
 		stz 	ListLowest+1
-		lda 	#20 						; show max 20 after lowest line
+		lda 	#24 						; show max 24 after lowest line
 		sta 	ListCount
 		set16	listPtr,ProgramMemory
 		stx 	temp1						; S->A

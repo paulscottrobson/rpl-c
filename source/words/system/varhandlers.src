@@ -220,7 +220,7 @@ _VFCreate:
 
 VarHandlerDecode:
 		pha 								; save, leading space
-		lda 	#" "
+		lda 	#CTH_Variable
 		jsr 	DecodeWriteBuffer
 		pla 								; restore and write type
 		jsr 	DecodeWriteBuffer

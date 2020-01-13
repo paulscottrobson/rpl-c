@@ -1,8 +1,6 @@
 TODO:
 	Line editing.
 	- :x doesn't encode ? haven't written it- should allow . in the name
-	- inserting a lastine deletes the last one (1185 ' deletes 1190)
-	- cannot append 
 
 	Error handling
 	Empty REM lists as yellow blocks (?)
