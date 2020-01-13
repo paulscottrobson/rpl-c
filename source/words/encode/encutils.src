@@ -27,6 +27,7 @@ EncodeWriteByte:
 		ldx 	encodeBuffer
 		sta 	encodeBuffer,x
 		stz 	encodeBuffer+1,x
+		stz 	encodeBuffer+2,x		
 		inc 	encodeBuffer
 		plx
 		rts		

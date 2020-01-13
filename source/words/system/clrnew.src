@@ -22,11 +22,12 @@ NewHandler:		;; 	new <0>
 
 ; *****************************************************************************
 ;
-;			Clr clears variables, allocate memory, zero out hash tables.
+;		Clr clears stacks,variables, allocate memory, zero out hash tables.
 ;
 ; *****************************************************************************
 
 ClrHandler:		;; 	clr <0>
+		resetStack 							; empty the stack
 		jsr 	ClearVariableSpace 			; clear variables, reset pointers
 		doNext
 		
@@ -38,9 +39,7 @@ ClrHandler:		;; 	clr <0>
 ; *****************************************************************************
 
 ClearVariableSpace:
-		lda 	#$FF 						; empty return stack
-		sta 	rsp
-
+		resetRSP
 		set16	nextFreeMem,ProgramMemory	; reset allocated memory pointer.
 		;
 		;		TODO:If using a cache for line lookup, initialise it here.

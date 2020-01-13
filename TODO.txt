@@ -1,11 +1,11 @@
 TODO:
-	Command line stuff
 	Encoders for structures (change generation to be legit)
 	Line editing.
+	Escape/Stack check.
 	Add [x] indexing handler (?)
 	Add [] indexing handler
 	Implement other words
-	
+		
 Missing vocabulary:	
 	load save old
 

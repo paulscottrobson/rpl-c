@@ -165,8 +165,13 @@ _NoCarryAdv:
 		.endm				
 
 resetStack .macro
-		
+		stx 	temp1
 		ldx 	#NumberStackBase 
 		txs
+		ldx 	temp1
 		.endm		
 
+resetRSP .macro
+		lda 	#$FF
+		sta 	rsp
+		.endm

@@ -25,6 +25,32 @@ IntToString: 	;; to.string
 
 ; *****************************************************************************
 ;
+;				 PrintYA using textBuffer,  CS signed CC unsigned
+;
+; *****************************************************************************
+
+PrintYA:
+		pha
+		phx
+		phy
+		pha
+		set16 	temp2,textBuffer
+		pla
+		jsr 	ConvertToString
+		ldx 	#0
+_PrintYALoop:
+		lda 	textBuffer,x
+		jsr 	ExternPrint
+		inx
+		lda 	textBuffer,x
+		bne 	_PrintYALoop
+		ply
+		plx
+		pla
+		rts
+		
+; *****************************************************************************
+;
 ;					Convert YA to ASCIIZ string at temp2
 ;						 Return # chars conveted in A
 ;

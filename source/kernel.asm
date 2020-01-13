@@ -34,8 +34,24 @@ WarmStart:
 		jsr 	ExternInput
 		lda 	#COL_Cyan
 		jsr 	ExternColour
-		jmp 	RunProgram	
+		lda 	#textBuffer & $FF
+		ldy 	#textBuffer >> 8
+		jsr 	EncodeProgram
+		lda 	encodeBuffer+1 				; has a line number been entered ?
+		ora 	encodeBuffer+2 				
+		bne 	LineEditor 					; if so, do the line editing code.
+		;
+		;		Execute encoded line.
+		;
+		resetRSP 							; clear the return stack.
+		ldx 	#encodeBuffer & $FF 		; run what is in the encode buffer.
+		ldy 	#encodeBuffer >> 8
+		jsr 	InitialiseCoreCode 			; initialise the NEXT routine at $00
+		doNext
 
+
+LineEditor:
+		.byte 	$FF
 ErrorHandler:
 		.byte 	$FF
 		ldx 	#$5E

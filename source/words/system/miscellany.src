@@ -125,3 +125,46 @@ _VLNoCarry:
 		lda 	#13
 		jsr 	ExternPrint
 		doNext
+
+; *****************************************************************************
+;
+;									Dump the stack
+;
+; *****************************************************************************
+
+DumpStack:	;; ..
+		stx 	temp1 						; X -> A
+		tsx
+		txa
+		ldx 	temp1
+		cmp 	#NumberStackBase 			; out of range, exit
+		beq 	_DSExit
+		pha 								; save it
+		lda 	#COL_WHITE
+		jsr 	ExternColour
+		lda 	TOS 						; print TOS then stack values backwards
+		ldy 	TOS+1
+		sec 								; print unsigned.
+		jsr 	PrintYA
+		lda 	#COL_CYAN
+		jsr 	ExternColour	
+		ply 								; restore offset
+_DSLoop:lda 	#" " 						; space
+		jsr 	ExternPrint
+		phy 								; save pos
+		lda 	$0101,y 					; read stack item
+		pha
+		lda 	$0102,y		
+		ply
+		sec
+		jsr 	PrintYA 					; print it
+		ply 								; restore and advance pos
+		iny
+		iny
+		cpy 	#NumberStackBase-2 			; till done whole stack.
+		bne 	_DSLoop
+
+		lda 	#13
+		jsr 	ExternPrint
+_DSExit:
+		doNext		
