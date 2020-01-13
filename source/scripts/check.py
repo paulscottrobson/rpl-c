@@ -42,7 +42,7 @@ stack = [ mem[tosAddr]+mem[tosAddr+1]*256 ]
 for i in range(sp,labels["numberstackbase"]-2,2):
 	stack.append(mem[0x102+i]+mem[0x101+i]*256)
 
-s1 = readString(labels["encodetestline"])
+s1 = readString(labels["encodetestlineoriginal"])
 s2 = readString(labels["textbuffer"])
 print("Org",s1)
 print("Dec",s2)

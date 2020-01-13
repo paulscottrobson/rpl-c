@@ -65,6 +65,8 @@ BootMsg:
 		.include 	"words/encode/encdef.src"
 		.include 	"words/encode/encutils.src"
 		.include 	"words/encode/encsearch.src"
+		.include 	"words/encode/encvar.src"
+
 		.include 	"words/structures/fornext.src"
 		.include 	"words/structures/ifelseendif.src"
 		.include 	"words/structures/repeatuntil.src"
@@ -107,8 +109,10 @@ EncodeTest:
 EncodeTestLine:
 		.if encode == 1
 		.include 	"generated/edtext.inc"
+EncodeTestLineOriginal:
+		.include 	"generated/edtext.inc"
 		.else
-		.text 	"518 42 $20A  ",0
+		.text 	"518 42 !A  ",0
 		.endif
 		.endif
 

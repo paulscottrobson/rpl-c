@@ -85,6 +85,12 @@ while len(" ".join(s)) < 220:
 	if n == 3:
 		v = random.randint(-32768,32767)
 		s.append(str(v))
+	#
+	#	Direct calls (4)
+	#
+	if n == 4:
+		v = random.randint(30000,40000)			# obviously not having :definitions
+		s.append("<"+str(v)+">")
 #
 #		Output it to an include file.
 #

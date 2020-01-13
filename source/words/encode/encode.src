@@ -132,8 +132,8 @@ _EPNotInDictionary:
 		lda	 	#CallHandler & $FF 			; write code call handler
 		jsr 	EncodeWriteByte
 		lda	 	#CallHandler >> 8
-		jsr 	EncodeWriteByte 			; write line number
-		pla 					
+		jsr 	EncodeWriteByte 	
+		pla 								; write line number
 		jsr 	EncodeWriteByte
 		tya
 		jsr 	EncodeWriteByte
@@ -144,16 +144,50 @@ _EPNotDefined:
 		;		Finally check for ! & @ (variable) or < (gosub)
 		;
 		lda 	(srcPtr) 					; first character
+		cmp 	#"<"						; is it <line> which is call syntax
+		beq 	_EPCallDirect
+		cmp 	#"!"						; check for variable operators
+		beq 	_EPVariable
+		cmp 	#"@"
+		beq 	_EPVariable
+		cmp 	#"&"
+		beq 	_EPVariable
 		;
 		;		Only thing left is a constant
 		;
 		lda 	#Literal2Byte & $FF 		; write out 2 byte literal
 		ldy 	#Literal2Byte >> 8
 		jsr 	EncodeWriteWord
+_EPOutputConstant:		
 		jsr 	EncodeGetConstant 			; extract that constant from the source
 		bcc 	_EPFail 					; if can't find one, that's us done.
 		jsr 	EncodeWriteWord 			; write out the encoded value.
 		jmp 	EncodeLoop 					; and go round again.
 _EPFail:
 		rerror 	"SYNTAX?"					; can't encode it.
-
+		;
+		;		Call direct syntax
+		;
+_EPCallDirect:
+		lda	 	#CallHandler & $FF 			; write code call handler
+		ldy	 	#CallHandler >> 8
+		jsr 	EncodeWriteWord
+		lda 	#1
+		jsr 	EncodeAddSrcPtr 			; skip over the <
+		ldy 	#255 						; scan forward for last character.
+_EPToLast:
+		iny		
+		lda 	(srcPtr),y
+		bpl	 	_EPToLast
+		cmp 	#">"+$80 					; must be > 
+		bne 	_EPFail
+		lda 	#" " 						; strip back to a number, erases last char
+		sta 	(srcPtr),y
+		bra 	_EPOutputConstant 			; borrow the number routines extract/compile constant
+		;
+		;		Extract and build a variable access definition
+		;
+_EPVariable:
+		jsr 	EncodeVariableReference		
+		jsr 	EncodeMoveNextWord 			; advance to the next and loop
+		jmp 	EncodeLoop

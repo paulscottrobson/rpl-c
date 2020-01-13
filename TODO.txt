@@ -1,7 +1,5 @@
 TODO:
 	Code tokeniser completion
-		- constants
-		- <x> code.
 		- variables (3 types)
 	Encoders.
 	Auto-testing of the conversion.
@@ -25,6 +23,6 @@ Fixes:
 	Optimise the call lookup.
 	AdvanceFreeMem checks high memory for out of memory.
 	Seperate type for $constants ?
-	How do we do escape ? Interrupt hack ?
+	How do we do escape ? Interrupt hack ? Patched IP which also tests S ?
 	
 
