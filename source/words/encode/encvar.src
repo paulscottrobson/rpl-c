@@ -10,5 +10,88 @@
 ; *****************************************************************************
 
 EncodeVariableReference:
-		.byte 	$FF
+		lda 	(srcPtr)					; get the type, use it to identify the routine
+		ldx 	#VarAddressHandler & $FF
+		ldy 	#VarAddressHandler >> 8
+		cmp 	#"&"
+		beq 	_EVFHaveAddress
+		ldx 	#VarReadHandler & $FF
+		ldy 	#VarReadHandler >> 8
+		cmp 	#"@"
+		beq 	_EVFHaveAddress
+		ldx 	#VarWriteHandler & $FF
+		ldy 	#VarWriteHandler >> 8
+_EVFHaveAddress:
+		txa	
+		jsr 	EncodeWriteWord 			; write it out.
+		ldy 	#1 							; get the first charactere
+		lda 	(srcPtr),y
+		and 	#$7F 						; might be the last.
+		jsr 	CheckIsLetter 				; is it A-Z
+		bcc 	EVFFail
+		and 	#31 						; make 1-26
+		sta 	temp1 						; start building the name in temp1
+		stz 	temp1+1
+		sec 								; possible char 2
+		jsr 	EncVarAlNum
+		clc 								; possible char 3
+		jsr 	EncVarAlNum
+		lda 	(srcPtr),y 					; more text after ?
+		bpl 	EVFFail
+		lda 	temp1 						; write out variable identifier.
+		ldy 	temp1+1
+		jsr 	EncodeWriteWord
 		rts
+
+EVFFail:
+		rerror	"VARIABLE?"
+
+EncVarAlNum:
+		lda 	(srcPtr),y 					; points to the  last char processed.
+		bpl 	_EVAContinue 				
+		rts
+_EVAContinue:		
+		php 								; CS x 32 ; CC x 32 x 40
+		iny 								; get the next character, strip bit 7
+		lda 	(srcPtr),y
+		and 	#$7F
+		jsr 	CheckIsLetter 				; letter ?
+		bcs 	_EVACharOkay
+		jsr 	CheckIsDigit				; fail if not digit.
+		bcc 	EVFFail
+		clc
+		adc 	#"Z"+1-"0"					; shift 0 so after Z
+_EVACharOkay:
+		sec 								; range 1-36
+		sbc 	#64 
+		plp 								; which multiplier ?
+		bcc 	_EVATimes32x40
+		;
+		sta 	temp2 						; save in temp2 - A x 32
+		stz 	temp2+1  
+		ldx 	#5
+_EVA32:	asl 	temp2
+		rol 	temp2+1
+		dex 	
+		bne 	_EVA32
+		bra 	_EVAAddVar
+		;
+_EVATimes32x40:			
+		sta 	temp2+1						; 32 x 40 = 1280 or $500, so temp2 = A x 256 x 5
+		stz 	temp2		
+		asl 	a
+		asl 	a
+		clc
+		adc 	temp2+1
+		sta 	temp2+1
+		;
+_EVAAddVar: 								; add temp2 to temp1
+		clc
+		lda 	temp1
+		adc 	temp2
+		sta 	temp1		
+		lda 	temp1+1
+		adc 	temp2+1
+		sta 	temp1+1
+		rts	
+

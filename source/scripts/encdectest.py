@@ -35,6 +35,7 @@ names = [x.upper() for x in Dictionary().getKeys()]
 #
 random.seed()
 seed = random.randint(0,10000)
+#seed = 42
 print("seed ",seed)
 random.seed(seed)
 l = random.randint(1,64000)
@@ -91,6 +92,12 @@ while len(" ".join(s)) < 220:
 	if n == 4:
 		v = random.randint(30000,40000)			# obviously not having :definitions
 		s.append("<"+str(v)+">")
+	#
+	#	Variable access (5)
+	#
+	if n == 5:
+		v = "&!@"[random.randint(0,2)]+getIdentifier(1,3)
+		s.append(v)
 #
 #		Output it to an include file.
 #

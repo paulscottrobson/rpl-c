@@ -112,7 +112,7 @@ EncodeTestLine:
 EncodeTestLineOriginal:
 		.include 	"generated/edtext.inc"
 		.else
-		.text 	"518 42 !A  ",0
+		.text 	"518 42 !AZ0  ",0
 		.endif
 		.endif
 

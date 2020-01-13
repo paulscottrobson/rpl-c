@@ -1,13 +1,10 @@
 TODO:
-	Code tokeniser completion
-		- variables (3 types)
-	Encoders.
-	Auto-testing of the conversion.
+	Command line stuff
+	Encoders for structures (change generation to be legit)
+	Line editing.
 	Add [x] indexing handler (?)
 	Add [] indexing handler
 	Implement other words
-	When the core is written, write the importers and scanners etc.
-	When encoder written check vlist works.
 	
 Missing vocabulary:	
 	load save old
@@ -18,11 +15,12 @@ Encoders/Immediate:
 	if 		else 	endif
 
 Decoders:
+	(None)
 
 Fixes:
 	Optimise the call lookup.
 	AdvanceFreeMem checks high memory for out of memory.
 	Seperate type for $constants ?
-	How do we do escape ? Interrupt hack ? Patched IP which also tests S ?
+	How do we do escape/check stack ? Interrupt hack ? Patched IP which also tests S ?
 	
 

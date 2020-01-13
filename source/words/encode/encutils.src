@@ -33,12 +33,28 @@ EncodeWriteByte:
 
 ; *****************************************************************************
 ;
+;						Return CS if A is a letter A-Z
+;
+; *****************************************************************************
+
+CheckIsLetter:
+		cmp 	#"A"						; return CS if A..Z
+		bcc 	_CILFail
+		cmp 	#"Z"+1
+		bcs 	_CILFail
+		sec
+		rts
+_CILFail:
+		clc
+		rts
+; *****************************************************************************
+;
 ;						Return CS if A is a digit 0-9
 ;
 ; *****************************************************************************
 
 CheckIsDigit:
-		cmp 	#"0"						; return CC if 0..9
+		cmp 	#"0"						; return CS if 0..9
 		bcc 	_CIDFail
 		cmp 	#"9"+1
 		bcs 	_CIDFail
