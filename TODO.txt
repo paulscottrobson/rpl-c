@@ -1,8 +1,12 @@
 TODO:
 	Line editing.
-	- :x doesn't encode ?
+	- :x doesn't encode ? haven't written it- should allow . in the name
+	- inserting a lastine deletes the last one (1185 ' deletes 1190)
+	- cannot append 
 
-	Encoders for structures (change generation to be legit)
+	Error handling
+	Empty REM lists as yellow blocks (?)
+	Encoders for structures (change generation to be legit)	
 	Escape/Stack check.
 	Add [x] indexing handler (?)
 	Add [] indexing handler
