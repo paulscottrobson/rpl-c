@@ -141,11 +141,19 @@ _EPNotInDictionary:
 		jmp 	EncodeLoop
 _EPNotDefined:		
 		;
-		;		See if it is a constant (hex or decimal)
+		;		Finally check for ! & @ (variable) or < (gosub)
 		;
-
-		; TODO: Constants (Hex/Dec)
-		; TODO: <line> encoding.
-		; TODO: Variable access
-		; TODO: Error
+		lda 	(srcPtr) 					; first character
+		;
+		;		Only thing left is a constant
+		;
+		lda 	#Literal2Byte & $FF 		; write out 2 byte literal
+		ldy 	#Literal2Byte >> 8
+		jsr 	EncodeWriteWord
+		jsr 	EncodeGetConstant 			; extract that constant from the source
+		bcc 	_EPFail 					; if can't find one, that's us done.
+		jsr 	EncodeWriteWord 			; write out the encoded value.
+		jmp 	EncodeLoop 					; and go round again.
+_EPFail:
+		rerror 	"SYNTAX?"					; can't encode it.
 

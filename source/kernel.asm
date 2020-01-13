@@ -24,7 +24,7 @@ RplBuild = $1000 							; code starts here.
 WarmStartBlankStack:				
 		resetStack 							; set up S to point to empty number stack
 
-		.if encode == 1
+		.if encode != 0
 		jmp 	EncodeTest
 		.endif
 
@@ -84,8 +84,13 @@ BootMsg:
 		
 Dictionary:
 		.include 	"generated/dictionary.inc"
-		
-		.if encode == 1
+	
+;
+;		Encode testing. Encode = 1 means the edbuild.bat script is running which 
+;		automatically tests encoding. Encode = 2 is for development ; the routine
+;		is called, but uses the text in the source not the generated one.
+;	
+		.if encode != 0
 EncodeTest:
 		lda 	#(EncodeTestLine & $FF)
 		ldy 	#(EncodeTestLine >> 8)
@@ -95,11 +100,16 @@ EncodeTest:
 		lda 	#encodeBuffer & $FF
 		sec
 		jsr 	DecodeLineIntoBufPtr
-		;.byte 	$FF
+		.if encode == 2
+		.byte 	$FF
+		.endif
 		jmp 	$FFFF
 EncodeTestLine:
-		;.text 	"518 '  hi  ",0
+		.if encode == 1
 		.include 	"generated/edtext.inc"
+		.else
+		.text 	"518 42 $20A  ",0
+		.endif
 		.endif
 
 		* = $3FFF

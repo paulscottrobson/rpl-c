@@ -93,6 +93,7 @@ EncodeGetConstant:
 		jsr 	EncodeAddSrcPtr 			; if passed add chars to src ptr
 		lda 	temp3 						; get result into YA
 		ldy 	temp3+1
+		sec 								; return CS
 _EGCExit:
 		rts
 

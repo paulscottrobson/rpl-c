@@ -79,6 +79,12 @@ while len(" ".join(s)) < 220:
 	#
 	if n == 2:
 		s.append(callers[random.randint(0,len(callers)-1)])
+	#
+	#	Constants (3)
+	#
+	if n == 3:
+		v = random.randint(-32768,32767)
+		s.append(str(v))
 #
 #		Output it to an include file.
 #
