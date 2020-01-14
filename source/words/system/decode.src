@@ -119,7 +119,7 @@ _DecodeIdNext: 								; go to next.
 		inc 	matchPtr+1
 		bra 	_DecodeIdentify
 _DecodeIdIssue:
-		rerror 	"DECODE?"					; couldn't find it. Internal error.
+		rerror 	"DECODE/BUG"				; couldn't find it. Internal error.
 _DecodeIdFound:
 		ply 								; restore position.
 		rts		

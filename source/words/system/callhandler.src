@@ -53,9 +53,9 @@ _CHSearchNext:
 		lda 	(IP)						; check reached the end.
 		bne 	_CHSearch
 _CHFail:
-		rerror 	"DEFINITION?"				; usually means line# has changed
+		rerror 	"CANT FIND DEFINITION"		; usually means line# has changed
 _CHOverflow:
-		rerror 	"STACKDEPTH?"
+		rerror 	"CALL STACK OVERFLOW"
 		;
 		;		LSB matches, check MSB
 		;
@@ -103,9 +103,9 @@ ReturnHandler:	;;	; noexec <0>
 		beq 	_RHInLoop 					; this means you have done :something for ; next
 		doNext
 _RHUnderflow:
-		rerror	"RETURN?"		
+		rerror	"MISSING RETURN"		
 _RHInLoop:
-		rerror 	"RETURN IN LOOP?"
+		rerror 	"RETURN IN LOOP ERROR"
 
 ; *****************************************************************************
 ;

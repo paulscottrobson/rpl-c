@@ -168,7 +168,7 @@ _VFNoPage1:
 _VFNotFound:
 		plp 								; was carry set, e.g. create a new record if not found ?
 		bcs 	_VFCreate
-		rerror 	"VARIABLE?"					; no such variable created.
+		rerror 	"NO SUCH VARIABLE"			; no such variable created.
 		;
 		;		Create variable, name in temp2.
 		;				

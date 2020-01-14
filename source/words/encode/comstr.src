@@ -56,7 +56,7 @@ _ECSEndOfString:
 _ECSEndOfLine:
 		lda 	temp1 						; missing closing quote
 		beq 	_ECSComplete 				; if we were doing a string.
-		rerror	"QUOTE?"
+		rerror	"NO CLOSING QUOTE"
 		;
 		;		Adjust srcptr to end of string/comment
 		;		

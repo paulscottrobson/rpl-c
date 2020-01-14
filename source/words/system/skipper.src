@@ -47,11 +47,15 @@ CommentDecoder: ;; $$comment decode
 		jsr 	DecodeWriteBuffer
 		lda 	#"'"
 		jsr 	DecodeWriteBuffer
+		lda 	(srcPtr),y 					; check if there is no data
+		cmp 	#1
+		beq 	_CDEmpty 					; if so print nothing.
 		lda 	#CTH_Comment
 		jsr 	DecodeWriteBuffer
 		jsr 	DecodeOutputData
 		lda 	#32
 		jsr 	DecodeWriteBuffer
+_CDEmpty		
 		rts
 
 ; *****************************************************************************
@@ -61,7 +65,7 @@ CommentDecoder: ;; $$comment decode
 ; *****************************************************************************
 
 DefineCode:	;; $$define noexec <n>
-		rerror "DEFINITION?"
+		rerror "REACHED DEFINITION"
 
 DefineDecoder: ;; $$define decode
 		lda 	#CTH_Definition

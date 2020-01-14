@@ -1,3 +1,6 @@
+'
+'	Hello world
+'
 !AZ0 42 ' Do it
 list vlist 10 for bm.2 next 42 .. repeat 0 until xdump for if endif next
 :bm1 1000 for next ;

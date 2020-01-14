@@ -44,7 +44,7 @@ _EVFHaveAddress:
 		rts
 
 EVFFail:
-		rerror	"VARIABLE?"
+		rerror	"BAD VARIABLE NAME"
 
 EncVarAlNum:
 		lda 	(srcPtr),y 					; points to the  last char processed.

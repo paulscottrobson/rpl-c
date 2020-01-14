@@ -36,7 +36,7 @@ PrintYA:
 		pha
 		set16 	temp2,textBuffer
 		pla
-		jsr 	ConvertToString
+		jsr 	ConvertToStringMain
 		ldx 	#0
 _PrintYALoop:
 		lda 	textBuffer,x

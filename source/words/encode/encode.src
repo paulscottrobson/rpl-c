@@ -164,7 +164,7 @@ _EPOutputConstant:
 		jsr 	EncodeWriteWord 			; write out the encoded value.
 		jmp 	EncodeLoop 					; and go round again.
 _EPFail:
-		rerror 	"SYNTAX?"					; can't encode it.
+		rerror 	"SYNTAX ERROR"				; can't encode it.
 		;
 		;		Call direct syntax
 		;

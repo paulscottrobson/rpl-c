@@ -11,7 +11,7 @@
 
 RplBuild = $1000 							; code starts here.
 
-		.include 	"data.asm"
+		.include 	"code/data.asm"
 
 		* = RplBuild
 
@@ -34,6 +34,9 @@ WarmStart:
 		jsr 	ExternInput
 		lda 	#COL_Cyan
 		jsr 	ExternColour
+		ldx 	#encodeBuffer & $FF 		; run what is in the encode buffer.
+		ldy 	#encodeBuffer >> 8
+		jsr 	InitialiseCoreCode 			; initialise the NEXT routine at $00 so error line# works
 		lda 	#textBuffer & $FF
 		ldy 	#textBuffer >> 8
 		jsr 	EncodeProgram
@@ -44,20 +47,12 @@ WarmStart:
 		;		Execute encoded line.
 		;
 		resetRSP 							; clear the return stack.
-		ldx 	#encodeBuffer & $FF 		; run what is in the encode buffer.
-		ldy 	#encodeBuffer >> 8
-		jsr 	InitialiseCoreCode 			; initialise the NEXT routine at $00
 		doNext
-
 
 LineEditor:
 		jsr 	EditProgram
 		bra 	WarmStartBlankStack			
 		
-ErrorHandler:
-		.byte 	$FF
-		ldx 	#$5E
-
 BootMsg:
 		.text 	"*** RPL/C INTERPRETER ***",13,13
 		.text	"WRITTEN BY PAUL ROBSON 2020",13,13
@@ -65,8 +60,10 @@ BootMsg:
 		.include 	"generated/timestamp.inc"
 		.byte 	13,13,0
 
-		.include 	"core.src"			
-		.include 	"extern.asm"
+		.include 	"code/core.src"			
+		.include 	"code/error.asm"
+		.include 	"code/export.asm"
+		.include 	"code/extern.asm"
 
 		.include 	"words/arithmetic/binary.src"
 		.include 	"words/arithmetic/compare.src"
@@ -106,34 +103,6 @@ BootMsg:
 Dictionary:
 		.include 	"generated/dictionary.inc"
 	
-;
-;		Encode testing. Encode = 1 means the edbuild.bat script is running which 
-;		automatically tests encoding. Encode = 2 is for development ; the routine
-;		is called, but uses the text in the source not the generated one.
-;	
-		.if encode != 0
-EncodeTest:
-		lda 	#(EncodeTestLine & $FF)
-		ldy 	#(EncodeTestLine >> 8)
-		jsr 	EncodeProgram
-		set16 	bufPtr,textBuffer
-		ldy 	#encodeBuffer>>8
-		lda 	#encodeBuffer & $FF
-		sec
-		jsr 	DecodeLineIntoBufPtr
-		.if encode == 2
-		.byte 	$FF
-		.endif
-		jmp 	$FFFF
-EncodeTestLine:
-		.if encode == 1
-		.include 	"generated/edtext.inc"
-EncodeTestLineOriginal:
-		.include 	"generated/edtext.inc"
-		.else
-		.text 	"518 42 !AZ0  ",0
-		.endif
-		.endif
 
 		* = $3FFF
 		.byte 	$FF

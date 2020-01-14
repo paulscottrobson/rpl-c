@@ -1,9 +1,8 @@
 TODO:
 	Line editing.
 	- :x doesn't encode ? haven't written it- should allow . in the name
-
 	Error handling
-	Empty REM lists as yellow blocks (?)
+
 	Encoders for structures (change generation to be legit)	
 	Escape/Stack check.
 	Add [x] indexing handler (?)
