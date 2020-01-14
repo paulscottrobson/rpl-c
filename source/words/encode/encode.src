@@ -141,9 +141,11 @@ _EPNotInDictionary:
 		jmp 	EncodeLoop
 _EPNotDefined:		
 		;
-		;		Finally check for ! & @ (variable) or < (gosub)
+		;		Finally check for ! & @ (variable) : (define) or < (gosub)
 		;
 		lda 	(srcPtr) 					; first character
+		cmp 	#":"						; is it :<routine> ?
+		beq 	_EPDefinition
 		cmp 	#"<"						; is it <line> which is call syntax
 		beq 	_EPCallDirect
 		cmp 	#"!"						; check for variable operators
@@ -189,5 +191,24 @@ _EPToLast:
 		;
 _EPVariable:
 		jsr 	EncodeVariableReference		
+		jsr 	EncodeMoveNextWord 			; advance to the next and loop
+		jmp 	EncodeLoop
+		;
+		;		:xxxx definition
+		;
+_EPDefinition:
+		lda	 	#DefineCode & $FF 			; write code call handler
+		ldy	 	#DefineCode >> 8
+		jsr 	EncodeWriteWord
+		ldx 	encodeBuffer 				; position
+		lda 	#1 							; write default size
+		jsr 	EncodeWriteByte
+		ldy 	#0 							; copy definition over.
+_EPCopy:iny
+		lda 	(srcPtr),y 		
+		jsr 	EncodeWriteByte
+		inc 	encodeBuffer,x 				; update length.
+		asl 	a
+		bcc 	_EPCopy
 		jsr 	EncodeMoveNextWord 			; advance to the next and loop
 		jmp 	EncodeLoop
