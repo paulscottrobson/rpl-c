@@ -1,11 +1,6 @@
-'
-'	Hello world
-'
-test1 end
-:test1 5 repeat dup 1- dup 0= until ;
-:parity 1 and if 444 else 222 endif ;
-!AZ0 42 ' Do it
-list vlist 10 for bm.2 next 42 .. repeat 0 until xdump for if endif next
+
+110 for bm1 next xdump
+
 :bm1 1000 for next ;
 :bm.2
 0 !k
@@ -23,3 +18,5 @@ repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 @k 1000 >= until ;
 0 !k
 repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 5 for next @k 1000 >= until ;
 :sub700 ;
+
+

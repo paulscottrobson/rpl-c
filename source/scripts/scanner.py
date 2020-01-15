@@ -10,6 +10,7 @@
 # *****************************************************************************
 
 import os,sys,re
+from wordindex import *
 
 # *****************************************************************************
 #
@@ -29,6 +30,7 @@ class Dictionary(object):
 					m = re.match("^(.*)\\:.*?\\;\\;\\s*(.*)$",l)
 					assert m is not None,f+" ... "+l
 					self.append(m.group(2).strip().lower().split(),m.group(1))
+		self.index = WordIndex().get()										# get the index.					
 	#					
 	#		Add a <label>: .... ;; <elements> reference
 	#
@@ -57,7 +59,8 @@ class Dictionary(object):
 	#
 	def getKeys(self):
 		keys = [x for x in self.dictionary.keys()]
-		keys.sort()
+		assert len(keys) == len(self.index.keys()),"Wordindex keys and code keys do not match"
+		keys.sort(key = lambda x:self.index[x.upper()])
 		return keys
 	#
 	#		Does a word exist
@@ -78,11 +81,11 @@ class Dictionary(object):
 if __name__ == "__main__":
 	d = Dictionary()
 	h = open("generated"+os.sep+"dictionary.inc","w")
-	count = 1
+	count = 0
 	keys = d.getKeys()
 	for k in keys:
 		e = d.get(k)
-		h.write("; *** {0} ***\n".format(k.lower()))
+		h.write("; *** {0} [ID:{1}] ***\n".format(k.lower(),d.index[k.upper()]))
 		h.write("\t.byte\t_end{0}-*\n".format(count))
 		#
 		ctrlByte ="012n".find(e["params"])

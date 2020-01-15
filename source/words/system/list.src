@@ -58,7 +58,7 @@ _LCPrint:
 _LCEnd:	lda 	#13 						; new line
 		jsr 	ExternPrint
 		dec 	ListCount					; done all the lines allowed
-		beq 	_LCExit
+		;beq 	_LCExit
 _LCNext:		
 		advance listPtr 					; next line
 		bra 	_LCLoop 					; go round again.
