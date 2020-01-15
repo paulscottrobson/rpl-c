@@ -18,6 +18,7 @@
 VarAddressHandler:	;; 	$$&handler noexec <2>
 		clc 								; find variable, error if it doesn't exist.
 		jsr 	VariableFind 				
+		jsr 	VariableCheckIndex
 		pushTOS 							; push stack top on the stack.
 
 		lda 	temp1 						; the address is the new value
@@ -39,6 +40,7 @@ VarAddrHandlerDecode: ;; $$&handler decode
 VarReadHandler:		;; 	$$@handler 	noexec <2>
 		clc 								; find variable, error if it doesn't exist.
 		jsr 	VariableFind 				
+		jsr 	VariableCheckIndex
 		;
 		pushTOS 							; push stack top on the stack.
 
@@ -62,7 +64,7 @@ VarReadHandlerDecode: ;; $$@handler decode
 VarWriteHandler:	;; 	$$!handler 	noexec <2>
 		sec 								; find variable, create it if it doesn't exist.
 		jsr 	VariableFind 							
-
+		jsr 	VariableCheckIndex
 		lda 	TOS 						; write TOS to that address.
 		sta 	(temp1)
 		lda 	TOS+1
@@ -94,6 +96,40 @@ IndexHandlerDecode: ;; $$index decode
 		jsr 	DecodeYAToBuffer
 		lda 	#"]"
 		jsr 	DecodeWriteBuffer		
+		rts
+
+; *****************************************************************************
+;
+;						Variable Index check routine
+;
+; *****************************************************************************
+
+VariableCheckIndex:
+		txa 								; next is $$index ?
+		tay 
+		iny
+		iny
+		lda 	(IP),y
+		cmp 	#IndexHandler & $FF
+		bne 	_VCIExit
+		iny
+		lda 	(IP),y
+		cmp 	#IndexHandler >> 8
+		bne 	_VCIExit
+		tya 								; fix X backup 3 on from where we started
+		tax
+		iny 								; get the index
+		lda 	(IP),y
+		asl 	a 							; double it, add to (temp1) -> temp1
+		ldy 	#1
+		adc 	(temp1) 					; do the indirection e.g. the look up.
+		pha
+		lda 	(temp1),y
+		adc 	#0
+		sta 	temp1+1
+		pla
+		sta 	temp1
+_VCIExit:		
 		rts
 
 ; *****************************************************************************

@@ -1,5 +1,6 @@
-100 !a @a [4]
-110 for bm1 next xdump
+1000 !a 
+ &a[1] 
+&a[3] .. end
 
 :bm1 1000 for next ;
 :bm.2

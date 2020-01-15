@@ -169,22 +169,21 @@ class LineConverter(object):
 			self.code += wByte
 			return nextCode
 		#		
-		if re.match("^[\\@\\!\\&][A-Z][A-Z0-9]*$",word) is not None:		# is it @var !var &var
-			if len(word) > 4:
+		m = re.match("^[\\@\\!\\&]([A-Z][A-Z0-9]*)(.*)$",word) 				# is it @var !var &var
+		if m is not None:
+			if len(m.group(1)) > 3:
 				raise ConversionException("Variable too long "+word)
-			name = word[1:]+"  "											# pad name out.
+			name = m.group(1)+"  "											# pad name out.
 			nameEnc = self.getCh(name[0])+self.getCh(name[1])*32+self.getCh(name[2])*32*40
 			self.appendWord("$$"+word[0]+"handler")
 			self.code.append(nameEnc & 0xFF)
 			self.code.append(nameEnc >> 8)
-			return nextCode
-		#
-		if re.match("^\\[\\d+\\]$",word) is not None: 						# is it [index]
-			ix = int(word[1:-1])
-			if ix < 0 or ix > 127:
-				raise ConversionException("Array range "+word)
-			self.appendWord("$$index")
-			self.code.append(ix)
+			if m.group(2) != "":											# index ?
+				m2 = re.match("^\\[\\d+\\]$",m.group(2))
+				if m2 is None:
+					raise ConversionException("Bad variable name "+word)
+				self.appendWord("$$index")
+				self.code.append(int(m.group(2)[1:-1]))
 			return nextCode
 		#
 		raise ConversionException("Can't process "+word)

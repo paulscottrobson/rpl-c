@@ -1,12 +1,10 @@
 TODO:
-	Implement in Execution
 	Implement in Encoding
-	Implement in Testing
+	Implement in Enc/Dec Testing
 
 	Escape/Stack check.
-	Add [x] indexing handler (?)
 	Add [] indexing handler
-	Implement other words
+	Implement old
 		
 Missing vocabulary:	
 	old
