@@ -1,7 +1,4 @@
 TODO:
-	Add structure tests to the test encode/decode stuff.
-
-	Design array indexing
 	Implement in RPLConv
 	Implement in Execution
 	Implement in Listing/Decoding

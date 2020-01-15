@@ -57,8 +57,10 @@ h.close()
 #
 #		Create an encodable string
 #
+structs = "IF/ENDIF,IF ELSE/ENDIF,IF/ELSE ENDIF,REPEAT/UNTIL,FOR/NEXT".split(",")
+
 while len(" ".join(s)) < 220:
-	n = random.randint(0,5)
+	n = random.randint(0,6)
 	#
 	#	Keywords (0)
 	#
@@ -98,6 +100,13 @@ while len(" ".join(s)) < 220:
 	if n == 5:
 		v = "&!@"[random.randint(0,2)]+getIdentifier(1,3)
 		s.append(v)
+	#
+	#	Structures (6)
+	#
+	if n == 6:
+		v = structs[random.randint(0,len(structs)-1)].split("/")
+		s.insert(1,v[0])
+		s.append(v[1])
 #
 #		Output it to an include file.
 #
