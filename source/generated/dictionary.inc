@@ -776,5 +776,13 @@ _end107:
 	.byte	$4c,$4f,$41,$c4
 _end108:
 
+; *** $$index [ID:109] ***
+	.byte	_end109-*
+	.byte	$11
+	.word	IndexHandler
+	.word	IndexHandlerDecode
+	.byte	$24,$24,$49,$4e,$44,$45,$d8
+_end109:
+
 	.byte	0
 

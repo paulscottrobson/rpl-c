@@ -1,4 +1,4 @@
-
+100 !a @a [4]
 110 for bm1 next xdump
 
 :bm1 1000 for next ;

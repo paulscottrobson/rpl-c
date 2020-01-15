@@ -150,6 +150,8 @@ class WordIndex(object):
 106	:::	xor
 107 ::: save
 108 ::: load
+109 ::: $$index
+
 """.strip().upper()
 
 WordIndex.INDEX = None		

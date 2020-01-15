@@ -78,6 +78,26 @@ VarWriteHandlerDecode: ;; $$!handler decode
 
 ; *****************************************************************************
 ;
+;							Dummy handler for $$index
+;
+; *****************************************************************************
+
+IndexHandler: 	;; $$index <1>
+		rerror 	"$$INDEX:BUG" 				; should not be executed
+
+IndexHandlerDecode: ;; $$index decode
+		lda 	#"["
+		jsr 	DecodeWriteBuffer
+		lda 	(srcPtr),y
+		ldy 	#0
+		sec
+		jsr 	DecodeYAToBuffer
+		lda 	#"]"
+		jsr 	DecodeWriteBuffer		
+		rts
+
+; *****************************************************************************
+;
 ;		Extract the variable name, find where it is and place address of 
 ;		data in temp1. If CS on entry, create it if it doesn't exist, else
 ;		report an error.

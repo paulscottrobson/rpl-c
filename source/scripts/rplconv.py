@@ -179,6 +179,14 @@ class LineConverter(object):
 			self.code.append(nameEnc >> 8)
 			return nextCode
 		#
+		if re.match("^\\[\\d+\\]$",word) is not None: 						# is it [index]
+			ix = int(word[1:-1])
+			if ix < 0 or ix > 127:
+				raise ConversionException("Array range "+word)
+			self.appendWord("$$index")
+			self.code.append(ix)
+			return nextCode
+		#
 		raise ConversionException("Can't process "+word)
 	#
 	#		Convert character to value

@@ -1,7 +1,5 @@
 TODO:
-	Implement in RPLConv
 	Implement in Execution
-	Implement in Listing/Decoding
 	Implement in Encoding
 	Implement in Testing
 
