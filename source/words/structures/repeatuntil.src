@@ -23,12 +23,8 @@ RepeatEncoder: ;; repeat encode
 		ldy 	#RepeatHandler >> 8
 		jsr 	EncodeWriteWord
 		;
-		inc 	rsp 						; make space on rstack
-		ldx 	rsp							; access it
-		lda 	encodeBuffer 				; save position in encode buffer
-		sta 	returnStackX,x
-		lda 	#"R" 						; return marker
-		sta 	returnStackHigh,x		
+		lda 	#"R" 						; repeat marker
+		jsr 	EncodePushPosMarkerOnStack	
 		rts
 
 ; *****************************************************************************

@@ -176,3 +176,18 @@ _ETTRemoveSpace:
 		bra 	_ETTRemoveSpace
 _ETTExit:
 		rts
+
+; *****************************************************************************
+;
+;		Push marker and current write position on return stack (encoders)
+;
+; *****************************************************************************
+
+EncodePushPosMarkerOnStack:
+		inc 	rsp 						; make space on rstack
+		ldx 	rsp							; access it
+		sta 	returnStackHigh,x			; save marker
+		lda 	encodeBuffer 				; save position in encode buffer
+		sta 	returnStackX,x
+		rts
+

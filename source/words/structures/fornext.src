@@ -35,13 +35,8 @@ ForEncoder: ;; for encode
 		lda 	#ForHandler & $FF 			; for handler
 		ldy 	#ForHandler >> 8
 		jsr 	EncodeWriteWord
-		;
-		inc 	rsp 						; make space on rstack
-		ldx 	rsp							; access it
-		lda 	encodeBuffer 				; save position in encode buffer
-		sta 	returnStackX,x
 		lda 	#"F" 						; for marker
-		sta 	returnStackHigh,x		
+		jsr 	EncodePushPosMarkerOnStack	
 		rts
 
 ; *****************************************************************************
@@ -87,7 +82,7 @@ NextEncoder: ;; next encode
 		;
 		ldx 	rsp 						; get stack offset and pop
 		dec 	rsp
-		lda 	returnStackHigh,x 			; check it is a repeat
+		lda 	returnStackHigh,x 			; check it is a for
 		cmp 	#"F"
 		bne 	_NENoFor
 		lda 	returnStackX,x 				; write the branch

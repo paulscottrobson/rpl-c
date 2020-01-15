@@ -1,8 +1,8 @@
 ; *****************************************************************************
 ; *****************************************************************************
 ;
-;		Name :		export.asm
-;		Purpose :	Export test code
+;		Name :		enctest.asm
+;		Purpose :	Encode test code
 ;		Author :	Paul Robson (paul@robsons.org.uk)
 ;		Date : 		14th January 2020
 ;
@@ -33,6 +33,6 @@ EncodeTestLine:
 EncodeTestLineOriginal:
 		.include 	"generated/edtext.inc"
 		.else
-		.text 	"518 REPEAT UNTIL  ",0
+		.text 	"518 IF ELSE ENDIF  ",0
 		.endif
 		.endif

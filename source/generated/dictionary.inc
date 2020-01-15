@@ -540,8 +540,9 @@ _end76:
 
 ; *** else ***
 	.byte	_end77-*
-	.byte	$01
+	.byte	$21
 	.word	ElseHandler
+	.word	ElseEncoder
 	.byte	$45,$4c,$53,$c5
 _end77:
 
@@ -554,8 +555,9 @@ _end78:
 
 ; *** endif ***
 	.byte	_end79-*
-	.byte	$00
+	.byte	$20
 	.word	EndIfHandler
+	.word	EndIfEncoder
 	.byte	$45,$4e,$44,$49,$c6
 _end79:
 
@@ -569,8 +571,9 @@ _end80:
 
 ; *** if ***
 	.byte	_end81-*
-	.byte	$01
+	.byte	$21
 	.word	IfHandler
+	.word	IfEncoder
 	.byte	$49,$c6
 _end81:
 

@@ -62,7 +62,7 @@ BootMsg:
 
 		.include 	"code/core.src"			
 		.include 	"code/error.asm"
-		.include 	"code/export.asm"
+		.include 	"code/enctest.asm"
 		.include 	"code/extern.asm"
 
 		.include 	"words/arithmetic/binary.src"

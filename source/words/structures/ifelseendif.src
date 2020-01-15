@@ -18,6 +18,16 @@
 IfHandler: ;; if <1>
 		jmp 	BranchIfZero
 
+IfEncoder: ;; if encode
+		lda 	#IfHandler & $FF 			; if handler
+		ldy 	#IfHandler >> 8
+		jsr 	EncodeWriteWord
+		lda 	#"I" 						; if marker
+		jsr 	EncodePushPosMarkerOnStack	
+		lda 	#0
+		jsr 	EncodeWriteByte 			; dummy write.
+		rts
+
 ; *****************************************************************************
 ;
 ;						Else does a branch always
@@ -27,6 +37,23 @@ IfHandler: ;; if <1>
 ElseHandler: ;; else <1>
 		jmp 	BranchTestSucceedsNoPop
 
+ElseEncoder: ;; else encode
+		lda 	#ElseHandler & $FF 			; else handler
+		ldy 	#ElseHandler >> 8
+		jsr 	EncodeWriteWord
+		lda 	encodeBuffer 				; push current position
+		pha
+		lda 	#0 							; zero branch
+		jsr 	EncodeWriteByte
+		jsr 	IfPatch 					; fix up the branch.
+
+		lda 	#"I" 						; recreate if marker
+		jsr 	EncodePushPosMarkerOnStack	
+		pla 								; address to patch
+		ldx 	rsp
+		sta 	returnStackX,x 				; and overwrite the target address
+		rts
+
 ; *****************************************************************************
 ;
 ;						  Endif is a marker only
@@ -35,3 +62,25 @@ ElseHandler: ;; else <1>
 
 EndIfHandler: ;; endif <0>
 		doNext 						
+
+
+EndIfEncoder: ;; endif encode
+		lda 	#EndIfHandler & $FF 		; endif handler
+		ldy 	#EndIfHandler >> 8
+		jsr 	EncodeWriteWord
+		jsr 	IfPatch
+		rts
+
+IfPatch:		
+		ldx 	rsp 						; get stack offset and pop
+		dec 	rsp
+		lda 	returnStackHigh,x 			; check it is an if.
+		cmp 	#"I"
+		bne 	_NENoIf
+		;
+		lda 	returnStackX,x 				; this is what you patch.
+		tax
+		lda 	encodeBuffer 				; with the current position.
+		sta 	encodeBuffer,x
+		rts
+_NENoIf:rerror 	"MISSING IF"		
