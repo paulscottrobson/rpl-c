@@ -94,8 +94,9 @@ BootMsg:
 		.include 	"words/system/edit.src"
 		.include 	"words/system/list.src"
 		.include 	"words/system/miscellany.src"
-		.include 	"words/system/toint.src"
+		.include 	"words/system/saveload.src"
 		.include 	"words/system/skipper.src"
+		.include 	"words/system/toint.src"
 		.include 	"words/system/tostr.src"
 		.include 	"words/system/varhandlers.src"
 

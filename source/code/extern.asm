@@ -204,11 +204,13 @@ _ESLoad:
 ; ******************************************************************************
 
 EXGetLength:
-		lda 	(temp3) 					; get name length
-		inc 	temp3 						; bump ptr past it
-		bne 	_EXGLExit
-		inc 	temp3+1
-_EXGLExit:
+		phy
+		ldy 	#255
+_EXGL0:	iny
+		lda 	(temp3),y
+		bne 	_EXGL0
+		tya
+		ply		
 		rts
 
 ; ******************************************************************************

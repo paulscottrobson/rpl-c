@@ -762,5 +762,19 @@ _end105:
 	.byte	$58,$4f,$d2
 _end106:
 
+; *** save [ID:107] ***
+	.byte	_end107-*
+	.byte	$00
+	.word	System_Save
+	.byte	$53,$41,$56,$c5
+_end107:
+
+; *** load [ID:108] ***
+	.byte	_end108-*
+	.byte	$00
+	.word	System_Load
+	.byte	$4c,$4f,$41,$c4
+_end108:
+
 	.byte	0
 

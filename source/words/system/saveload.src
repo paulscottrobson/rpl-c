@@ -1,0 +1,143 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		saveload.src
+;		Purpose :	Save and Load binary programs
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		15th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *******************************************************************************************
+;
+;									Save Program
+;
+; *******************************************************************************************
+
+System_Save: ;; save
+		jsr 	ClearVariableSpace  		; make sure start/end are right
+		jsr 	ExtendWithDictionary 		; attach the dictionary addresses.
+		jsr 	SLGetFileName 				; get filename -> temp3
+
+		lda 	nextFreeMem 				; end address
+		sta 	temp1
+		lda 	nextFreeMem+1
+		sta 	temp1+1
+
+		lda 	#ProgramMemory & $FF 		; program start to YA
+		ldy 	#ProgramMemory >> 8
+		jsr 	ExternSave
+
+		jsr 	ClearVariableSpace  		; make sure start/end are right
+		jmp 	WarmStartBlankStack
+
+; *******************************************************************************************
+;
+;									Load Program
+;
+; *******************************************************************************************
+
+System_Load: ;; load
+		jsr 	SLGetFileName 				; get filename -> temp3
+		lda 	#ProgramMemory & $FF 		; program start to YA
+		ldy 	#ProgramMemory >> 8
+		jsr 	ExternLoad
+		jsr 	ClearVariableSpace 			; reset everything.
+		jmp 	WarmStartBlankStack
+		
+; *******************************************************************************************
+;
+;							Get filename -> temp1
+;
+; *******************************************************************************************
+
+SLGetFileName:
+		tsx
+		cpx 	#NumberStackBase
+		beq 	_SLFNFail
+
+		lda 	#textBuffer & $FF 			; f/n in input buffer.
+		sta 	temp3
+		lda 	#textBuffer >> 8
+		sta 	temp3+1
+
+		ldy 	#0
+_SLCopy:lda 	(TOS),y
+		sta 	(temp3),y
+		iny
+		cmp		#0
+		bne 	_SLCopy
+		dey
+		ldx 	#3 							; check if it ends in .RPL
+_SLCheckEnd:
+		dey
+		lda 	_SLFNExtension,x
+		cmp 	(temp3),y
+		bne 	_SLNoExtension
+		dex
+		bpl 	_SLCheckEnd
+		bra 	_SLExit
+_SLNoExtension:
+		ldy 	#255						; add the extension.
+_SLFindend:
+		iny
+		lda 	textBuffer,y
+		bne 	_SLFindend
+		ldx 	#0
+_SLAppend:
+		lda 	_SLFNExtension,x
+		sta 	textBuffer,y
+		inx
+		iny
+		cmp 	#0
+		bne 	_SLAppend	
+_SLExit:		
+		rts
+
+_SLFNFail:
+		rerror	"BAD FILENAME"
+_SLFNExtension:
+		.text 	".RPL",0
+		
+; *******************************************************************************************
+;
+;		Extend the saved program by writing the dictionary addresses in order after it
+;		this means the program saved has its decoding built in and is not reliant on 
+;		dictionary not changing, though of course it will not load directly.
+;
+; *******************************************************************************************
+
+ExtendWithDictionary:
+		jsr 	_EWDMarker 					; 8 bytes after the final offset write a marker				
+		set16 	temp1,Dictionary
+_EWDLoop:
+		lda 	(temp1)						; end
+		beq 	_EWDMarker
+		ldy 	#2 							; output the address
+		lda 	(temp1),y
+		jsr 	_EWDWrite
+		iny
+		lda 	(temp1),y
+		jsr 	_EWDWrite
+		clc 								; next entry.
+		lda 	temp1
+		adc 	(temp1)
+		sta 	temp1
+		bcc 	_EWDLoop
+		inc 	temp1+1
+		bra 	_EWDLoop
+
+_EWDMarker:		
+		lda 	#$FF	 					
+		jsr 	_EWDWrite
+		jsr 	_EWDWrite
+		rts
+
+_EWDWrite:
+		sta 	(nextFreeMem)		
+		inc 	nextFreeMem
+		bne 	_EWDExit
+		inc 	nextFreeMem+1
+_EWDExit:
+		rts		

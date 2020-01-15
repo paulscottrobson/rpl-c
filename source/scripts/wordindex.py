@@ -148,6 +148,8 @@ class WordIndex(object):
 104	:::	xbreak
 105	:::	xdump
 106	:::	xor
+107 ::: save
+108 ::: load
 """.strip().upper()
 
 WordIndex.INDEX = None		
