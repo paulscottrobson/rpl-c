@@ -16,6 +16,9 @@
 ; *****************************************************************************
 
 ErrorHandler:
+		.if encode != 0 					; encode test doesn't cause sn error loop
+		.byte 	$FF
+		.endif
 		pla 								; get message address
 		ply
 		inc 	a

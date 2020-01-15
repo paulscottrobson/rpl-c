@@ -35,7 +35,7 @@ names = [x.upper() for x in Dictionary().getKeys()]
 #
 random.seed()
 seed = random.randint(0,10000)
-#seed = 42
+seed = 1186
 print("seed ",seed)
 random.seed(seed)
 l = random.randint(1,64000)

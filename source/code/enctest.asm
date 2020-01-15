@@ -29,9 +29,9 @@ EncodeTest:
 		jmp 	$FFFF
 EncodeTestLine:
 		.if encode == 1
-		.include 	"generated/edtext.inc"
+		.include 	"../generated/edtext.inc"
 EncodeTestLineOriginal:
-		.include 	"generated/edtext.inc"
+		.include 	"../generated/edtext.inc"
 		.else
 		.text 	"518 IF ELSE ENDIF  ",0
 		.endif

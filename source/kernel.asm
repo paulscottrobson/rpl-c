@@ -62,7 +62,6 @@ BootMsg:
 
 		.include 	"code/core.src"			
 		.include 	"code/error.asm"
-		.include 	"code/enctest.asm"
 		.include 	"code/extern.asm"
 
 		.include 	"words/arithmetic/binary.src"
@@ -104,6 +103,7 @@ BootMsg:
 Dictionary:
 		.include 	"generated/dictionary.inc"
 	
+		.include 	"code/enctest.asm"
 
 		* = $3FFF
 		.byte 	$FF
