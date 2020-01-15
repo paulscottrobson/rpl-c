@@ -55,6 +55,7 @@ ExternPrint:
 		pha
 		phx
 		phy
+		and 	#$7F
 		jsr 	$FFD2
 		ply
 		plx
@@ -77,13 +78,13 @@ ExternColour:
 		asl 	a
 		asl 	a
 		eor 	#$92
-		jsr 	ExternPrint
+		jsr 	$FFD2
 
 		pla
 		and 	#7
 		tax 	
 		lda 	_ECTable,x
-		jsr 	ExternPrint
+		jsr 	$FFD2
 		plx
 		pla
 		rts
@@ -110,9 +111,9 @@ ExternInput:
 		lda 	#(textBuffer >> 8)
 		sta 	temp3+1
 _EIRead:jsr 	$FFCF
-		and 	#$7F
 		cmp 	#13
 		beq 	_EIExit
+		and 	#$7F
 		sta 	(temp3)
 		inc 	temp3
 		bne 	_EIRead

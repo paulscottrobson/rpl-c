@@ -1,7 +1,7 @@
-$F00 !abc 
-
-$1357 !abc[2]
- end
+0 $9f20 !
+$10 $9f22 c!
+1000 for 33 $9f23 c! next
+end
 
 :bm1 1000 for next ;
 :bm.2
