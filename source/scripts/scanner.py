@@ -79,7 +79,8 @@ if __name__ == "__main__":
 	d = Dictionary()
 	h = open("generated"+os.sep+"dictionary.inc","w")
 	count = 1
-	for k in d.getKeys():
+	keys = d.getKeys()
+	for k in keys:
 		e = d.get(k)
 		h.write("; *** {0} ***\n".format(k.lower()))
 		h.write("\t.byte\t_end{0}-*\n".format(count))

@@ -561,8 +561,9 @@ _end79:
 
 ; *** for ***
 	.byte	_end80-*
-	.byte	$00
+	.byte	$20
 	.word	ForHandler
+	.word	ForEncoder
 	.byte	$46,$4f,$d2
 _end80:
 
@@ -624,8 +625,9 @@ _end88:
 
 ; *** next ***
 	.byte	_end89-*
-	.byte	$01
+	.byte	$21
 	.word	NextHandler
+	.word	NextEncoder
 	.byte	$4e,$45,$58,$d4
 _end89:
 
@@ -659,8 +661,9 @@ _end93:
 
 ; *** repeat ***
 	.byte	_end94-*
-	.byte	$00
+	.byte	$20
 	.word	RepeatHandler
+	.word	RepeatEncoder
 	.byte	$52,$45,$50,$45,$41,$d4
 _end94:
 
@@ -722,8 +725,9 @@ _end102:
 
 ; *** until ***
 	.byte	_end103-*
-	.byte	$01
+	.byte	$21
 	.word	UntilHandler
+	.word	UntilEncoder
 	.byte	$55,$4e,$54,$49,$cc
 _end103:
 

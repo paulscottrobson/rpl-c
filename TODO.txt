@@ -1,5 +1,5 @@
 TODO:
-	Encoders for structures (change generation to be legit)	
+	Encoders for if/else/endif
 	Escape/Stack check.
 	Add [x] indexing handler (?)
 	Add [] indexing handler

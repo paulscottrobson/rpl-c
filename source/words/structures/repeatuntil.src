@@ -18,6 +18,19 @@
 RepeatHandler:	;; repeat <0> 
 		doNext 						
 
+RepeatEncoder: ;; repeat encode
+		lda 	#RepeatHandler & $FF 		; repeat marker
+		ldy 	#RepeatHandler >> 8
+		jsr 	EncodeWriteWord
+		;
+		inc 	rsp 						; make space on rstack
+		ldx 	rsp							; access it
+		lda 	encodeBuffer 				; save position in encode buffer
+		sta 	returnStackX,x
+		lda 	#"R" 						; return marker
+		sta 	returnStackHigh,x		
+		rts
+
 ; *****************************************************************************
 ;
 ;			 Until is a marker, the code is 'branch if tos zero back'
@@ -26,5 +39,19 @@ RepeatHandler:	;; repeat <0>
 
 UntilHandler:	;; until <1>
 		jmp 	BranchIfZero
-
 		
+UntilEncoder: ;; until encode
+		lda 	#UntilHandler & $FF 		; until code
+		ldy 	#UntilHandler >> 8
+		jsr 	EncodeWriteWord
+		;
+		ldx 	rsp 						; get stack offset and pop
+		dec 	rsp
+		lda 	returnStackHigh,x 			; check it is a repeat
+		cmp 	#"R"
+		bne 	_UENoRepeat
+		lda 	returnStackX,x 				; write the branch
+		jsr 	EncodeWriteByte
+		rts
+_UENoRepeat:
+		rerror	"MISSING REPEAT"		

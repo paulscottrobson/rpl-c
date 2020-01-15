@@ -33,6 +33,6 @@ EncodeTestLine:
 EncodeTestLineOriginal:
 		.include 	"generated/edtext.inc"
 		.else
-		.text 	"518 :TEST.42  ",0
+		.text 	"518 REPEAT UNTIL  ",0
 		.endif
 		.endif

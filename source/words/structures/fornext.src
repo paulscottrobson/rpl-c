@@ -31,6 +31,19 @@ ForHandler:	;; for <0>
 _FHOverflow:
 		rerror	"STRUCTURE OVERFLOW"
 
+ForEncoder: ;; for encode
+		lda 	#ForHandler & $FF 			; for handler
+		ldy 	#ForHandler >> 8
+		jsr 	EncodeWriteWord
+		;
+		inc 	rsp 						; make space on rstack
+		ldx 	rsp							; access it
+		lda 	encodeBuffer 				; save position in encode buffer
+		sta 	returnStackX,x
+		lda 	#"F" 						; for marker
+		sta 	returnStackHigh,x		
+		rts
+
 ; *****************************************************************************
 ;
 ;			 Until is a marker, the code is 'branch if tos zero back'
@@ -66,6 +79,22 @@ _NHComplete:
 
 NHNoFor:
 		rerror 	"OUT OF FOR SCOPE"
+		
+NextEncoder: ;; next encode
+		lda 	#NextHandler & $FF 			; next code
+		ldy 	#NextHandler >> 8
+		jsr 	EncodeWriteWord
+		;
+		ldx 	rsp 						; get stack offset and pop
+		dec 	rsp
+		lda 	returnStackHigh,x 			; check it is a repeat
+		cmp 	#"F"
+		bne 	_NENoFor
+		lda 	returnStackX,x 				; write the branch
+		jsr 	EncodeWriteByte
+		rts
+_NENoFor:
+		rerror	"MISSING FOR"		
 		
 ; *****************************************************************************
 ;

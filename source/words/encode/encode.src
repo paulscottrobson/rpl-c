@@ -22,6 +22,11 @@ EncodeProgram:
 		phy
 		sty 	srcPtr+1					; save source pointer.
 		sta		srcPtr
+
+		resetRSP 							; reset the stack.
+		ldx 	rsp 						; this is the current stack entry type, so $00 means
+		stz 	returnStackHigh,x 			; an initial "until" will fail as it's looking for "R" here (repeat)
+
 		jsr 	EncodeTrimTrailingSpaces 	; remove trailing spaces.
 		;
 		lda 	#3 							; reset the encode Buffer
@@ -50,10 +55,15 @@ _EPEndEncode:
 		lda 	#NextLine & $FF 			; compile $$nextline to mark eol
 		ldy 	#NextLine >> 8
 		jsr 	EncodeWriteWord
+		lda 	rsp 						; is the return stack empty ?
+		cmp 	#$FF
+		bne 	_EPIncomplete
 		ply									; restore and exit.
 		plx
 		pla
 		rts
+_EPIncomplete:
+		rerror	"STRUCTURE OPEN"		
 		;
 		;		First check for a quoted string "hello" or a comment ' do this
 		;		these use the same code.
@@ -119,7 +129,7 @@ _EPENoDecoder:
 		plx
 		pla
 		jsr 	EncodeMoveNextWord 			; advance to the next and loop
-		bra 	EncodeLoop
+		jmp 	EncodeLoop
 _EPECallTemp2:		
 		jmp 	(temp2)
 _EPNotInDictionary:		
