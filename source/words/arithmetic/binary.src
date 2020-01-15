@@ -36,12 +36,10 @@ Subtract: ;; - <0>
 		ply
 		pla
 		sec
-		eor 	#$FF
-		adc 	TOS
+		sbc 	TOS
 		sta 	TOS
 		tya
-		eor 	#$FF
-		adc 	TOS+1
+		sbc 	TOS+1
 		sta 	TOS+1
 		doNext
 

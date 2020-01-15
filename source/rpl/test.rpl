@@ -1,6 +1,7 @@
-1000 !a 
- &a[1] 
-&a[3] .. end
+$F00 !abc 
+
+$1357 !abc[2]
+ end
 
 :bm1 1000 for next ;
 :bm.2

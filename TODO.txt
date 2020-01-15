@@ -1,7 +1,4 @@
 TODO:
-	Implement in Encoding
-	Implement in Enc/Dec Testing
-
 	Escape/Stack check.
 	Add [] indexing handler
 	Implement old

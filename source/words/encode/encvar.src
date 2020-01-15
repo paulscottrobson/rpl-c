@@ -36,11 +36,46 @@ _EVFHaveAddress:
 		jsr 	EncVarAlNum
 		clc 								; possible char 3
 		jsr 	EncVarAlNum
-		lda 	(srcPtr),y 					; more text after ?
-		bpl 	EVFFail
+		phy
 		lda 	temp1 						; write out variable identifier.
 		ldy 	temp1+1
 		jsr 	EncodeWriteWord
+		ply
+		lda 	(srcPtr),y 					; more text after ?
+		bpl 	_EVFCheckArray
+		rts
+
+_EVFCheckArray:
+		iny 								; get the next character
+		lda 	(srcPtr),y
+		cmp 	#"["						; array index ?
+		bne 	EVFFail
+		stz 	temp1 						; zero temp1.
+		iny  								; point to index
+_EVFGetIndex:
+		asl 	temp1 						; temp1 x 10
+		lda 	temp1
+		asl 	a
+		asl		a
+		adc 	temp1
+		sta 	temp1
+		lda 	(srcPtr),y 					; get the digit
+		jsr 	CheckIsDigit
+		bcc 	EVFFail 					; failed, not digit
+		and 	#15
+		clc
+		adc 	temp1
+		bmi 	EVFFail 					; failed, bad index.
+		sta 	temp1
+		iny
+		lda 	(srcPtr),y
+		cmp 	#"]"+$80
+		bne 	_EVFGetIndex 				; index now in temp1.
+		lda 	#IndexHandler & $FF 		; output code
+		ldy 	#IndexHandler >> 8
+		jsr 	EncodeWriteWord
+		lda 	temp1	 					; write index
+		jsr 	EncodeWriteByte
 		rts
 
 EVFFail:
@@ -48,20 +83,22 @@ EVFFail:
 
 EncVarAlNum:
 		lda 	(srcPtr),y 					; points to the  last char processed.
-		bpl 	_EVAContinue 				
+		bpl 	_EVAContinue
 		rts
 _EVAContinue:		
 		php 								; CS x 32 ; CC x 32 x 40
 		iny 								; get the next character, strip bit 7
 		lda 	(srcPtr),y
+		dey
 		and 	#$7F
 		jsr 	CheckIsLetter 				; letter ?
 		bcs 	_EVACharOkay
 		jsr 	CheckIsDigit				; fail if not digit.
-		bcc 	EVFFail
+		bcc 	_EVAExit
 		clc
 		adc 	#"Z"+1-"0"					; shift 0 so after Z
 _EVACharOkay:
+		iny 								; char okay advance to it.
 		sec 								; range 1-36
 		sbc 	#64 
 		plp 								; which multiplier ?
@@ -93,5 +130,8 @@ _EVAAddVar: 								; add temp2 to temp1
 		lda 	temp1+1
 		adc 	temp2+1
 		sta 	temp1+1
+		php
+_EVAExit:	
+		plp	
 		rts	
 
