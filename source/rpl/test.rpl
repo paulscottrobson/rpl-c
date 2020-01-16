@@ -1,24 +1,18 @@
-0 $9f20 !
-$10 $9f22 c!
-1000 for 33 $9f23 c! next
-end
-
-:bm1 1000 for next ;
-:bm.2
-0 !k
-repeat @k 1+ dup !k 1000 >= until ;
-:bm3
-0 !k
-repeat @k 1+ !k @k @k  / @k * @k + @k - !a @k 1000 >= until ;	
-:bm4
-0 !k
-repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a @k 1000 >= until ;
-:bm5
-0 !k
-repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 @k 1000 >= until ;
-:bm6
-0 !k
-repeat @k 1+ !k @k 2 / 3 * 4 + 5 - !a sub700 5 for next @k 1000 >= until ;
-:sub700 ;
-
-
+'
+'	Balls in RPL-C		
+'
+100 !cnt
+$6000 !dat
+@cnt for index select setup 42 draw next
+repeat @cnt for index select 32 draw move 42 draw next 0 until
+	
+:select 16* @dat + !p ;
+:setup rnd abs 80 mod !p[0] rnd abs 60 mod !p[1] rand.dir !p[2] rand.dir !p[3] rnd 15 and !p[4] ;
+:draw @p[1] 256* @p[0] 2* + $9f20 ! $10 $9f22 c! $9f23 c! @p[4] $9f23 c! ;
+:move
+	@p[0] @p[2] + dup !p[0] 
+	dup 79 > swap 0< or if @p[2] negate !p[2] endif
+	@p[1] @p[3] + dup !p[1] 
+	dup 59 > swap 0< or if @p[3] negate !p[3] endif
+;
+:rand.dir rnd 1 and dup 0= if 1- endif ;
