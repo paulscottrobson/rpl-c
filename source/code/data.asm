@@ -173,6 +173,5 @@ resetStack .macro
 		.endm		
 
 resetRSP .macro
-		lda 	#$FF
-		sta 	rsp
+		stz 	rsp
 		.endm

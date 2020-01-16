@@ -91,7 +91,7 @@ _CHFoundLSB:
 		
 ReturnHandler:	;;	; noexec <0>		
 		ldy 	rsp 						; get rsp
-		bmi 	_RHUnderflow 				; if -ve underflowed
+		beq 	_RHUnderflow 				; if -ve underflowed
 		dec 	rsp 						; decrement rsp
 		;
 		lda 	returnStackHigh,y 			; restore IP/X

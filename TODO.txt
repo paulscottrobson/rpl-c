@@ -1,6 +1,5 @@
 TODO:
-	Enter 1 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx - EncodeProgram writes $00 out
-	when encoding it truncating it to 64 chars. Very long (80+) lines give a syntax error.
+	Very long (80+) lines give a syntax error.
 
 	Escape/Stack check.
 	Add [] indexing handler

@@ -22,7 +22,6 @@ EncodeProgram:
 		phy
 		sty 	srcPtr+1					; save source pointer.
 		sta		srcPtr
-
 		resetRSP 							; reset the stack.
 		ldx 	rsp 						; this is the current stack entry type, so $00 means
 		stz 	returnStackHigh,x 			; an initial "until" will fail as it's looking for "R" here (repeat)
@@ -56,7 +55,6 @@ _EPEndEncode:
 		ldy 	#NextLine >> 8
 		jsr 	EncodeWriteWord
 		lda 	rsp 						; is the return stack empty ?
-		cmp 	#$FF
 		bne 	_EPIncomplete
 		ply									; restore and exit.
 		plx
