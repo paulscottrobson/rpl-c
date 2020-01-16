@@ -1,10 +1,8 @@
 TODO:
-	Very long (80+) lines give a syntax error.
-
 	Escape/Stack check.
 	Add [] indexing handler
 	Implement old
-		
+
 Missing vocabulary:	
 	old
 
@@ -15,7 +13,7 @@ Decoders:
 	(None)
 
 Fixes:
-
+	80/256 line length issue
 	Optimise the call lookup.
 	AdvanceFreeMem checks high memory for out of memory.
 	Seperate type for $constants ?
