@@ -151,6 +151,7 @@ class WordIndex(object):
 107 ::: save
 108 ::: load
 109 ::: $$index
+110 ::: old
 
 """.strip().upper()
 

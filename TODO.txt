@@ -1,10 +1,9 @@
 TODO:
 	Escape/Stack check.
 	Add [] indexing handler
-	Implement old
 
 Missing vocabulary:	
-	old
+	(None)
 
 Encoders/Immediate:
 	(None)

@@ -1,0 +1,44 @@
+; *****************************************************************************
+; *****************************************************************************
+;
+;		Name :		old.src
+;		Purpose :	Recover new'ed program
+;		Author :	Paul Robson (paul@robsons.org.uk)
+;		Date : 		16th January 2020
+;
+; *****************************************************************************
+; *****************************************************************************
+
+; *****************************************************************************
+;
+;			Old - scan for old program after new. This uses a lot of the
+;			code from LIST. This can fail if program code is corrupted.
+;
+; *****************************************************************************
+
+OldCode: 	;; old
+		set16 	srcPtr,ProgramMemory 		; start here.
+		ldy 	#3 							; start after line# / offset
+_OldLoop:		
+		lda 	(srcPtr),y 					; copy the current character to temp1 
+		sta 	temp1 						; must be an execution address.
+		iny
+		lda 	(srcPtr),y
+		sta 	temp1+1		
+		iny
+		;
+		lda 	temp1 						; have we reached the end ?
+		cmp 	#NextLine & $FF
+		bne 	_OldNotEOL
+		lda 	temp1+1
+		cmp 	#NextLine >> 8
+		beq 	_OldEOL
+_OldNotEOL:		
+		jsr 	IdentifyCodeWord			; what is it ?
+		jsr 	AdvanceToNext 				; advance to next entry in the line.
+		bra	 	_OldLoop
+;
+_OldEOL:
+		sty 	ProgramMemory 				; Y is the offset.
+		jsr 	ClearVariableSpace 			; clear variables, reset pointers
+		jmp 	WarmStartBlankStack

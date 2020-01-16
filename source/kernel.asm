@@ -52,18 +52,9 @@ WarmStart:
 LineEditor:
 		jsr 	EditProgram
 		bra 	WarmStartBlankStack			
-		
-BootMsg:
-		.text 	"*** RPL/C INTERPRETER ***",13,13
-		.text	"WRITTEN BY PAUL ROBSON 2020",13,13
-		.text 	"BUILD: "
-		.include 	"generated/timestamp.inc"
-		.byte 	13,13,0
 
 		.include 	"code/core.src"			
-		.include 	"code/error.asm"
-		.include 	"code/extern.asm"
-
+		
 		.include 	"words/arithmetic/binary.src"
 		.include 	"words/arithmetic/compare.src"
 		.include 	"words/arithmetic/divide.src"
@@ -93,11 +84,22 @@ BootMsg:
 		.include 	"words/system/edit.src"
 		.include 	"words/system/list.src"
 		.include 	"words/system/miscellany.src"
+		.include 	"words/system/old.src"
 		.include 	"words/system/saveload.src"
 		.include 	"words/system/skipper.src"
 		.include 	"words/system/toint.src"
 		.include 	"words/system/tostr.src"
 		.include 	"words/system/varhandlers.src"
+
+BootMsg:
+		.text 	"*** RPL/C INTERPRETER ***",13,13
+		.text	"WRITTEN BY PAUL ROBSON 2020",13,13
+		.text 	"BUILD: "
+		.include 	"generated/timestamp.inc"
+		.byte 	13,13,0
+
+		.include 	"code/error.asm"
+		.include 	"code/extern.asm"
 
 		
 Dictionary:

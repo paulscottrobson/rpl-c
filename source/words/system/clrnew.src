@@ -18,7 +18,7 @@
 NewHandler:		;; 	new <0>
 		stz 	ProgramMemory 				; Make the first offset zero.
 		jsr 	ClearVariableSpace 			; clear variables, reset pointers
-		doNext
+		jmp 	WarmStartBlankStack
 
 ; *****************************************************************************
 ;

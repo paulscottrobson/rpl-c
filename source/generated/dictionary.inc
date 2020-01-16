@@ -784,5 +784,12 @@ _end108:
 	.byte	$24,$24,$49,$4e,$44,$45,$d8
 _end109:
 
+; *** old [ID:110] ***
+	.byte	_end110-*
+	.byte	$00
+	.word	OldCode
+	.byte	$4f,$4c,$c4
+_end110:
+
 	.byte	0
 
