@@ -155,7 +155,7 @@ class LineConverter(object):
 		m1 = re.match("^\\-?\\d+$",word)									# try decimal/hexadecimal
 		m2 = re.match("^\\$([0-9A-F]+)$",word)
 		if m1 is not None or m2 is not None:								# either
-			self.appendWord("$$literal")									# literal handler
+			self.appendWord("$$hexliteral" if word[0]=="$" else "$$literal")# literal handler
 			n = int(word) if m1 is not None else int(word[1:],16)			# convert to integer
 			self.code.append(n & 0xFF)										# append in range
 			self.code.append((n & 0xFFFF) >> 8)

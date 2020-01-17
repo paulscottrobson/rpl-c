@@ -1,8 +1,7 @@
-repeat @cnt for index select 32 draw move 42 draw next 0 until
 '
 '	Balls in RPL-C		
 '
-100 !cnt
+200 !cnt
 $6000 !dat
 @cnt for index select setup 42 draw next
 repeat @cnt for index select 32 draw move 42 draw next 0 until

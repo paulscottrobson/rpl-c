@@ -33,6 +33,8 @@ InitialiseCoreCode:
 ;
 ; *****************************************************************************
 
+HexLiteral2Byte: ;; $$hexliteral noexec <2>
+		nop 							; must have different address for decoding.
 Literal2Byte:	;; $$literal noexec <2>
 		pushTOS							; push the old TOS on the stack
 		inx  							; point X to the word 
@@ -46,6 +48,41 @@ Literal2Byte:	;; $$literal noexec <2>
 		lda 	(IP),y
 		sta 	TOS+1
 		doNext
+
+HexLiteral2ByteDecode: ;; $$hexliteral decode
+		lda 	#CTH_Keyword
+		jsr 	DecodeWriteBuffer
+		lda 	#"$"
+		jsr 	DecodeWriteBuffer
+		lda 	(srcPtr),y
+		pha
+		iny
+		lda 	(srcPtr),y
+		iny
+		jsr 	HL2BDWrite
+		pla
+		jsr 	HL2BDWrite
+		rts
+
+HL2BDWrite:
+		pha
+		lsr 	a
+		lsr 	a
+		lsr 	a
+		lsr 	a
+		jsr 	_HLNibble
+		pla
+_HLNibble:
+		and 	#$0F
+		cmp 	#$0A
+		bcc 	_HLNoAdjust
+		clc
+		adc 	#7
+_HLNoAdjust:
+		clc
+		adc 	#48
+		jsr 	DecodeWriteBuffer
+		rts
 
 Literal2ByteDecode: ;; $$literal decode
 		lda 	#CTH_Keyword

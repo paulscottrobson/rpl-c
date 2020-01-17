@@ -152,6 +152,7 @@ class WordIndex(object):
 108 ::: load
 109 ::: $$index
 110 ::: old
+111 ::: $$hexliteral
 
 """.strip().upper()
 

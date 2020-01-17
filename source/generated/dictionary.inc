@@ -791,5 +791,13 @@ _end109:
 	.byte	$4f,$4c,$c4
 _end110:
 
+; *** $$hexliteral [ID:111] ***
+	.byte	_end111-*
+	.byte	$52
+	.word	HexLiteral2Byte
+	.word	HexLiteral2ByteDecode
+	.byte	$24,$24,$48,$45,$58,$4c,$49,$54,$45,$52,$41,$cc
+_end111:
+
 	.byte	0
 

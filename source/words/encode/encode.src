@@ -165,6 +165,13 @@ _EPNotDefined:
 		;
 		;		Only thing left is a constant
 		;
+		cmp 	#"$" 						; is it a hex constant
+		bne 	_EPDecLiteral
+		lda 	#HexLiteral2Byte & $FF 		; write out 2 byte literal (hex)
+		ldy 	#HexLiteral2Byte >> 8
+		jsr 	EncodeWriteWord
+		bra 	_EPOutputConstant
+_EPDecLiteral:		
 		lda 	#Literal2Byte & $FF 		; write out 2 byte literal
 		ldy 	#Literal2Byte >> 8
 		jsr 	EncodeWriteWord
