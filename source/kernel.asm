@@ -21,6 +21,7 @@ LastMemoryByte = $9EFF 						; program ends here
 ColdStart:		
 		ldx 	#$FF 						; reset the stack
 		txs
+		stz 	FastMode 					; start in slow mode.
 		jsr 	ExternInitialise
 		lda 	#BootMsg & $FF
 		ldy 	#BootMsg >> 8

@@ -17,15 +17,72 @@
 ; *****************************************************************************
 
 InitialiseCoreCode:
-		lda 	#$E8 					; Copy INX INX 			4 cycles when run
-		sta 	NextCode
-		sta 	NextCode+1
 		lda 	#$7C 					; Copy JMP ($aaaa,x) 	6 cycles when run
 		sta 	NextCode+2 
 		stx 	NextCode+3 				; set the indirect address (IP)
 		sty 	NextCode+4
+
+		lda 	#$4C 					; JMP AltHandler
+		sta 	AltCode
+		lda 	#AlternateHandler & $FF
+		sta 	AltCode+1
+		lda 	#AlternateHandler >> 8
+		sta 	AltCode+2
+
+		jsr 	SetRunMode 				; set run mode to current
+
 		ldx 	#1 						; set up to run from provided word.
 		rts								; (2 INX skip offset and line#)
+
+; *****************************************************************************
+;
+;								Alternate handler
+;
+; *****************************************************************************
+
+SetRunMode:
+		lda 	FastMode
+		beq 	_SRMSlow
+		lda 	#$E8 					; Copy INX INX 			4 cycles when run
+		sta 	NextCode
+		sta 	NextCode+1
+		rts
+_SRMSlow:
+		lda 	#$80	 				; BRA AltCode
+		sta 	NextCode
+		lda 	#AltCode-NextCode-2
+		sta 	NextCode+1
+		rts
+
+AlternateHandler:
+		inx 							; patched in - does the INX that is overwritten
+		inx
+		stx 	temp1 					; save it
+		tsx 							; check underflow
+		cpx 	#$81
+		bcs 	_AHStackError
+		ldx 	temp1
+		lda 	BreakTestCount 			; do a break test say 1 in 32
+		clc
+		adc 	#8
+		sta 	BreakTestCount
+		bcc 	_AHNoTest
+		jsr 	ExternCheckBreak
+_AHNoTest:
+		jmp 	NextCode+2				; then the indirect jump.
+_AHStackError:
+		rerror 	"STACK UNDERFLOW"
+
+SetSlowMode: 	;; slow <0>
+		lda 	#0
+		bra 	SetMode
+SetFastMode: 	;; fast <0>
+		lda 	#1
+SetMode:		
+		sta 	FastMode
+		jsr 	SetRunMode
+		doNext
+
 
 ; *****************************************************************************
 ;

@@ -799,5 +799,19 @@ _end110:
 	.byte	$24,$24,$48,$45,$58,$4c,$49,$54,$45,$52,$41,$cc
 _end111:
 
+; *** fast [ID:112] ***
+	.byte	_end112-*
+	.byte	$00
+	.word	SetFastMode
+	.byte	$46,$41,$53,$d4
+_end112:
+
+; *** slow [ID:113] ***
+	.byte	_end113-*
+	.byte	$00
+	.word	SetSlowMode
+	.byte	$53,$4c,$4f,$d7
+_end113:
+
 	.byte	0
 

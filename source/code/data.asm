@@ -18,7 +18,8 @@
 ; *****************************************************************************
 
 NextCode: 									; NEXT code (INX INX JSR ($xxxx,X) goes here)
-		.fill 	5
+		.fill 	8
+AltCode = NextCode+5 						; Patch goes here.
 
 IP = NextCode+3 							; the IP which points to the current instruction
 
@@ -70,6 +71,12 @@ ListCount:
 ListLowest:
 		.word 	?
 
+BreakTestCount:
+		.byte 	?
+
+FastMode:
+		.byte 	?
+				
 stack2Low = $102							; access other stack members following tsx
 stack2High = $101							; (which requires saving X, not on the stack !)
 stack3Low = $104
