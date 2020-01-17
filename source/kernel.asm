@@ -10,6 +10,7 @@
 ; *****************************************************************************
 
 RplBuild = $1000 							; code starts here.
+LastMemoryByte = $9EFF 						; program ends here
 
 		.include 	"code/data.asm"
 

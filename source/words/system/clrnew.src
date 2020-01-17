@@ -75,4 +75,20 @@ AdvanceFreeMem:
 		tya
 		adc 	nextFreeMem+1
 		sta 	nextFreeMem+1
+		bcs 	MemoryOverflow
 		rts		
+
+; *****************************************************************************
+;
+;				Warning if low on memory (when there's 1/4k left)
+;
+; *****************************************************************************
+
+CheckMemory:
+		lda 	nextFreeMem+1
+		cmp 	#(lastMemoryByte >> 8)-1
+		bcs 	MemoryOverflow
+		rts
+MemoryOverflow:
+		rerror 	"OUT OF MEMORY"
+		

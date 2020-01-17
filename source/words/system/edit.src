@@ -33,6 +33,7 @@ _EPNotFound:
 		cmp 	#5 							; <offset> <line#> <next line>
 		beq 	_EPNoInsert
 		jsr 	EDInsertLine 				; insert line back in.
+		jsr 	CheckMemory 				; low on memory ?
 _EPNoInsert:
 		jsr 	ClearVariableSpace
 		rts

@@ -266,6 +266,7 @@ _VFCreate:
 		lda 	#6							; shift freemem pointer up 6
 		ldy 	#0
 		jsr 	AdvanceFreeMem
+		jsr 	CheckMemory 				; low on memory ?
 		rts
 
 ; *****************************************************************************

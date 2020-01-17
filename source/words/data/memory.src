@@ -103,5 +103,6 @@ AllocateMemory: ;; alloc <0>
 		ply 								; advance the free ram pointer
 		pla
 		jsr 	AdvanceFreeMem
+		jsr 	CheckMemory 				; low on memory ?
 		doNext 						; and continue
 		
