@@ -27,9 +27,10 @@ class Dictionary(object):
 		for root,dirs,files in os.walk("."):								# scan for lines
 			for f in [x for x in files if x.endswith(".src")]:
 				for l in [x.strip() for x in open(root+os.sep+f).readlines() if x.find(";;") >= 0]:
-					m = re.match("^(.*)\\:.*?\\;\\;\\s*(.*)$",l)
-					assert m is not None,f+" ... "+l
-					self.append(m.group(2).strip().lower().split(),m.group(1))
+					if l.find(";;;") < 0:
+						m = re.match("^(.*)\\:.*?\\;\\;\\s*(.*)$",l)
+						assert m is not None,f+" ... "+l
+						self.append(m.group(2).strip().lower().split(),m.group(1))
 		self.index = WordIndex().get()										# get the index.					
 	#					
 	#		Add a <label>: .... ;; <elements> reference

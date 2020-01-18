@@ -29,7 +29,12 @@ Call6502: 	;; sys <0>
 		lda 	TOS+1
 		sta 	temp1+1
 		popTOS
+		phx
+		lda		('A'-'@')*2+azVariables 	; load AXY
+		ldx		('X'-'@')*2+azVariables 	
+		ldy		('Y'-'@')*2+azVariables 	
 		jsr 	_CallTemp1 					; call it		
+		plx
 		doNext
 _CallTemp1:
 		jmp 	(temp1)		
