@@ -36,52 +36,29 @@ CallHandler: 	;; 	$$call noexec <2>
 		iny 	
 		lda 	(IP),y
 		sta 	temp1+1
-		;
-		set16 	IP,ProgramMemory 			; now search for it.
-		lda 	(IP)						; no program code ?
-		beq 	_CHFail
-		;
-		;		Simple search. May upgrade it for later
-		;
-		ldy 	#1 							; Y = 1 throughout.
-_CHSearch:
-		lda 	(IP),y 						; check LSB of line number
-		cmp 	temp1
-		beq 	_CHFoundLSB
-_CHSearchNext:		
-		advance	IP 							; go forward to next
-		lda 	(IP)						; check reached the end.
-		bne 	_CHSearch
-_CHFail:
-		rerror 	"CANT FIND DEFINITION"		; usually means line# has changed
-_CHOverflow:
-		rerror 	"CALL STACK OVERFLOW"
-		;
-		;		LSB matches, check MSB
-		;
-_CHFoundLSB:		
-		iny 								; get MSB
-		lda 	(IP),y
-		dey
-		cmp 	temp1+1 					; matches, if not contineu
-		bne 	_CHSearchNext
+		jsr 	CallSearch 
 		;
 		;		IP points to the new line.
 		;
 		ldy 	#3	 						; check it begins with $$define
 		lda 	(IP),y
 		cmp 	#DefineCode & $FF
-		bne 	_CHFail
+		bne 	_CHNoDefine
 		iny
 		lda 	(IP),y 						
 		cmp 	#DefineCode >> 8
-		bne 	_CHFail
+		bne 	_CHNoDefine
 		iny
 		lda 	(IP),y 						; this is the length of the define name
 		clc
 		adc 	#5-2 						; $$define token, line number, offset - 2 for Next
 		tax
 		doNext 								; and execute
+		;
+_CHOverflow:
+		rerror 	"CALL STACK OVERFLOW"
+_CHNoDefine:
+		rerror 	"DEFINE MISSING"		
 
 ; *****************************************************************************
 ;
@@ -208,3 +185,34 @@ _FLExit:
 		rts		
 		clc
 		rts
+
+; *****************************************************************************
+;
+;							Set IP to line temp1.
+;
+; *****************************************************************************
+
+CallSearch:
+		set16 	IP,ProgramMemory 			; now search for it.
+		lda 	(IP)						; no program code ?
+		beq 	SearchFail
+		ldy 	#1 							; Y = 1 throughout.
+_CHSearch:
+		lda 	(IP),y 						; check LSB of line number
+		cmp 	temp1
+		beq 	_CHFoundLSB
+_CHSearchNext:		
+		advance	IP 							; go forward to next
+		lda 	(IP)						; check reached the end.
+		bne 	_CHSearch
+		bra 	SearchFail		
+_CHFoundLSB:								; LSB matches, check MSB
+		iny 								; get MSB
+		lda 	(IP),y
+		dey
+		cmp 	temp1+1 					; matches, if not contineu
+		bne 	_CHSearchNext
+		rts
+
+SearchFail:
+		rerror 	"CANT FIND DEFINITION"		; usually means line# has changed
