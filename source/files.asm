@@ -34,6 +34,8 @@
 		.include 	"words/system/debug.src"
 		.include 	"words/system/decode.src"
 		.include 	"words/system/edit.src"
+		.include 	"words/system/fastsearch.src"
+		
 		.include 	"words/system/list.src"
 		.include 	"words/system/miscellany.src"
 		.include 	"words/system/old.src"

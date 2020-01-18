@@ -1,10 +1,10 @@
 '
 '	Balls in RPL-C		
 '
+142 !a $FFD2 sys
 200 !cnt
 $6000 !dat
 0 $9f20 ! $10 $9f22 c!
-142 !a $FFD2 sys
 128 60 * for 32	$9f23 c! 1 $9f23 c! next
 @cnt for index select setup  next
 repeat @cnt for index select 32 draw move 81 draw next 0 until

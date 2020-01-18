@@ -60,7 +60,9 @@ _CVSFindEnd:
 		lda 	#8 							; this puts a gap in, more for clarity than anything.
 		ldy 	#0 
 		jsr 	AdvanceFreeMem				; we need +1 because the previous code leaves the
-		rts 								; free mem pointer pointing to the last zero offset
+			 								; free mem pointer pointing to the last zero offset
+		jsr 	CreateSearchTable 			; create search lookup
+		rts			 								
 
 ; *****************************************************************************
 ;
