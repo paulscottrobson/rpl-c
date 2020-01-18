@@ -35,7 +35,7 @@ names = [x.upper() for x in Dictionary().getKeys()]
 #
 random.seed()
 seed = random.randint(0,10000)
-seed = 1186
+#seed = 6108
 print("seed ",seed)
 random.seed(seed)
 l = random.randint(1,64000)
@@ -59,7 +59,8 @@ h.close()
 #
 structs = "IF/ENDIF,IF ELSE/ENDIF,IF/ELSE ENDIF,REPEAT/UNTIL,FOR/NEXT".split(",")
 
-while len(" ".join(s)) < 220:
+doneRem = False
+while len(" ".join(s)) < 220 and not doneRem:
 	n = random.randint(0,6)
 	#
 	#	Keywords (0)
@@ -75,6 +76,7 @@ while len(" ".join(s)) < 220:
 		st = getIdentifier(3,9) if random.randint(0,9) > 0 else ""
 		if random.randint(0,10) == 0:
 			s.append("' "+st) 
+			doneRem = True
 		else:
 			s.append('"'+st+'"')
 	#
