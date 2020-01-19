@@ -16,9 +16,9 @@ rem
 64tass -q -D encode=0 -c kernel.asm -o kernel_nocode.prg -L kernel.lst -l kernel.lbl
 if errorlevel 1 goto exit
 rem
-rem		Convert rpl\test.rpl to RPL tokenised\compiled code
+rem		Convert ASCII RPL to RPL tokenised\compiled code
 rem
-python scripts\rplconv.py
+python scripts\rplconv.py rpl\balls.rpl
 if errorlevel 1 goto exit
 rem
 rem		Batten it onto the end of the executable

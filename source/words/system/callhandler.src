@@ -192,7 +192,7 @@ _FLExit:
 ;
 ; *****************************************************************************
 
-CallSearch:
+DisabledCallSearch:
 		set16 	IP,ProgramMemory 			; now search for it.
 		lda 	(IP)						; no program code ?
 		beq 	SearchFail

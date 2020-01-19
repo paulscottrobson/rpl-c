@@ -77,6 +77,9 @@ BreakTestCount:
 FastMode:
 		.byte 	?
 				
+LineTable: 									; line number index table.
+		.word 	?
+
 stack2Low = $102							; access other stack members following tsx
 stack2High = $101							; (which requires saving X, not on the stack !)
 stack3Low = $104

@@ -17,5 +17,127 @@
 ; *****************************************************************************
 
 CreateSearchTable:
+		jsr 	CreateLineNumberTable
+		sta 	LineTable
+		sty 	LineTable+1
 		rts
 		
+; *****************************************************************************
+;
+;		Create an index of all the line numbers that start with $$define
+;		Return in YA. 
+;
+; *****************************************************************************
+
+CreateLineNumberTable:
+		lda 	nextFreeMem 				; push table position on stack.
+		ldy 	nextFreeMem+1
+		pha
+		phy
+
+		set16 	temp1,ProgramMemory 		; scan through
+_CLNTCheck:
+		lda 	(temp1) 					; finished ?
+		beq 	_CLNTEnd
+		ldy 	#3 							; is it $$define
+		lda 	(temp1),y				
+		cmp 	#DefineCode & $FF
+		bne 	_CLNTNext
+		iny
+		lda 	(temp1),y				
+		cmp 	#DefineCode >> 8
+		bne 	_CLNTNext
+		;
+		ldy 	#2
+		lda 	(temp1),y 					; line msb
+		dey
+		sta 	(nextFreeMem),y 			; save out
+		lda 	(temp1),y 					; line lsb
+		sta 	(nextFreeMem)
+		;
+		ldy 	#2 							; copy line position
+		lda 	temp1
+		sta 	(nextFreeMem),y
+		lda 	temp1+1
+		iny
+		sta 	(nextFreeMem),y
+		;
+		lda 	#4 							; advance memory pointer
+		ldy 	#0
+		jsr 	AdvanceFreeMem 				; over new record.		
+_CLNTNext:
+		advance temp1
+		bra 	_CLNTCheck
+_CLNTEnd:
+		ldy 	#0 							; append 128 zeros, so only check end on minus check.
+_CLNTPadZero:
+		lda 	#$00
+		sta 	(nextFreeMem),y
+		iny
+		bpl 	_CLNTPadZero
+		lda 	#128 						; advance memory pointer
+		ldy 	#0
+		jsr 	AdvanceFreeMem 				; over padding
+
+		ply 								; restore original position and exit.
+		pla
+		rts
+
+; *****************************************************************************
+;
+;							Put address of line temp1 in IP
+;
+;		 (either this or the CallSearch in callhandler.src to be enabled)
+; *****************************************************************************
+
+CallSearch:
+		lda 	LineTable 					; copy line table pointer to temp3
+		sta 	temp3
+		lda 	LineTable+1
+		sta 	temp3+1
+_DFLNewYSet:		
+		ldy 	#0 							; start of set.
+		lda 	temp1 						; A = Line number, low.
+_DFLCheck:
+		cmp 	(temp3),y 					; do the LSB match ?
+		beq 	_DFLLSBMatch
+_DFLLSBAdvance:
+		iny 								; advance to the next record
+		iny
+		iny
+		iny
+		bpl 	_DFLCheck 					; we only check when Y goes -ve hence the zero padding.
+		;
+		dey 								; check if the last entry is zero
+		lda 	(temp3),y
+		dey
+		ora 	(temp3),y
+		beq 	_DFLFailed 					; if so, give up.
+		lda 	temp3 						; advance temp3 by 128, the next block of 128 defines
+		clc
+		adc 	#128
+		sta 	temp3
+		bcc 	_DFLNewYSet 				; go back zeroing Y to check the next lot.
+		inc 	temp3+1
+		bra 	_DFLNewYSet
+		;
+_DFLLSBMatch:
+		iny 								; get the MSB
+		lda 	(temp3),y 					
+		cmp 	temp1+1 					; if it matches the MSB
+		beq 	_DFLFound 					; then we are done.
+		dey 								; fix back up
+		lda 	temp1 						; restore A = low byte
+		bra 	_DFLLSBAdvance 				; and continue
+
+_DFLFound: 				
+		iny									; copy the address into IP		
+		lda 	(temp3),y
+		sta 	IP
+		iny
+		lda 	(temp3),y
+		sta 	IP+1
+		rts
+
+_DFLFailed:
+		jmp 	SearchFail		

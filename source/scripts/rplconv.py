@@ -9,7 +9,7 @@
 # *****************************************************************************
 # *****************************************************************************
  
-import re,os
+import re,os,sys
 from dictaddr import *
 
 # *****************************************************************************
@@ -276,6 +276,6 @@ LineConverter.IF = 'I'
 
 if __name__ == "__main__":
 	prg = RPLProgram()
-	prg.addFile("rpl/test.rpl")
+	prg.addFile(sys.argv[1])
 	prg.convert(LineConverter())
 	open("generated"+os.sep+"rplcode.bin","wb").write(bytes(prg.code))
