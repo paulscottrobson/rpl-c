@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.54.1900 listing file
 ; 64tass -q -D encode=0 -c -o kernel_nocode.prg -L kernel.lst -l kernel.lbl kernel.asm
-; Mon Jan 20 18:45:05 2020
+; Mon Jan 20 19:24:02 2020
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -1797,30 +1797,30 @@
 .1ab5	48		pha				pha
 .1ab6	5a		phy				phy
 .1ab7	a9 00		lda #$00			lda 	#(ProgramMemory) & $FF
-.1ab9	85 13		sta $13				sta 	0+(temp1)
+.1ab9	85 19		sta $19				sta 	0+(temp4)
 .1abb	a9 40		lda #$40			lda 	#(ProgramMemory) >> 8
-.1abd	85 14		sta $14				sta 	1+(temp1)
+.1abd	85 1a		sta $1a				sta 	1+(temp4)
 .1abf					_CLNTCheck:
-.1abf	b2 13		lda ($13)			lda 	(temp1) 					; finished ?
+.1abf	b2 19		lda ($19)			lda 	(temp4) 					; finished ?
 .1ac1	f0 39		beq $1afc			beq 	_CLNTEnd
 .1ac3	a0 03		ldy #$03			ldy 	#3 							; is it $$define
-.1ac5	b1 13		lda ($13),y			lda 	(temp1),y
+.1ac5	b1 19		lda ($19),y			lda 	(temp4),y
 .1ac7	c9 f5		cmp #$f5			cmp 	#DefineCode & $FF
 .1ac9	d0 24		bne $1aef			bne 	_CLNTNext
 .1acb	c8		iny				iny
-.1acc	b1 13		lda ($13),y			lda 	(temp1),y
+.1acc	b1 19		lda ($19),y			lda 	(temp4),y
 .1ace	c9 1d		cmp #$1d			cmp 	#DefineCode >> 8
 .1ad0	d0 1d		bne $1aef			bne 	_CLNTNext
 .1ad2	a0 02		ldy #$02			ldy 	#2
-.1ad4	b1 13		lda ($13),y			lda 	(temp1),y 					; line msb
+.1ad4	b1 19		lda ($19),y			lda 	(temp4),y 					; line msb
 .1ad6	88		dey				dey
 .1ad7	91 11		sta ($11),y			sta 	(nextFreeMem),y 			; save out
-.1ad9	b1 13		lda ($13),y			lda 	(temp1),y 					; line lsb
+.1ad9	b1 19		lda ($19),y			lda 	(temp4),y 					; line lsb
 .1adb	92 11		sta ($11)			sta 	(nextFreeMem)
 .1add	a0 02		ldy #$02			ldy 	#2 							; copy line position
-.1adf	a5 13		lda $13				lda 	temp1
+.1adf	a5 19		lda $19				lda 	temp4
 .1ae1	91 11		sta ($11),y			sta 	(nextFreeMem),y
-.1ae3	a5 14		lda $14				lda 	temp1+1
+.1ae3	a5 1a		lda $1a				lda 	temp4+1
 .1ae5	c8		iny				iny
 .1ae6	91 11		sta ($11),y			sta 	(nextFreeMem),y
 .1ae8	a9 04		lda #$04			lda 	#4 							; advance memory pointer
@@ -1828,11 +1828,11 @@
 .1aec	20 95 18	jsr $1895			jsr 	AdvanceFreeMem 				; over new record.
 .1aef					_CLNTNext:
 .1aef	18		clc				clc
-.1af0	a5 13		lda $13				lda 	temp1
-.1af2	72 13		adc ($13)			adc 	(temp1)
-.1af4	85 13		sta $13				sta 	temp1
+.1af0	a5 19		lda $19				lda 	temp4
+.1af2	72 19		adc ($19)			adc 	(temp4)
+.1af4	85 19		sta $19				sta 	temp4
 .1af6	90 02		bcc $1afa			bcc 	_NoCarryAdv
-.1af8	e6 14		inc $14				inc 	temp1+1
+.1af8	e6 1a		inc $1a				inc 	temp4+1
 .1afa					_NoCarryAdv:
 .1afa	80 c3		bra $1abf			bra 	_CLNTCheck
 .1afc					_CLNTEnd:
@@ -3423,8 +3423,8 @@
 
 ;******  Processing file: generated/timestamp.inc
 
->2567	5b 32 30 2d 30 31 2d 32			.text	"[20-01-20 18:45]"
->256f	30 20 31 38 3a 34 35 5d
+>2567	5b 32 30 2d 30 31 2d 32			.text	"[20-01-20 19:24]"
+>256f	30 20 31 39 3a 32 34 5d
 
 ;******  Return to file: kernel.asm
 

@@ -35,30 +35,30 @@ CreateLineNumberTable:
 		pha
 		phy
 
-		set16 	temp1,ProgramMemory 		; scan through
+		set16 	temp4,ProgramMemory 		; scan through
 _CLNTCheck:
-		lda 	(temp1) 					; finished ?
+		lda 	(temp4) 					; finished ?
 		beq 	_CLNTEnd
 		ldy 	#3 							; is it $$define
-		lda 	(temp1),y				
+		lda 	(temp4),y				
 		cmp 	#DefineCode & $FF
 		bne 	_CLNTNext
 		iny
-		lda 	(temp1),y				
+		lda 	(temp4),y				
 		cmp 	#DefineCode >> 8
 		bne 	_CLNTNext
 		;
 		ldy 	#2
-		lda 	(temp1),y 					; line msb
+		lda 	(temp4),y 					; line msb
 		dey
 		sta 	(nextFreeMem),y 			; save out
-		lda 	(temp1),y 					; line lsb
+		lda 	(temp4),y 					; line lsb
 		sta 	(nextFreeMem)
 		;
 		ldy 	#2 							; copy line position
-		lda 	temp1
+		lda 	temp4
 		sta 	(nextFreeMem),y
-		lda 	temp1+1
+		lda 	temp4+1
 		iny
 		sta 	(nextFreeMem),y
 		;
@@ -66,7 +66,7 @@ _CLNTCheck:
 		ldy 	#0
 		jsr 	AdvanceFreeMem 				; over new record.		
 _CLNTNext:
-		advance temp1
+		advance temp4
 		bra 	_CLNTCheck
 _CLNTEnd:
 		ldy 	#0 							; append 128 zeros, so only check end on minus check.
