@@ -1,7 +1,7 @@
 
 ; 64tass Turbo Assembler Macro V1.54.1900 listing file
 ; 64tass -q -D encode=0 -c -o kernel_nocode.prg -L kernel.lst -l kernel.lbl kernel.asm
-; Thu Jan 23 14:56:35 2020
+; Fri Jan 24 16:28:31 2020
 
 ;Offset	;Hex		;Monitor	;Source
 
@@ -3423,8 +3423,8 @@
 
 ;******  Processing file: generated/timestamp.inc
 
->2567	5b 32 30 2d 30 31 2d 32			.text	"[20-01-23 14:56]"
->256f	33 20 31 34 3a 35 36 5d
+>2567	5b 32 30 2d 30 31 2d 32			.text	"[20-01-24 16:28]"
+>256f	34 20 31 36 3a 32 38 5d
 
 ;******  Return to file: kernel.asm
 
